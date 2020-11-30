@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: mongoDb-dev
+    include: mongodb-dev
 
 logging:
   config: classpath:logback.xml

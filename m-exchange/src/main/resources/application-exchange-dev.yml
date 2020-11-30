@@ -1,6 +1,6 @@
 spring:
   profiles:
-    include: mongoDb-dev
+    include: mongodb-dev
 
 eureka:
   client:

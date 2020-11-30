@@ -32,7 +32,7 @@
         <module>sc-register</module>
         <module>sc-gateway</module>
 
-        <module>m-mongoDb</module>
+        <module>m-mongodb</module>
         <module>m-rabbitmq</module>
 
         <module>m-blockchain</module>
@@ -63,7 +63,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.cq</groupId>
-                <artifactId>m-mongoDb</artifactId>
+                <artifactId>m-mongodb</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>

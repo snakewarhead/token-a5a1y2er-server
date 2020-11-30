@@ -9,9 +9,9 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>m-mongoDb</artifactId>
-    <name>m-mongoDb</name>
-    <description>m-mongoDb project for Spring Boot</description>
+    <artifactId>m-mongodb</artifactId>
+    <name>m-mongodb</name>
+    <description>m-mongodb project for Spring Boot</description>
     <packaging>jar</packaging>
     <version>1.0.0</version>
 
