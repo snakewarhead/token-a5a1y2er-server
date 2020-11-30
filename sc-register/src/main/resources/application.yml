@@ -1,0 +1,13 @@
+server:
+  port: 6543
+spring:
+  application:
+    name: sc-register
+logging:
+  config: classpath:logback.xml
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    register-with-eureka: false
+    fetch-registry: false

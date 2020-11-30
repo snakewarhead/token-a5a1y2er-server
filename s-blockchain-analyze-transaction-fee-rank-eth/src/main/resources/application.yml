@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: s-blockchain-analyze-transaction-fee-rank-eth
+  profiles:
+    include: blockchain-dev

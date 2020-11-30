@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    include: mongoDb-dev
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:6543/eureka/

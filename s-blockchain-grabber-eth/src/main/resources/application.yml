@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: s-blockchain-grabber-eth
+  profiles:
+    include: blockchain-dev
+
+wallet:
+  ip: 192.168.1.102
+  port: 7000
+  password: 123
+  height: 633043
+

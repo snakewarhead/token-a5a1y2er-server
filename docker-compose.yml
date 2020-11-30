@@ -1,0 +1,9 @@
+version: '2'
+services:
+  s-exchange-grabber-binance:
+    image: token-a5a1y2er/s-exchange-grabber-binance:latest
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
