@@ -32,6 +32,9 @@ public class MongoDbInitial {
             MongoMappingContext mongoMappingContext = (MongoMappingContext) mappingContext;
             for (BasicMongoPersistentEntity<?> persistentEntity : mongoMappingContext.getPersistentEntities()) {
                 Class<?> clazz = persistentEntity.getType();
+                if (clazz.isAnnotationPresent(View.class)) {
+                    continue;
+                }
                 if (clazz.isAnnotationPresent(Document.class)) {
                     MongoPersistentEntityIndexResolver resolver = new MongoPersistentEntityIndexResolver(mongoMappingContext);
 
