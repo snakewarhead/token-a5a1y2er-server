@@ -1,11 +1,13 @@
 package com.cq.dao;
 
 import com.cq.entity.BaseEntity;
+import com.mongodb.bulk.BulkWriteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Query;
@@ -35,6 +37,16 @@ public class BaseDAODynamic<T> {
 
         List<T> ls = mongoTemplate.find(query.with(pageable), clazz);
         return new PageImpl(ls, pageable, total);
+    }
+
+    public int bulkInsert(boolean isOrdered, List<T> ls) {
+        BulkOperations.BulkMode m = isOrdered ? BulkOperations.BulkMode.ORDERED : BulkOperations.BulkMode.UNORDERED;
+        BulkWriteResult res = mongoTemplate.bulkOps(m, clazz).insert(ls).execute();
+
+        if (!res.wasAcknowledged()) {
+            return 0;
+        }
+        return res.getInsertedCount();
     }
 
     public void createView(Class<? extends BaseEntity<?>> viewIn, Class<? extends BaseEntity<?>> viewOn, String pipeline) {
