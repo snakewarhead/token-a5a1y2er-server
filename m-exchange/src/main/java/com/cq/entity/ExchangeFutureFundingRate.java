@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.math.BigDecimal;
 
@@ -16,10 +14,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_future_perpetual_funding_rate")
-public class ExchangeFutureFundingRate {
-
-  @MongoId(FieldType.OBJECT_ID)
-  private String id;
+public class ExchangeFutureFundingRate extends BaseEntity<ExchangeFutureFundingRate> {
 
   @Indexed
   private Integer exchangeId;

@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,10 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_order_book")
-public class ExchangeOrderBook {
-
-    @MongoId(FieldType.OBJECT_ID)
-    private String id;
+public class ExchangeOrderBook extends BaseEntity<ExchangeOrderBook> {
 
     @Indexed
     private Integer exchangeId;

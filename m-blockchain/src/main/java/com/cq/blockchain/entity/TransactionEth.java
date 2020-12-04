@@ -1,10 +1,9 @@
 package com.cq.blockchain.entity;
 
+import com.cq.entity.BaseEntity;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.FieldType;
-import org.springframework.data.mongodb.core.mapping.MongoId;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -14,10 +13,8 @@ import java.util.List;
  */
 @Data
 @Document(collection = "blockchain_transaction_eth")
-public class TransactionEth {
+public class TransactionEth extends BaseEntity<TransactionEth> {
 
-    @MongoId(FieldType.OBJECT_ID)
-    private String id;
     private String remark;
 
     @Indexed
