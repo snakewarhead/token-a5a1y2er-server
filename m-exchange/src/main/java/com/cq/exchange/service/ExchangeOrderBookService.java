@@ -1,7 +1,7 @@
-package com.cq.service;
+package com.cq.exchange.service;
 
-import com.cq.dao.ExchangeOrderBookDAO;
-import com.cq.entity.ExchangeOrderBook;
+import com.cq.exchange.dao.ExchangeOrderBookDAO;
+import com.cq.exchange.entity.ExchangeOrderBook;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,6 @@
-package com.cq;
+package com.cq.exchange;
 
-import com.cq.service.ExchangeOrderBookService;
+import com.cq.exchange.service.ExchangeOrderBookService;
 import info.bitrich.xchangestream.binance.BinanceFutureStreamingExchange;
 import info.bitrich.xchangestream.binance.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;

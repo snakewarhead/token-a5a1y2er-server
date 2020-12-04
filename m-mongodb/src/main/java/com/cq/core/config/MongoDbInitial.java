@@ -1,4 +1,4 @@
-package com.cq.config;
+package com.cq.core.config;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.cq.entity;
+package com.cq.exchange.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

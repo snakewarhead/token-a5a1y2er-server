@@ -1,8 +1,8 @@
-package com.cq.task;
+package com.cq.exchange.task;
 
-import com.cq.ExchangeContext;
-import com.cq.ExchangeRunningParam;
-import com.cq.ExchangeTradeType;
+import com.cq.exchange.ExchangeContext;
+import com.cq.exchange.ExchangeRunningParam;
+import com.cq.exchange.ExchangeTradeType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;

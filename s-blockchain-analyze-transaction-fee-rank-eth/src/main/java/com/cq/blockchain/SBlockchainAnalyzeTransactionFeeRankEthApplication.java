@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @EnableScheduling
 @EnableEurekaClient
-@ComponentScan({"com.cq.config", "com.cq.blockchain"})
+@ComponentScan({"com.cq.core", "com.cq.blockchain"})
 @SpringBootApplication
 public class SBlockchainAnalyzeTransactionFeeRankEthApplication {
 

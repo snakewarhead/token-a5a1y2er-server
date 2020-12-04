@@ -1,4 +1,4 @@
-package com.cq;
+package com.cq.exchange;
 
 public enum ExchangeTradeType {
     SPOT(1),

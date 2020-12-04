@@ -1,6 +1,6 @@
 package com.cq.blockchain.entity;
 
-import com.cq.entity.BaseEntity;
+import com.cq.exchange.entity.BaseEntity;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;

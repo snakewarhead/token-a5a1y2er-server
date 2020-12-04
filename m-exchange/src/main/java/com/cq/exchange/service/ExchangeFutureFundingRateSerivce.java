@@ -1,8 +1,8 @@
-package com.cq.service;
+package com.cq.exchange.service;
 
-import com.cq.entity.ExchangeFutureFundingRate;
-import com.cq.dao.ExchangeFutureFundingRateDAO;
-import com.cq.dao.ExchangeFutureFundingRateDAODynamic;
+import com.cq.exchange.entity.ExchangeFutureFundingRate;
+import com.cq.exchange.dao.ExchangeFutureFundingRateDAO;
+import com.cq.exchange.dao.ExchangeFutureFundingRateDAODynamic;
 import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;

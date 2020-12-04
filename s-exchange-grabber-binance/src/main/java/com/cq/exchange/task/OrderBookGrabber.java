@@ -1,7 +1,7 @@
-package com.cq.task;
+package com.cq.exchange.task;
 
-import com.cq.ExchangeContext;
-import com.cq.entity.ExchangeOrderBook;
+import com.cq.exchange.ExchangeContext;
+import com.cq.exchange.entity.ExchangeOrderBook;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceAdapters;

@@ -1,4 +1,4 @@
-package com.cq;
+package com.cq.exchange;
 
 import lombok.Data;
 

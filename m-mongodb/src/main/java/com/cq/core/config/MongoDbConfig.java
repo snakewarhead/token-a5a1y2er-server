@@ -1,4 +1,4 @@
-package com.cq.config;
+package com.cq.core.config;
 
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSBuckets;

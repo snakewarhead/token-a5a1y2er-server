@@ -6,7 +6,7 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.context.annotation.ComponentScan;
 
 @EnableEurekaClient
-@ComponentScan({"com.cq.config", "com.cq.blockchain"})
+@ComponentScan({"com.cq.core", "com.cq.blockchain"})
 @SpringBootApplication
 public class SBlockchainGrabberEthApplication {
 

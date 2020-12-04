@@ -1,4 +1,4 @@
-package com.cq.entity;
+package com.cq.core.entity;
 
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.FieldType;

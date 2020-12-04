@@ -1,6 +1,6 @@
-package com.cq.dao;
+package com.cq.exchange.dao;
 
-import com.cq.entity.ExchangeFutureFundingRate;
+import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;

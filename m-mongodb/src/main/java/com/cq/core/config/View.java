@@ -1,4 +1,4 @@
-package com.cq.config;
+package com.cq.core.config;
 
 import java.lang.annotation.*;
 
