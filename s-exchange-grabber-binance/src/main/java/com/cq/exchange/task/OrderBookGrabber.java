@@ -2,6 +2,7 @@ package com.cq.exchange.task;
 
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeOrderBook;
+import com.cq.exchange.enums.ExchangeEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceAdapters;
@@ -41,7 +42,7 @@ public class OrderBookGrabber implements Runnable {
 
     private ExchangeOrderBook adapt(String symbol, DiffOrderBook o) {
         ExchangeOrderBook b = new ExchangeOrderBook();
-        b.setExchangeId(1);
+        b.setExchangeId(ExchangeEnum.BINANCE.getCode());
         b.setTradeType(exchangeContext.getTradeType().getCode());
         b.setSymbol(symbol);
         b.setTime(o.getTimeStamp());
