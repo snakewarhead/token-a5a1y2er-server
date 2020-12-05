@@ -1,10 +1,13 @@
 package com.cq.exchange;
 
+import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.service.ExchangeOrderBookService;
+import com.cq.exchange.service.ExchangeTakerLongShortRatioService;
 import info.bitrich.xchangestream.binance.BinanceFutureStreamingExchange;
 import info.bitrich.xchangestream.binance.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.ExchangeSpecification;
@@ -19,10 +22,12 @@ import org.springframework.stereotype.Component;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 @Component
 public class ExchangeContext {
 
     private final ExchangeOrderBookService exchangeOrderBookService;
+    private final ExchangeTakerLongShortRatioService exchangeTakerLongShortRatioService;
 
     private ExchangeTradeType tradeType;
     private StreamingExchange streamingExchangeCurrent;
@@ -116,15 +121,4 @@ public class ExchangeContext {
         return exchange;
     }
 
-    public ExchangeOrderBookService getExchangeOrderBookService() {
-        return exchangeOrderBookService;
-    }
-
-    public ExchangeTradeType getTradeType() {
-        return tradeType;
-    }
-
-    public StreamingExchange getStreamingExchangeCurrent() {
-        return streamingExchangeCurrent;
-    }
 }

@@ -2,7 +2,7 @@ package com.cq.exchange.task;
 
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.ExchangeRunningParam;
-import com.cq.exchange.ExchangeTradeType;
+import com.cq.exchange.enums.ExchangeTradeType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 /**
@@ -75,6 +76,9 @@ public class ExchangeInitial implements ApplicationRunner {
         p.getActions().forEach(a -> {
             if ("OrderBook".equals(a.getName())) {
                 threadPoolTaskScheduler.submit(new OrderBookGrabber(exchangeContext, a.getSymbols()));
+            } else if ("TakerLongShortRatio".equals(a.getName())) {
+                TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(exchangeContext, a.getSymbols());
+                a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
             }
         });
 
