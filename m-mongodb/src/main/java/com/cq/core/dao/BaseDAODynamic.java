@@ -1,6 +1,6 @@
 package com.cq.core.dao;
 
-import com.cq.exchange.entity.BaseEntity;
+import com.cq.core.entity.BaseEntity;
 import com.mongodb.bulk.BulkWriteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

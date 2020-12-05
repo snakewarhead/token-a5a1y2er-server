@@ -1,6 +1,6 @@
 package com.cq.exchange.dao;
 
-import com.cq.exchange.dao.BaseDAODynamic;
+import com.cq.core.dao.BaseDAODynamic;
 import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import org.springframework.stereotype.Repository;
 
