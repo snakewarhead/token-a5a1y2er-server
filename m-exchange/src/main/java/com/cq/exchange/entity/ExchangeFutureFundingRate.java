@@ -1,5 +1,6 @@
 package com.cq.exchange.entity;
 
+import com.cq.core.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
