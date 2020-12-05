@@ -18,5 +18,6 @@ public class ExchangeRunningParam {
     public static class Action {
         String name;
         List<String> symbols;
+        List<String> params;
     }
 }
