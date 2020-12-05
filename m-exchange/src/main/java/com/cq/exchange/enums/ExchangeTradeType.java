@@ -1,4 +1,6 @@
-package com.cq.exchange;
+package com.cq.exchange.enums;
+
+import java.util.Arrays;
 
 public enum ExchangeTradeType {
     SPOT(1),
@@ -17,12 +19,6 @@ public enum ExchangeTradeType {
     }
 
     public static ExchangeTradeType getEnum(int t) {
-        ExchangeTradeType[] arry = ExchangeTradeType.values();
-        for (int i = 0; i < arry.length; i++) {
-            if (arry[i].getCode() == t) {
-                return arry[i];
-            }
-        }
-        return null;
+        return Arrays.stream(ExchangeTradeType.values()).filter(item -> t == item.getCode()).findFirst().orElse(null);
     }
 }
