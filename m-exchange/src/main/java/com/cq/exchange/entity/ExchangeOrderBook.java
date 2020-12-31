@@ -31,6 +31,7 @@ public class ExchangeOrderBook extends BaseEntity<ExchangeOrderBook> {
     @Indexed
     private String symbol;
 
+    @Indexed
     private String pair;
 
     private Date time;

@@ -32,6 +32,7 @@ public class ExchangeFutureFundingRate extends BaseEntity<ExchangeFutureFundingR
   @Indexed
   private String symbol;
 
+  @Indexed
   private String pair;
 
   private BigDecimal markPrice;

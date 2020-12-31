@@ -29,8 +29,10 @@ public class ExchangeTakerLongShortRatio extends BaseEntity<ExchangeTakerLongSho
     @Indexed
     private String symbol;
 
+    @Indexed
     private String pair;
 
+    @Indexed
     private String baseSymbol;
 
     private BigDecimal buySellRatio;
