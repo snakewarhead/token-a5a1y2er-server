@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: s-blockchain-grabber-eth-addliquadity
+  profiles:
+    include: blockchain-dev
+
+swap:
+  contract-address-router: '0x05ff2b0db69458a0750badebc4f9e13add608c7f'
+  contract-address-factory: '0xbcfccbde45ce874adcb698cc183debcf17952812'
+  liquidity-limites:
+    - 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c-100  #WBNB
+    - 0xe9e7cea3dedca5984780bafc599bd69add087d56-20000  #BUSD
+    - 0x55d398326f99059ff775485246999027b3197955-20000  #USDT
+    - 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c-1  #BTC

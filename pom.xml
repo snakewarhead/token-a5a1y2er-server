@@ -24,8 +24,10 @@
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
         <spring-cloud-netflix-eureka-client.version>2.2.0.RELEASE</spring-cloud-netflix-eureka-client.version>
         <spring-cloud-starter-openfeign.version>2.2.2.RELEASE</spring-cloud-starter-openfeign.version>
-        <skipTests>true</skipTests>
         <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
+        <hutool.version>5.1.4</hutool.version>
+
+        <skipTests>true</skipTests>
     </properties>
 
     <modules>
@@ -40,6 +42,7 @@
 
         <module>s-blockchain-analyze-transaction-fee-rank-eth</module>
         <module>s-blockchain-grabber-eth</module>
+        <module>s-blockchain-grabber-eth-addliquadity</module>
 
         <module>s-exchange-grabber-binance</module>
     </modules>
@@ -49,6 +52,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
             <version>${spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool.version}</version>
         </dependency>
 
         <dependency>

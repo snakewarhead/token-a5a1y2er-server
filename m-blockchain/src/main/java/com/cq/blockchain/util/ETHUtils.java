@@ -345,7 +345,6 @@ public class ETHUtils {
             }
             return btcInfos;
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
         }
         return null;
@@ -416,8 +415,7 @@ public class ETHUtils {
             JSONObject json = JSONObject.fromObject(s);
             return json.getBoolean("result");
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
 
@@ -432,6 +430,7 @@ public class ETHUtils {
             JSONObject json = JSONObject.fromObject(s);
             return json.getBoolean("result");
         } catch (Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
         return false;
 
@@ -551,7 +550,6 @@ public class ETHUtils {
 
             json = JSONObject.fromObject(s);
         } catch (Throwable e) {
-            e.printStackTrace();
             LOGGER.error(e.getMessage(), e);
 
             // TODO: 还应该标记一个错误的状态，要么重试，要么就等到客户联系
@@ -573,7 +571,7 @@ public class ETHUtils {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -588,7 +586,7 @@ public class ETHUtils {
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }

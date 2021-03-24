@@ -1,6 +1,7 @@
 package com.cq.blockchain.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 
 public class MathUtil {
@@ -151,4 +152,7 @@ public class MathUtil {
         return val;
     }
 
+    public static BigDecimal trimByDecimals(BigInteger val, Integer decimals) {
+        return new BigDecimal(val).divide(new BigDecimal(BigInteger.TEN.pow(decimals)), RoundingMode.DOWN);
+    }
 }

@@ -10,3 +10,10 @@ eureka:
     service-url:
       defaultZone: http://localhost:6543/eureka/
 
+web3j:
+  #  client-address: https://bsc-dataseed1.ninicoin.io/
+  client-address: https://bsc-dataseed2.binance.org/
+  #  client-address: https://data-seed-prebsc-1-s1.binance.org:8545
+  admin-client: false
+
+

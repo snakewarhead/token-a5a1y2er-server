@@ -24,7 +24,13 @@
         <dependency>
             <groupId>org.web3j</groupId>
             <artifactId>abi</artifactId>
-            <version>3.2.0</version>
+            <version>4.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>web3j-spring-boot-starter</artifactId>
+            <version>4.0.3</version>
         </dependency>
 
         <dependency>
