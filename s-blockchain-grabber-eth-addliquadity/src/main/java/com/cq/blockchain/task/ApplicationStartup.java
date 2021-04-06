@@ -9,6 +9,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -23,7 +24,8 @@ public class ApplicationStartup implements ApplicationRunner {
     private final SwapConfig swapConfig;
 
     @Override
-    public void run(ApplicationArguments args) {
-        ethWeb3Service.grabberEventAddLiquidity(swapConfig.getContractAddressRouter(), swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites());
+    public void run(ApplicationArguments args) throws IOException {
+//        ethWeb3Service.grabberEventAddLiquidity(swapConfig.getContractAddressRouter(), swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites());
+        ethWeb3Service.scanNewPair(swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites());
     }
 }

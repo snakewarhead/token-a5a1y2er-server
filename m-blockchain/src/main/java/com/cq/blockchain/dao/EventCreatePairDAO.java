@@ -11,4 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface EventCreatePairDAO extends MongoRepository<EventCreatePair, String> {
 
     EventCreatePair findOneByTransactionHash(String transactionHash);
+
+    EventCreatePair findOneByAddressPair(String addressPair);
 }

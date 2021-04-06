@@ -1,6 +1,7 @@
 package com.cq.blockchain.service;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.thread.ThreadUtil;
 import com.cq.blockchain.dao.ConfigEthDAO;
 import com.cq.blockchain.dao.EventCreatePairDAO;
 import com.cq.blockchain.entity.ConfigEth;
@@ -13,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.web3j.abi.*;
 import org.web3j.abi.datatypes.*;
+import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameter;
 import org.web3j.protocol.core.DefaultBlockParameterName;
@@ -186,6 +188,46 @@ public class EthWeb3Service {
         return ((BigInteger) readContract(address, f).getValue()).intValue();
     }
 
+    public BigInteger contractBalanceOf(String addressToken, String addressHolder) throws IOException {
+        Function f = new Function(
+                "balanceOf",
+                Arrays.asList(new Address(addressHolder)),
+                Arrays.asList(new TypeReference<Uint256>() {
+                })
+        );
+        return (BigInteger) readContract(addressToken, f).getValue();
+    }
+
+    public int contractAllPairsLength(String address) throws IOException {
+        Function f = new Function(
+                "allPairsLength",
+                Arrays.asList(),
+                Arrays.asList(new TypeReference<Uint>() {
+                })
+        );
+        return ((BigInteger) readContract(address, f).getValue()).intValue();
+    }
+
+    public String contractAllPairs(String addressFactory, int idx) throws IOException {
+        Function f = new Function(
+                "allPairs",
+                Arrays.asList(new Uint(new BigInteger(idx + ""))),
+                Arrays.asList(new TypeReference<Address>() {
+                })
+        );
+        return (String) readContract(addressFactory, f).getValue();
+    }
+
+    public String contractPairToken(String addressPair, boolean token0OrToken1) throws IOException {
+        Function f = new Function(
+                token0OrToken1 ? "token0" : "token1",
+                Arrays.asList(),
+                Arrays.asList(new TypeReference<Address>() {
+                })
+        );
+        return (String) readContract(addressPair, f).getValue();
+    }
+
     public Type<?> readContract(String address, Function function) throws IOException {
         String data = FunctionEncoder.encode(function);
         return FunctionReturnDecoder.decode(
@@ -195,6 +237,46 @@ public class EthWeb3Service {
                 ).send().getValue(),
                 function.getOutputParameters()
         ).get(0);
+    }
+
+    public boolean overliquidityLimit(EventCreatePair e, List<String> liquidityLimits) {
+        boolean isMatch = false;
+        for (String i : liquidityLimits) {
+            String[] ss = i.split("-");
+            String addressPegged = ss[0];
+            BigDecimal amountLimit = new BigDecimal(ss[1]);
+
+            if (e.getTokenAddressA().equalsIgnoreCase(addressPegged)) {
+                isMatch = true;
+                if (e.getAmountA().compareTo(amountLimit) < 0) {
+                    return false;
+                }
+            }
+            if (e.getTokenAddressB().equalsIgnoreCase(addressPegged)) {
+                isMatch = true;
+                if (e.getAmountB().compareTo(amountLimit) < 0) {
+                    return false;
+                }
+            }
+
+            if (isMatch) {
+                break;
+            }
+        }
+        if (!isMatch) {
+            log.warn("overliquidityLimit not match ----- pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}",
+                    e.getAddressPair(),
+                    e.getSymbolA(),
+                    e.getTokenAddressA(),
+                    e.getAmountA().toString(),
+                    e.getSymbolB(),
+                    e.getTokenAddressB(),
+                    e.getAmountB().toString()
+            );
+            return false;
+        }
+
+        return true;
     }
 
     public void grabberEventAddLiquidity(String addressRouter, String addressFactory, List<String> liquidityLimits) {
@@ -284,34 +366,75 @@ public class EthWeb3Service {
             }
 
             // store over the limit
-            boolean isMatch = false;
-            for (String i : liquidityLimits) {
-                String[] ss = i.split("-");
-                String addressPegged = ss[0];
-                BigDecimal amountLimit = new BigDecimal(ss[1]);
-
-                if (e.getTokenAddressA().equalsIgnoreCase(addressPegged)) {
-                    isMatch = true;
-                    if (e.getAmountA().compareTo(amountLimit) < 0) {
-                        return;
-                    }
-                }
-                if (e.getTokenAddressB().equalsIgnoreCase(addressPegged)) {
-                    isMatch = true;
-                    if (e.getAmountB().compareTo(amountLimit) < 0) {
-                        return;
-                    }
-                }
-
-                if (isMatch) {
-                    break;
-                }
-            }
-            if (!isMatch) {
+            if (overliquidityLimit(e, liquidityLimits)) {
                 return;
             }
 
             eventCreatePairDAO.save(e);
         });
+    }
+
+    private final static long INTERVAL_LOOP_ADD_LIQUIDITY = 5000L;
+
+    public void scanNewPair(String addressFactory, List<String> liquidityLimits) throws IOException {
+        int allPairsLength = contractAllPairsLength(addressFactory);
+//        int allPairsLength = 0;
+        while (true) {
+            do {
+                try {
+                    int allPairsLengthNew = contractAllPairsLength(addressFactory);
+                    if (allPairsLengthNew <= allPairsLength) {
+                        break;
+                    }
+
+                    for (int i = allPairsLength; i < allPairsLengthNew; ++i) {
+                        String pair = contractAllPairs(addressFactory, i);
+
+                        String token0 = contractPairToken(pair, false);
+                        String symbol0 = contractSymbol(token0);
+                        int decimals0 = contractDecimals(token0);
+                        BigDecimal balance0 = MathUtil.trimByDecimals(contractBalanceOf(token0, pair), decimals0);
+
+                        String token1 = contractPairToken(pair, true);
+                        String symbol1 = contractSymbol(token1);
+                        int decimals1 = contractDecimals(token1);
+                        BigDecimal balance1 = MathUtil.trimByDecimals(contractBalanceOf(token1, pair), decimals1);
+
+                        log.info("idx: {}, pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}", i, pair, symbol0, token0, balance0.toString(), symbol1, token1, balance1.toString());
+
+                        EventCreatePair e = eventCreatePairDAO.findOneByAddressPair(pair);
+                        if (e == null) {
+                            e = new EventCreatePair();
+                        }
+
+                        e.setTokenAddressA(token0);
+                        e.setSymbolA(symbol0);
+                        e.setDecimalsA(decimals0);
+                        e.setAmountA(balance0);
+
+                        e.setTokenAddressB(token1);
+                        e.setSymbolB(symbol1);
+                        e.setDecimalsB(decimals1);
+                        e.setAmountB(balance1);
+
+                        e.setAddressPair(pair);
+
+                        if (!overliquidityLimit(e, liquidityLimits)) {
+                            continue;
+                        }
+
+                        eventCreatePairDAO.save(e);
+                    }
+
+                    allPairsLength = allPairsLengthNew;
+
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+
+            } while (false);
+
+            ThreadUtil.sleep(INTERVAL_LOOP_ADD_LIQUIDITY);
+        }
     }
 }

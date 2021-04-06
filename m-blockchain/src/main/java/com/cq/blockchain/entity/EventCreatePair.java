@@ -23,19 +23,18 @@ public class EventCreatePair extends BaseEntity<EventCreatePair> {
     private BigInteger blockNumber;
 
     @Indexed
+    private String addressPair;
+
+    @Indexed
     private String tokenAddressA;
     private String symbolA;
     private Integer decimalsA;
+    private BigDecimal amountA;
 
     @Indexed
     private String tokenAddressB;
     private String symbolB;
     private Integer decimalsB;
-
-    @Indexed
-    private String addressPair;
-
-    private BigDecimal amountA;
     private BigDecimal amountB;
 
 }
