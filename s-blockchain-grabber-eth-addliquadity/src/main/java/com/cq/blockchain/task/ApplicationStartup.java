@@ -25,7 +25,9 @@ public class ApplicationStartup implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
+
+        List<String> notices = args.getOptionValues("notices");
 //        ethWeb3Service.grabberEventAddLiquidity(swapConfig.getContractAddressRouter(), swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites());
-        ethWeb3Service.scanNewPair(swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites());
+        ethWeb3Service.scanNewPair(swapConfig.getContractAddressFactory(), swapConfig.getLiquidityLimites(), notices);
     }
 }

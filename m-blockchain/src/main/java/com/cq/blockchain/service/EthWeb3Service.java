@@ -2,11 +2,13 @@ package com.cq.blockchain.service;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.cq.blockchain.dao.ConfigEthDAO;
 import com.cq.blockchain.dao.EventCreatePairDAO;
 import com.cq.blockchain.entity.ConfigEth;
 import com.cq.blockchain.entity.EventCreatePair;
 import com.cq.blockchain.util.MathUtil;
+import com.cq.core.service.MailService;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,8 @@ public class EthWeb3Service {
 
     private final ConfigEthDAO configEthDAO;
     private final EventCreatePairDAO eventCreatePairDAO;
+
+    private final MailService mailService;
 
     public String getClientVersion() throws IOException {
         return web3j.web3ClientVersion().send().getWeb3ClientVersion();
@@ -376,9 +380,8 @@ public class EthWeb3Service {
 
     private final static long INTERVAL_LOOP_ADD_LIQUIDITY = 5000L;
 
-    public void scanNewPair(String addressFactory, List<String> liquidityLimits) throws IOException {
+    public void scanNewPair(String addressFactory, List<String> liquidityLimits, List<String> notices) throws IOException {
         int allPairsLength = contractAllPairsLength(addressFactory);
-//        int allPairsLength = 0;
         while (true) {
             do {
                 try {
@@ -400,8 +403,6 @@ public class EthWeb3Service {
                         int decimals1 = contractDecimals(token1);
                         BigDecimal balance1 = MathUtil.trimByDecimals(contractBalanceOf(token1, pair), decimals1);
 
-                        log.info("idx: {}, pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}", i, pair, symbol0, token0, balance0.toString(), symbol1, token1, balance1.toString());
-
                         EventCreatePair e = eventCreatePairDAO.findOneByAddressPair(pair);
                         if (e == null) {
                             e = new EventCreatePair();
@@ -419,11 +420,17 @@ public class EthWeb3Service {
 
                         e.setAddressPair(pair);
 
+                        String subject = StrUtil.format("CreatePair: {} - {}", symbol0, symbol1);
+                        String content = StrUtil.format("idx: {}, pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}", i, pair, symbol0, token0, balance0.toString(), symbol1, token1, balance1.toString());
+                        log.info(content);
+
                         if (!overliquidityLimit(e, liquidityLimits)) {
                             continue;
                         }
 
                         eventCreatePairDAO.save(e);
+
+                        mailService.sendMail(notices, subject, content);
                     }
 
                     allPairsLength = allPairsLengthNew;
