@@ -51,7 +51,7 @@ public class TakerLongShortRatioGrabber implements Runnable {
                 List<BinanceTakerLongShortRatio> ls = service.takerlongshortRatio(symbol, period, 100, null, null);
                 List<ExchangeTakerLongShortRatio> lsAdapt = ls.stream().map(e -> adapt(symbol, e)).collect(Collectors.toList());
 
-                a ThreadPoolTaskScheduler wrapper can maintain a pool in which store taskes that need run with times limit.
+//                a ThreadPoolTaskScheduler wrapper can maintain a pool in which store taskes that need run with times limit.
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
