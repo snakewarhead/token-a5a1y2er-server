@@ -33,16 +33,12 @@ public class ApplicationStartup implements ApplicationRunner {
         threadPoolTaskScheduler.setPoolSize(4);
         threadPoolTaskScheduler.initialize();
 
-        boolean isActioning = true;
         if ("whale".equals(action)) {
-
+            threadPoolTaskScheduler.submit(() -> {
+                ethWeb3Service.grabberWhaleApprove(swapConfig.getWhaleAddresses(), notices);
+            });
         } else {
-            isActioning = false;
             log.error("action is not match");
-        }
-
-        while (isActioning) {
-            ThreadUtil.sleep(1000);
         }
     }
 }

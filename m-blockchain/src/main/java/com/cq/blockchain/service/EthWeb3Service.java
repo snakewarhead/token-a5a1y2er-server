@@ -4,8 +4,10 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.blockchain.dao.ConfigEthDAO;
+import com.cq.blockchain.dao.EventApprovalDAO;
 import com.cq.blockchain.dao.EventCreatePairDAO;
 import com.cq.blockchain.entity.ConfigEth;
+import com.cq.blockchain.entity.EventApproval;
 import com.cq.blockchain.entity.EventCreatePair;
 import com.cq.blockchain.util.MathUtil;
 import com.cq.core.service.MailService;
@@ -32,6 +34,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by lin on 2021-03-18.
@@ -45,6 +48,7 @@ public class EthWeb3Service {
 
     private final ConfigEthDAO configEthDAO;
     private final EventCreatePairDAO eventCreatePairDAO;
+    private final EventApprovalDAO eventApprovalDAO;
 
     private final MailService mailService;
 
@@ -137,7 +141,7 @@ public class EthWeb3Service {
                     subscriber.onError(e);
                 }
 
-                Thread.sleep(10 * 1000);
+                Thread.sleep(1000);
             }
         }, BackpressureStrategy.BUFFER);
     }
@@ -172,6 +176,20 @@ public class EthWeb3Service {
         );
     }
 
+    public Event event_Approval() {
+        // event Approval(address indexed owner, address indexed spender, uint value);
+        return new Event("Approval",
+                Arrays.asList(
+                        new TypeReference<Address>(true) {
+                        },
+                        new TypeReference<Address>(true) {
+                        },
+                        new TypeReference<Uint>(false) {
+                        }
+                )
+        );
+    }
+
     public String contractSymbol(String address) throws IOException {
         Function f = new Function(
                 "symbol",
@@ -190,6 +208,16 @@ public class EthWeb3Service {
                 })
         );
         return ((BigInteger) readContract(address, f).getValue()).intValue();
+    }
+
+    public BigInteger contractTotalSupply(String address) throws IOException {
+        Function f = new Function(
+                "totalSupply",
+                Arrays.asList(),
+                Arrays.asList(new TypeReference<Uint256>() {
+                })
+        );
+        return (BigInteger) readContract(address, f).getValue();
     }
 
     public BigInteger contractBalanceOf(String addressToken, String addressHolder) throws IOException {
@@ -444,4 +472,76 @@ public class EthWeb3Service {
             ThreadUtil.sleep(INTERVAL_LOOP_ADD_LIQUIDITY);
         }
     }
+
+    public void grabberWhaleApprove(List<String> whaleAddresses, List<String> notices) {
+        Event event_Approval = event_Approval();
+        final String signature_Approval = EventEncoder.encode(event_Approval);
+
+        grabberTransaction().subscribe(t -> {
+            List<String> w = whaleAddresses.stream().filter(a -> a.equalsIgnoreCase(t.getFrom())).collect(Collectors.toList());
+            if (w.size() == 0) {
+                return;
+            }
+            String whale = w.get(0);
+
+            EventApproval exist = eventApprovalDAO.findOneByToken(t.getTo());
+            if (exist != null) {
+                return;
+            }
+            String token = t.getTo();
+            String symbol = contractSymbol(token);
+            int decimals = contractDecimals(token);
+            BigDecimal totalSupply = MathUtil.trimByDecimals(contractTotalSupply(token), decimals);
+
+            List<Log> logs = t.getLogs();
+            if (CollectionUtil.isEmpty(logs)) {
+                return;
+            }
+
+            boolean isApproval = false;
+            for (int i = 0; i < logs.size(); ++i) {
+                Log l = logs.get(i);
+                List<String> topics = l.getTopics();
+                if (CollectionUtil.isEmpty(topics)) {
+                    continue;
+                }
+                if (!signature_Approval.equalsIgnoreCase(topics.get(0))) {
+                    continue;
+                }
+                isApproval = true;
+                break;
+
+//                String owner = (String) FunctionReturnDecoder.decodeIndexedValue(topics.get(1), new TypeReference<Address>() {
+//                }).getValue();
+//                String spender = (String) FunctionReturnDecoder.decodeIndexedValue(topics.get(2), new TypeReference<Address>() {
+//                }).getValue();
+
+            }
+            if (!isApproval) {
+                return;
+            }
+
+            EventApproval e = eventApprovalDAO.findOneByTransactionHash(t.getTransactionHash());
+            if (e == null) {
+                e = new EventApproval();
+            }
+            e.setTransactionHash(t.getTransactionHash());
+            e.setTransactionIndex(t.getTransactionIndex());
+            e.setBlockHash(t.getBlockHash());
+            e.setBlockNumber(t.getBlockNumber());
+            e.setAddressFrom(whale);
+            e.setToken(token);
+            e.setSymbol(symbol);
+            e.setDecimals(decimals);
+            e.setTotalSupply(totalSupply);
+            eventApprovalDAO.save(e);
+
+            String subject = StrUtil.format("WhaleApprove - {}", symbol);
+            String content = StrUtil.format("whale: {}, blockNumber: {}, contract: {}, symbol: {}, decimals: {}, totalSupply: {}", whale, e.getBlockNumber().toString(), token, symbol, decimals + "", totalSupply.toPlainString());
+            content += StrUtil.format("\n\n https://bscscan.com/tx/{}", e.getTransactionHash());
+
+            mailService.sendMail(notices, subject, content);
+        });
+    }
+
 }
