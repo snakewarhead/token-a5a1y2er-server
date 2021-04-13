@@ -118,6 +118,8 @@ public class EthWeb3Service {
             while (true) {
                 try {
                     while (height < ethBlockNumber().longValue()) {
+                        log.info("-----height----- {}", height);
+                        
                         int trxCount = ethGetBlockTransactionCountByNumber(height);
                         for (int i = 0; i < trxCount; ++i) {
                             Transaction trx = ethGetTransactionByBlockNumberAndIndex(height, i);
