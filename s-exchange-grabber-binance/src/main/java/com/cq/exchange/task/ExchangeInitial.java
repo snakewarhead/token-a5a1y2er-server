@@ -1,7 +1,6 @@
 package com.cq.exchange.task;
 
 import com.cq.exchange.ExchangeContext;
-import com.cq.exchange.ExchangeRunningParam;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import info.bitrich.xchangestream.core.ProductSubscription;
@@ -81,9 +80,5 @@ public class ExchangeInitial implements ApplicationRunner {
                 a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
             }
         });
-
-        while (true) {
-            Thread.sleep(1000);
-        }
     }
 }

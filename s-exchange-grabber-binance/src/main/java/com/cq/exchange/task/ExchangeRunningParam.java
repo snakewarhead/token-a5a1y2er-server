@@ -1,4 +1,4 @@
-package com.cq.exchange;
+package com.cq.exchange.task;
 
 import lombok.Data;
 
