@@ -18,6 +18,11 @@
     <dependencies>
         <dependency>
             <groupId>com.cq</groupId>
+            <artifactId>m-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.cq</groupId>
             <artifactId>m-mongodb</artifactId>
         </dependency>
 

@@ -1,6 +1,3 @@
-logging:
-  config: classpath:logback.xml
-
 spring:
   mail:
     host: smtp.126.com

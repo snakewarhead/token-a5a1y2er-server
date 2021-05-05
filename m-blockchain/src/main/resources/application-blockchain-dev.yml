@@ -1,14 +1,6 @@
 spring:
   profiles:
-    include: mongodb-dev, mail-dev
-
-logging:
-  config: classpath:logback.xml
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:6543/eureka/
+    include: core, core-dev, mongodb-dev, mail-dev
 
 web3j:
   #  client-address: https://bsc-dataseed1.ninicoin.io/
