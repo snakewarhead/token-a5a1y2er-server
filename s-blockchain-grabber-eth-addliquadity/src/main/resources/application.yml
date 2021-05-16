@@ -10,9 +10,9 @@ swap:
   contract-address-router: '0x10ed43c718714eb63d5aa57b78b54704e256024e'   # v2
   contract-address-factory: '0xca143ce32fe78f1f7019d7d551a6402fc5350c73'  # v2
   liquidity-limites:
-    - 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c-100  #WBNB
-    - 0xe9e7cea3dedca5984780bafc599bd69add087d56-20000  #BUSD
-    - 0x55d398326f99059ff775485246999027b3197955-20000  #USDT
-    - 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c-1  #BTC
-    - 0x2170ed0880ac9a755fd29b2688956bd959f933f8-10 #ETH
-    - 0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82-2000 #Cake
+    - 0xbb4cdb9cbd36b01bd1cbaebf2de08d9173bc095c-1000  #WBNB
+    - 0xe9e7cea3dedca5984780bafc599bd69add087d56-100000  #BUSD
+    - 0x55d398326f99059ff775485246999027b3197955-100000  #USDT
+    - 0x7130d2a12b9bcbfae4f2634d864a1ee1ce3ead9c-2  #BTC
+    - 0x2170ed0880ac9a755fd29b2688956bd959f933f8-100 #ETH
+    - 0x0e09fabb73bd3ade0a17ecc321fd13a19e81ce82-10000 #Cake

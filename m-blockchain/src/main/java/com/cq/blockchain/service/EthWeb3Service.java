@@ -421,46 +421,50 @@ public class EthWeb3Service {
                     }
 
                     for (int i = allPairsLength; i < allPairsLengthNew; ++i) {
-                        String pair = contractAllPairs(addressFactory, i);
+                        try {
+                            String pair = contractAllPairs(addressFactory, i);
 
-                        String token0 = contractPairToken(pair, false);
-                        String symbol0 = contractSymbol(token0);
-                        int decimals0 = contractDecimals(token0);
-                        BigDecimal balance0 = MathUtil.trimByDecimals(contractBalanceOf(token0, pair), decimals0);
+                            String token0 = contractPairToken(pair, false);
+                            String symbol0 = contractSymbol(token0);
+                            int decimals0 = contractDecimals(token0);
+                            BigDecimal balance0 = MathUtil.trimByDecimals(contractBalanceOf(token0, pair), decimals0);
 
-                        String token1 = contractPairToken(pair, true);
-                        String symbol1 = contractSymbol(token1);
-                        int decimals1 = contractDecimals(token1);
-                        BigDecimal balance1 = MathUtil.trimByDecimals(contractBalanceOf(token1, pair), decimals1);
+                            String token1 = contractPairToken(pair, true);
+                            String symbol1 = contractSymbol(token1);
+                            int decimals1 = contractDecimals(token1);
+                            BigDecimal balance1 = MathUtil.trimByDecimals(contractBalanceOf(token1, pair), decimals1);
 
-                        EventCreatePair e = eventCreatePairDAO.findOneByAddressPair(pair);
-                        if (e == null) {
-                            e = new EventCreatePair();
+                            EventCreatePair e = eventCreatePairDAO.findOneByAddressPair(pair);
+                            if (e == null) {
+                                e = new EventCreatePair();
+                            }
+
+                            e.setTokenAddressA(token0);
+                            e.setSymbolA(symbol0);
+                            e.setDecimalsA(decimals0);
+                            e.setAmountA(balance0);
+
+                            e.setTokenAddressB(token1);
+                            e.setSymbolB(symbol1);
+                            e.setDecimalsB(decimals1);
+                            e.setAmountB(balance1);
+
+                            e.setAddressPair(pair);
+
+                            String subject = StrUtil.format("CreatePair: {} - {}", symbol0, symbol1);
+                            String content = StrUtil.format("idx: {}, pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}", i, pair, symbol0, token0, balance0.toString(), symbol1, token1, balance1.toString());
+                            log.info(content);
+
+                            if (!overliquidityLimit(e, liquidityLimits)) {
+                                continue;
+                            }
+
+                            eventCreatePairDAO.save(e);
+
+                            mailService.sendMail(notices, subject, content);
+                        } catch (Exception e) {
+                            log.error(e.getMessage() + " - " + i, e);
                         }
-
-                        e.setTokenAddressA(token0);
-                        e.setSymbolA(symbol0);
-                        e.setDecimalsA(decimals0);
-                        e.setAmountA(balance0);
-
-                        e.setTokenAddressB(token1);
-                        e.setSymbolB(symbol1);
-                        e.setDecimalsB(decimals1);
-                        e.setAmountB(balance1);
-
-                        e.setAddressPair(pair);
-
-                        String subject = StrUtil.format("CreatePair: {} - {}", symbol0, symbol1);
-                        String content = StrUtil.format("idx: {}, pari: {}, symbol: {}, token0: {}, amount0: {} - symbol: {}, token1: {}, amount1: {}", i, pair, symbol0, token0, balance0.toString(), symbol1, token1, balance1.toString());
-                        log.info(content);
-
-                        if (!overliquidityLimit(e, liquidityLimits)) {
-                            continue;
-                        }
-
-                        eventCreatePairDAO.save(e);
-
-                        mailService.sendMail(notices, subject, content);
                     }
 
                     allPairsLength = allPairsLengthNew;
