@@ -1,5 +1,6 @@
 package com.cq.web.task;
 
+import com.cq.web.config.Config;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -17,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Component
 public class ApplicationStartup implements ApplicationRunner {
+
+    private final Config config;
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
