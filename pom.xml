@@ -41,6 +41,7 @@
 
         <module>m-blockchain</module>
         <module>m-exchange</module>
+        <module>m-web</module>
 
         <module>m-mail</module>
 
@@ -50,6 +51,8 @@
         <module>s-blockchain-grabber-eth-utility</module>
 
         <module>s-exchange-grabber-binance</module>
+
+        <module>s-web-crawler</module>
     </modules>
 
     <dependencies>
@@ -98,6 +101,11 @@
             <dependency>
                 <groupId>com.cq</groupId>
                 <artifactId>m-blockchain</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.cq</groupId>
+                <artifactId>m-web</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>
