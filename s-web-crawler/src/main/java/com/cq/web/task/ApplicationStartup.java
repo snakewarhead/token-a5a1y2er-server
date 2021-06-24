@@ -1,12 +1,12 @@
 package com.cq.web.task;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.cq.web.config.Config;
-import com.cq.web.service.CoinGeckoCrawlerService;
+import com.cq.web.service.GeckoTwitterCrawlerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -20,20 +20,41 @@ import java.util.List;
 @Component
 public class ApplicationStartup implements ApplicationRunner {
 
-    private final CoinGeckoCrawlerService coinGeckoCrawlerService;
-
+    private final GeckoTwitterCrawlerService geckoTwitterCrawlerService;
     private final Config config;
+
+    private final static long DURATION_GECKO_TWITTER_CRAWL = 1000 * 60 * 60 * 12;
 
     @Override
     public void run(ApplicationArguments args) throws IOException {
-        String action = args.getOptionValues("action").get(0);
+        int numThread = 4;
+        try {
+            numThread = Integer.parseInt(args.getOptionValues("thread").get(0));
+        } catch (Exception e) {
+        }
         List<String> notices = args.getOptionValues("notices");
 
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(4);
-        threadPoolTaskScheduler.initialize();
+        String action = args.getOptionValues("action").get(0);
+        List<String> params = args.getOptionValues("params");
+        if ("gecko_twitter_crawl".equals(action)) {
+            while (true) {
+                int coinCategory = 1;
+                try {
+                    coinCategory = Integer.parseInt(params.get(0));
+                } catch (Exception e) {
+                }
 
-        if ("cointwitter".equals(action)) {
+                int numRank = 100;
+                try {
+                    numRank = Integer.parseInt(params.get(1));
+                } catch (Exception e) {
+                }
+                // crawl from coin gecko
+                geckoTwitterCrawlerService.start(coinCategory, numRank, numThread);
+
+                ThreadUtil.sleep(DURATION_GECKO_TWITTER_CRAWL);
+            }
+        } else if ("twitter_msg_crawl".equals(action)) {
 
         } else {
             log.error("action is not match");
