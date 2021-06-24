@@ -73,7 +73,7 @@ public class GeckoTwitterCrawlerService {
 
         // 抓取twitter url
         Spider.create(new GeckoTwitterPageProcess())
-                .addPipeline(new GeckoTwitterPipeline())
+                .addPipeline(new GeckoTwitterPipeline(coinInfoDAO))
                 .startUrls(urls)
                 .thread(numThread)
                 .start();
