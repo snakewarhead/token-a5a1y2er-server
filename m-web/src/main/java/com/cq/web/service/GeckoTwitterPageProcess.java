@@ -8,6 +8,8 @@ import us.codecraft.webmagic.processor.PageProcessor;
 @Slf4j
 public class GeckoTwitterPageProcess implements PageProcessor {
 
+    public final static String HOST = "https://www.coingecko.com/en/coins/";
+
     private Site site = Site.me().setCycleRetryTimes(3).setRetrySleepTime(1000 * 60).setTimeOut(1000 * 10);
 
     @Override
