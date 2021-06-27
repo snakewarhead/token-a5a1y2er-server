@@ -2,6 +2,7 @@ package com.cq.web.service;
 
 import cn.hutool.core.util.StrUtil;
 import com.cq.web.dao.CoinInfoDAO;
+import com.cq.web.entity.CoinInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import us.codecraft.webmagic.ResultItems;
@@ -22,12 +23,14 @@ public class GeckoTwitterPipeline implements Pipeline {
             return;
         }
 
-
         String url = resultItems.get("url");
         if (StrUtil.isEmpty(url)) {
             log.error("url is empty");
             return;
         }
 
+        CoinInfo info = coinInfoDAO.findById(id).orElse(null);
+        info.setTwitter_url(url);
+        coinInfoDAO.save(info);
     }
 }

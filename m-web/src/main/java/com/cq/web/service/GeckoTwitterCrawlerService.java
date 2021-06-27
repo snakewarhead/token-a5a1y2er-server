@@ -11,6 +11,7 @@ import com.cq.web.enums.GeckoCoinCategory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import us.codecraft.webmagic.Request;
 import us.codecraft.webmagic.Spider;
 
 import java.util.ArrayList;
@@ -34,7 +35,7 @@ public class GeckoTwitterCrawlerService {
     private List<CoinInfo> grabRank(int coinCategory, int numRank) {
         List<CoinInfo> coinInfos = new ArrayList<>();
         int page = 0;
-        int pageTotal = numRank / MAX_PER_PAGE + 1;
+        int pageTotal = numRank / MAX_PER_PAGE;
         while (true) {
             page++;
             if (page > pageTotal) {
@@ -77,7 +78,13 @@ public class GeckoTwitterCrawlerService {
             return null;
         }
 
-        coinInfos.stream().forEach(i -> coinInfoDAO.save(i));
+        coinInfos = coinInfos.stream().map(i -> {
+            CoinInfo ii = coinInfoDAO.findById(i.getId()).orElse(null);
+            if (ii != null) {
+                i.setTwitter_url(ii.getTwitter_url());
+            }
+            return coinInfoDAO.save(i);
+        }).collect(Collectors.toList());
 
         return coinInfos;
     }
@@ -87,12 +94,21 @@ public class GeckoTwitterCrawlerService {
         if (CollUtil.isEmpty(ls)) {
             return;
         }
-        List<String> urls = ls.stream().map(i -> GeckoTwitterPageProcess.HOST + i.getId()).collect(Collectors.toList());
+
+        List<Request> requests = ls.stream()
+                .filter(i -> StrUtil.isEmpty(i.getTwitter_url()))
+                .map(i -> {
+                    String u = GeckoTwitterPageProcess.HOST + i.getId();
+                    Request r = new Request(u);
+                    r.putExtra("id", i.getId());
+                    return r;
+                })
+                .collect(Collectors.toList());
 
         // 抓取twitter url
         Spider.create(new GeckoTwitterPageProcess())
                 .addPipeline(new GeckoTwitterPipeline(coinInfoDAO))
-                .startUrls(urls)
+                .startRequest(requests)
                 .thread(numThread)
                 .start();
     }
