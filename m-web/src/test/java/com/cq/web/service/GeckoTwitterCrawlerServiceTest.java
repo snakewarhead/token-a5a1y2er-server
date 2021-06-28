@@ -6,6 +6,7 @@ import com.cq.web.entity.CoinInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
+import us.codecraft.webmagic.Spider;
 
 import java.util.List;
 
@@ -26,5 +27,12 @@ public class GeckoTwitterCrawlerServiceTest {
         List<CoinInfo> ls = JSON.parseArray(res, CoinInfo.class);
 
         log.info(ls.toString());
+    }
+
+    @Test
+    public void testXPath() {
+        Spider s = Spider.create(new GeckoTwitterPageProcess());
+        s.addUrl("https://www.coingecko.com/en/coins/bunnypark");
+        s.run();
     }
 }
