@@ -5,9 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import us.codecraft.webmagic.Page;
 import us.codecraft.webmagic.Site;
 import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.selector.HtmlNode;
 import us.codecraft.webmagic.selector.PlainText;
-import us.codecraft.webmagic.selector.Selectable;
 
 @Slf4j
 public class GeckoTwitterPageProcess implements PageProcessor {
