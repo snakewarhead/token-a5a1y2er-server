@@ -16,4 +16,5 @@ public class Config {
 
     private List<String> twitters;
 
+    private List<String> notices;
 }

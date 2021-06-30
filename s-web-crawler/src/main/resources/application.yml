@@ -10,3 +10,6 @@ web:
   twitters:
     - BunnyPark_BSC
     - cz_binance
+
+  notices:
+    - 1111@abc.com

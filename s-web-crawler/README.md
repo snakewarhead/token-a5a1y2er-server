@@ -15,5 +15,5 @@ a tool which crawl from web.
 
 ```cmd
 java -jar s-web-crawler-1.0.0.jar --thread=4 --action=gecko_twitter_crawl --params=1 --params=100
-java -jar s-web-crawler-1.0.0.jar --thread=4 --action=twitter_news_crawl --notices=xxx1@qq.com --notices=xxx2@qq.com
+java -jar s-web-crawler-1.0.0.jar --thread=4 --action=twitter_news_crawl --params=100
 ```

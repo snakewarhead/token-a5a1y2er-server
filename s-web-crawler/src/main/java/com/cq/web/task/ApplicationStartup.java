@@ -36,10 +36,9 @@ public class ApplicationStartup implements ApplicationRunner {
             numThread = Integer.parseInt(args.getOptionValues("thread").get(0));
         } catch (Exception e) {
         }
-        List<String> notices = args.getOptionValues("notices");
-
         String action = args.getOptionValues("action").get(0);
         List<String> params = args.getOptionValues("params");
+
         if ("gecko_twitter_crawl".equals(action)) {
             while (true) {
                 int coinCategory = 1;
@@ -58,9 +57,18 @@ public class ApplicationStartup implements ApplicationRunner {
 
                 ThreadUtil.sleep(DURATION_GECKO_TWITTER_CRAWL);
             }
-        } else if ("twitter_msg_crawl".equals(action)) {
+        } else if ("twitter_news_crawl".equals(action)) {
+            List<String> notices = config.getNotices();
+            List<String> twittersInConfig = config.getTwitters();
+
+            int numRank = 100;
+            try {
+                numRank = Integer.parseInt(params.get(0));
+            } catch (Exception e) {
+            }
+
             while (true) {
-                twitterNewsCrawlerService.start();
+                twitterNewsCrawlerService.start(twittersInConfig, numRank, notices, numThread);
 
                 ThreadUtil.sleep(DURATION_TWITTER_NEWS_CRAWL);
             }
