@@ -18,6 +18,10 @@ public enum ExchangeTradeType {
         return code;
     }
 
+    public boolean is(int c) {
+        return this.code == c;
+    }
+
     public static ExchangeTradeType getEnum(int t) {
         return Arrays.stream(ExchangeTradeType.values()).filter(item -> t == item.getCode()).findFirst().orElse(null);
     }

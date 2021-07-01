@@ -3,6 +3,7 @@ package com.cq.exchange.task;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeOrderBook;
 import com.cq.exchange.enums.ExchangeEnum;
+import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceAdapters;
@@ -21,10 +22,20 @@ public class OrderBookGrabber implements Runnable {
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 
+    public Runnable init() {
+        // subscript
+        ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
+        symbols.forEach(s -> builder.addOrderbook(BinanceAdapters.adaptSymbol(s)));
+        ProductSubscription subscription = builder.build();
+
+        exchangeContext.getExchangeCurrentStream().connect(subscription).blockingAwait();
+        return this;
+    }
+
     @Override
     public void run() {
         symbols.forEach(s -> {
-            exchangeContext.getStreamingExchangeCurrent().getStreamingMarketDataService().getOrderBook(BinanceAdapters.adaptSymbol(s)).subscribe(
+            exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService().getOrderBook(BinanceAdapters.adaptSymbol(s)).subscribe(
                     orderBook -> {
                         DiffOrderBook diffOrderBook = (DiffOrderBook) orderBook;
 

@@ -11,7 +11,6 @@ import org.knowm.xchange.binance.dto.marketdata.BinanceTakerLongShortRatio;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,7 +44,7 @@ public class TakerLongShortRatioGrabber implements Runnable {
         @Override
         public void run() {
             try {
-                BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getStreamingExchangeCurrent();
+                BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getExchangeCurrent();
                 BinanceFuturesMarketDataServiceRaw service = (BinanceFuturesMarketDataServiceRaw) exchange.getMarketDataService();
 
                 List<BinanceTakerLongShortRatio> ls = service.takerlongshortRatio(symbol, period, 100, null, null);

@@ -2,7 +2,12 @@
 
 ## summary
 
-a tool which grab exchange data.
+A tool which grab exchange data.
+
+- initial action
+
+- dynamic action
+  - receive action msg from mq
 
 ## run
 

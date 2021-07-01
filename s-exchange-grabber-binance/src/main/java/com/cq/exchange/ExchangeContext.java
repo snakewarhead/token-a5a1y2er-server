@@ -10,6 +10,7 @@ import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.binance.BinanceExchangeSpecification;
 import org.knowm.xchange.binance.BinanceFuturesCoin;
@@ -30,11 +31,27 @@ public class ExchangeContext {
     private final ExchangeTakerLongShortRatioService exchangeTakerLongShortRatioService;
 
     private ExchangeTradeType tradeType;
-    private StreamingExchange streamingExchangeCurrent;
+    private BaseExchange exchangeCurrent;
 
     private BinanceFutureStreamingExchange exchangeFutureUSDT;
     private BinanceFutureStreamingExchange exchangeFutureCoin;
     private BinanceStreamingExchange exchangeSpot;
+
+    public void initExchange(int type) {
+        if (ExchangeTradeType.SPOT.is(type)) {
+            exchangeSpot();
+        } else if (ExchangeTradeType.FUTURE_USDT.is(type)) {
+            exchangeFutureUSDT();
+        } else if (ExchangeTradeType.FUTURE_COIN.is(type)) {
+            exchangeFutureCoin();
+        } else {
+            throw new RuntimeException("exchange is null");
+        }
+    }
+
+    public BinanceFutureStreamingExchange getExchangeCurrentStream() {
+        return (BinanceFutureStreamingExchange) exchangeCurrent;
+    }
 
     private BinanceExchangeSpecification getFutureSpec(FuturesSettleType type) {
         BinanceExchangeSpecification spec =
@@ -71,7 +88,7 @@ public class ExchangeContext {
                 (BinanceFutureStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
         tradeType = ExchangeTradeType.FUTURE_USDT;
-        streamingExchangeCurrent = exchange;
+        exchangeCurrent = exchange;
 
         return exchange;
     }
@@ -85,7 +102,7 @@ public class ExchangeContext {
                 (BinanceFutureStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
         tradeType = ExchangeTradeType.FUTURE_COIN;
-        streamingExchangeCurrent = exchange;
+        exchangeCurrent = exchange;
 
         return exchange;
     }
@@ -116,7 +133,7 @@ public class ExchangeContext {
                 (BinanceStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
         tradeType = ExchangeTradeType.SPOT;
-        streamingExchangeCurrent = exchange;
+        exchangeCurrent = exchange;
 
         return exchange;
     }
