@@ -51,6 +51,8 @@ public class ExchangeInitial implements ApplicationRunner {
         p.getActions().forEach(a -> {
             if ("OrderBook".equals(a.getName())) {
                 threadPoolTaskScheduler.submit(new OrderBookGrabber(exchangeContext, a.getSymbols()).init());
+            } else if ("AggTrade".equals(a.getName())) {
+                threadPoolTaskScheduler.submit(new AggTradeGrabber(exchangeContext, a.getSymbols()).init());
             } else if ("TakerLongShortRatio".equals(a.getName())) {
                 TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(exchangeContext, a.getSymbols());
                 a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
