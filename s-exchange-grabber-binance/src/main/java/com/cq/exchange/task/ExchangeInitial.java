@@ -1,5 +1,6 @@
 package com.cq.exchange.task;
 
+import cn.hutool.core.thread.ThreadUtil;
 import com.cq.exchange.ExchangeContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -60,5 +61,7 @@ public class ExchangeInitial implements ApplicationRunner {
                 a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
             }
         });
+
+        ThreadUtil.waitForDie(Thread.currentThread());
     }
 }
