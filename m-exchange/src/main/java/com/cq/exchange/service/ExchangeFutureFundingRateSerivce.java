@@ -1,11 +1,11 @@
 package com.cq.exchange.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import com.cq.exchange.dao.ExchangeFutureFundingRateDAO;
 import com.cq.exchange.dao.ExchangeFutureFundingRateDAODynamic;
 import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,10 +35,10 @@ public class ExchangeFutureFundingRateSerivce {
         if (exchangeId != null) {
             queryBuilder.and("exchangeId").is(exchangeId);
         }
-        if (StringUtils.isNotEmpty(name)) {
+        if (StrUtil.isNotEmpty(name)) {
             queryBuilder.and("name").is(name);
         }
-        if (StringUtils.isNotEmpty(pair)) {
+        if (StrUtil.isNotEmpty(pair)) {
             queryBuilder.and("symbol").is(pair);
         }
 

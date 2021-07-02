@@ -1,19 +1,17 @@
 package com.cq.exchange.service;
 
+import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.dao.ExchangeTakerLongShortRatioDAODynamic;
 import com.cq.exchange.entity.ExchangeTakerLongShortRatio;
 import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * Created by lin on 2020-12-05.
@@ -34,7 +32,7 @@ public class ExchangeTakerLongShortRatioService {
         if (tradeType != null) {
             queryBuilder.and("tradeType").is(tradeType);
         }
-        if (StringUtils.isNotEmpty(symbol)) {
+        if (StrUtil.isNotEmpty(symbol)) {
             queryBuilder.and("symbol").is(symbol);
         }
 
