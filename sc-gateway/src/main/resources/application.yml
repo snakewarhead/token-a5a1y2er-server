@@ -1,11 +1,18 @@
 server:
-  port: 6544
+  port: 80
 spring:
   application:
     name: sc-gateway
   cloud:
     gateway:
       routes:
+        - id: b_command
+          uri: lb://b-command
+          order: 1
+          predicates:
+            - Path=/command/**
+          filters:
+            - StripPrefix=1
 
 logging:
   config: classpath:logback.xml

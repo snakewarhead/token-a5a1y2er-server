@@ -34,6 +34,8 @@
         <module>sc-register</module>
         <module>sc-gateway</module>
 
+        <module>b-command</module>
+
         <module>m-core</module>
 
         <module>m-mongodb</module>

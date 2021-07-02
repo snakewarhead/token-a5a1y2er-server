@@ -9,33 +9,37 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>m-exchange</artifactId>
-    <name>m-exchange</name>
-    <description>m-exchange project</description>
+    <artifactId>b-command</artifactId>
+    <name>b-command</name>
+    <description>b-command project for Spring Boot</description>
     <packaging>jar</packaging>
     <version>1.0.0</version>
 
     <dependencies>
         <dependency>
             <groupId>com.cq</groupId>
-            <artifactId>m-core</artifactId>
+            <artifactId>m-exchange</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.cq</groupId>
-            <artifactId>m-mongodb</artifactId>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>com.cq</groupId>
-            <artifactId>m-rabbitmq</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

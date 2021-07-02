@@ -2,7 +2,7 @@ package com.cq.exchange.task;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.cq.exchange.ExchangeContext;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class ExchangeInitial implements ApplicationRunner {
         ExchangeRunningParam p = null;
         try {
             String params = args.getOptionValues("params").get(0);
-            p = new ObjectMapper().readValue(params, ExchangeRunningParam.class);
+            p = ExchangeRunningParam.parse(params);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

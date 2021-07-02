@@ -1,4 +1,4 @@
 spring:
   profiles:
-    include: core, core-dev, mongodb-dev
+    include: core, core-dev, mongodb-dev, rabbitmq-dev
 
