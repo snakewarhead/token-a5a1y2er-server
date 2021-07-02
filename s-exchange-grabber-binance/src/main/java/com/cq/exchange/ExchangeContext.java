@@ -2,6 +2,7 @@ package com.cq.exchange;
 
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.service.ExchangeAggTradeService;
+import com.cq.exchange.service.ExchangeForceOrderService;
 import com.cq.exchange.service.ExchangeOrderBookService;
 import com.cq.exchange.service.ExchangeTakerLongShortRatioService;
 import info.bitrich.xchangestream.binance.BinanceFutureStreamingExchange;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExchangeContext {
 
+    private final ExchangeForceOrderService exchangeForceOrderService;
     private final ExchangeAggTradeService exchangeAggTradeService;
     private final ExchangeOrderBookService exchangeOrderBookService;
     private final ExchangeTakerLongShortRatioService exchangeTakerLongShortRatioService;
