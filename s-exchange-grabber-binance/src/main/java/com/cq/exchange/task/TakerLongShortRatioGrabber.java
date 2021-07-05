@@ -3,6 +3,7 @@ package com.cq.exchange.task;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeTakerLongShortRatio;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.service.ServiceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceAdapters;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class TakerLongShortRatioGrabber implements Runnable {
 
+    private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 

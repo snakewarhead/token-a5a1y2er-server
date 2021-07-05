@@ -1,10 +1,7 @@
 package com.cq.exchange;
 
 import com.cq.exchange.enums.ExchangeTradeType;
-import com.cq.exchange.service.ExchangeAggTradeService;
-import com.cq.exchange.service.ExchangeForceOrderService;
-import com.cq.exchange.service.ExchangeOrderBookService;
-import com.cq.exchange.service.ExchangeTakerLongShortRatioService;
+import com.cq.exchange.service.*;
 import info.bitrich.xchangestream.binance.BinanceFutureStreamingExchange;
 import info.bitrich.xchangestream.binance.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;
@@ -24,32 +21,33 @@ import org.springframework.stereotype.Component;
  * Created by lin on 2020-11-06.
  */
 @Slf4j
-@RequiredArgsConstructor
 @Getter
-@Component
 public class ExchangeContext {
 
-    private final ExchangeForceOrderService exchangeForceOrderService;
-    private final ExchangeAggTradeService exchangeAggTradeService;
-    private final ExchangeOrderBookService exchangeOrderBookService;
-    private final ExchangeTakerLongShortRatioService exchangeTakerLongShortRatioService;
+    private final ExchangeTradeType tradeType;
 
-    private ExchangeTradeType tradeType;
     private BaseExchange exchangeCurrent;
-
     private BinanceFutureStreamingExchange exchangeFutureUSDT;
     private BinanceFutureStreamingExchange exchangeFutureCoin;
     private BinanceStreamingExchange exchangeSpot;
 
-    public void initExchange(int type) {
-        if (ExchangeTradeType.SPOT.is(type)) {
-            exchangeSpot();
-        } else if (ExchangeTradeType.FUTURE_USDT.is(type)) {
-            exchangeFutureUSDT();
-        } else if (ExchangeTradeType.FUTURE_COIN.is(type)) {
-            exchangeFutureCoin();
-        } else {
-            throw new RuntimeException("exchange is null");
+    public ExchangeContext(int tradeType) {
+        this.tradeType = ExchangeTradeType.getEnum(tradeType);
+        switch (this.tradeType) {
+            case SPOT:
+                exchangeSpot();
+                break;
+
+            case FUTURE_USDT:
+                exchangeFutureUSDT();
+                break;
+
+            case FUTURE_COIN:
+                exchangeFutureCoin();
+                break;
+
+            default:
+                throw new RuntimeException("exchange is null");
         }
     }
 
@@ -91,8 +89,8 @@ public class ExchangeContext {
         BinanceFutureStreamingExchange exchange =
                 (BinanceFutureStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
-        tradeType = ExchangeTradeType.FUTURE_USDT;
         exchangeCurrent = exchange;
+        exchangeFutureUSDT = exchange;
 
         return exchange;
     }
@@ -105,8 +103,8 @@ public class ExchangeContext {
         BinanceFutureStreamingExchange exchange =
                 (BinanceFutureStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
-        tradeType = ExchangeTradeType.FUTURE_COIN;
         exchangeCurrent = exchange;
+        exchangeFutureCoin = exchange;
 
         return exchange;
     }
@@ -136,8 +134,8 @@ public class ExchangeContext {
         BinanceStreamingExchange exchange =
                 (BinanceStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
 
-        tradeType = ExchangeTradeType.SPOT;
         exchangeCurrent = exchange;
+        exchangeSpot = exchange;
 
         return exchange;
     }

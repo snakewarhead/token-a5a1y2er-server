@@ -1,8 +1,6 @@
 package com.cq.exchange.vo;
 
-import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-import com.cq.exchange.enums.ExchangeEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;

@@ -1,15 +1,13 @@
 package com.cq.exchange.task;
 
 import cn.hutool.core.thread.ThreadUtil;
-import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.service.ExchangeRunningService;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ExchangeInitial implements ApplicationRunner {
 
-    private final ExchangeContext exchangeContext;
+    private final ExchangeRunningService exchangeRunningService;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -30,9 +28,7 @@ public class ExchangeInitial implements ApplicationRunner {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(poolSize);
-        threadPoolTaskScheduler.initialize();
+        exchangeRunningService.init(poolSize);
 
         ExchangeRunningParam p = null;
         try {
@@ -46,21 +42,7 @@ public class ExchangeInitial implements ApplicationRunner {
         }
         p.setExchange(ExchangeEnum.BINANCE.getCode());
 
-        exchangeContext.initExchange(p.getTradeType());
-
-        // start runner&task
-        p.getActions().forEach(a -> {
-            if (ExchangeRunningParam.ActionType.OrderBook.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new OrderBookGrabber(exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.AggTrade.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new AggTradeGrabber(exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.ForceOrder.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new ForceOrderGrabber(exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.TakerLongShortRatio.equals(a.getName())) {
-                TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(exchangeContext, a.getSymbols());
-                a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
-            }
-        });
+        exchangeRunningService.start(p);
 
         ThreadUtil.waitForDie(Thread.currentThread());
     }

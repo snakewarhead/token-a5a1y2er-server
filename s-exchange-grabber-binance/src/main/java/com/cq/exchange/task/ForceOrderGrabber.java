@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeForceOrder;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.service.ServiceContext;
 import info.bitrich.xchangestream.binance.BinanceFutureStreamingMarketDataService;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ForceOrderGrabber implements Runnable {
 
+    private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 
@@ -38,7 +40,7 @@ public class ForceOrderGrabber implements Runnable {
         symbols.forEach(s -> {
             BinanceFutureStreamingMarketDataService service = (BinanceFutureStreamingMarketDataService) exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService();
             service.getForceOrder(BinanceAdapters.adaptSymbol(s)).subscribe(
-                    e -> exchangeContext.getExchangeForceOrderService().save(adapt(s, e)),
+                    e -> serviceContext.getExchangeForceOrderService().save(adapt(s, e)),
                     throwable -> log.error("ERROR in getting force order: ", throwable)
             );
         });

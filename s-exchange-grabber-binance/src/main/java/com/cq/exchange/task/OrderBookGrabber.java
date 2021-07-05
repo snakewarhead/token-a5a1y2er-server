@@ -3,6 +3,7 @@ package com.cq.exchange.task;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeOrderBook;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.service.ServiceContext;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderBookGrabber implements Runnable {
 
+    private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 
@@ -39,7 +41,7 @@ public class OrderBookGrabber implements Runnable {
                     orderBook -> {
                         DiffOrderBook diffOrderBook = (DiffOrderBook) orderBook;
 
-                        exchangeContext.getExchangeOrderBookService().save(adapt(s, diffOrderBook));
+                        serviceContext.getExchangeOrderBookService().save(adapt(s, diffOrderBook));
 
                         // TODO: save all in first time or DiffOrderBook.isFullUpdate == true
                         // TODO: update partial next time.
