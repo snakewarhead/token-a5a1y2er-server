@@ -4,4 +4,4 @@ spring:
   application:
     name: b-command
   profiles:
-    include: exchange-dev
+    include: exchange-dev, rabbitmq-dev

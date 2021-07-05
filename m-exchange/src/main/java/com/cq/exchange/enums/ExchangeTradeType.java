@@ -22,7 +22,15 @@ public enum ExchangeTradeType {
         return this.code == c;
     }
 
-    public static ExchangeTradeType getEnum(int t) {
-        return Arrays.stream(ExchangeTradeType.values()).filter(item -> t == item.getCode()).findFirst().orElse(null);
+    public boolean isNot(int c) {
+        return !(is(c));
+    }
+
+    public static ExchangeTradeType getEnum(int c) {
+        return Arrays.stream(ExchangeTradeType.values()).filter(item -> c == item.getCode()).findFirst().orElse(null);
+    }
+
+    public static boolean contains(int c) {
+        return getEnum(c) != null;
     }
 }

@@ -19,4 +19,11 @@ public class JSONResult<T> implements Serializable {
 
     private T result;
 
+    public static JSONResult<?> error(int code, String msg) {
+        return new JSONResult<>(false, code, msg, null);
+    }
+
+    public static JSONResult<?> success(String msg) {
+        return new JSONResult<>(true, 200, msg, null);
+    }
 }

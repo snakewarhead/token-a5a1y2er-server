@@ -2,5 +2,5 @@ spring:
   application:
     name: s-exchange-grabber-binance
   profiles:
-    include: exchange-dev
+    include: exchange-dev, rabbitmq-dev
 

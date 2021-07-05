@@ -1,6 +1,8 @@
 package com.cq.controller;
 
 import com.cq.core.config.MqConfigCommand;
+import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import com.cq.vo.JSONResult;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,27 @@ public class GrabberCommandController {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @GetMapping("forceOrderBinance")
-    public JSONResult<?> forceOrderBinance(String symbol) {
-        ExchangeRunningParam p = new ExchangeRunningParam();
-        p.setType(2);
-        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, MqConfigCommand.ROUTING_KEY, p);
-        return new JSONResult<>(true, 200, "", null);
+    @GetMapping("forceOrder")
+    public JSONResult<?> forceOrder(int exchange, int tradeType, String symbol) {
+        if (!ExchangeEnum.contains(exchange)) {
+            return JSONResult.error(400, "params error 1");
+        }
+        if (!ExchangeTradeType.contains(tradeType)) {
+            return JSONResult.error(400, "params error 2");
+        }
+
+        ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
+        p.addAction(ExchangeRunningParam.ActionType.ForceOrder, symbol, null);
+        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), p);
+
+        return JSONResult.success("");
+    }
+
+    private String mapRoutingKey(int exchange) {
+        if (ExchangeEnum.BINANCE.is(exchange)) {
+            return MqConfigCommand.ROUTING_KEY_BINANCE;
+        }
+
+        throw new IllegalStateException("Unexpected value: " + exchange);
     }
 }

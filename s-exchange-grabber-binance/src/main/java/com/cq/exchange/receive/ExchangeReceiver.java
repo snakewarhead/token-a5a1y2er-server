@@ -1,6 +1,7 @@
 package com.cq.exchange.receive;
 
 import com.cq.core.config.MqConfigCommand;
+import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +12,14 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = MqConfigCommand.QUEUE_NAME)
+@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_BINANCE)
 public class ExchangeReceiver {
 
     @RabbitHandler
     public void process(ExchangeRunningParam param) {
-       log.info(param.toString());
+       if (ExchangeEnum.BINANCE.isNot(param.getExchange())) {
+           return;
+       }
     }
 
 }

@@ -12,12 +12,12 @@ import org.springframework.context.annotation.Configuration;
 public class MqConfigCommand {
 
     public static final String EXCHANGE_NAME = "exchange_command";
-    public static final String QUEUE_NAME = "queue_command";
-    public static final String ROUTING_KEY = "routing_key_command";
+    public static final String QUEUE_NAME_BINANCE = "queue_command_binance";
+    public static final String ROUTING_KEY_BINANCE = "routing_key_command_binance";
 
     @Bean
-    Queue directQueue() {
-        return new Queue(QUEUE_NAME, false);
+    Queue directQueueBinance() {
+        return new Queue(QUEUE_NAME_BINANCE, false);
     }
 
     @Bean
@@ -26,8 +26,8 @@ public class MqConfigCommand {
     }
 
     @Bean
-    Binding bindingDirect(@Qualifier("directQueue") Queue q, @Qualifier("directExchange") DirectExchange x) {
-        return BindingBuilder.bind(q).to(x).with(ROUTING_KEY);
+    Binding bindingDirectBinance(@Qualifier("directQueueBinance") Queue q, @Qualifier("directExchange") DirectExchange x) {
+        return BindingBuilder.bind(q).to(x).with(ROUTING_KEY_BINANCE);
     }
 
 }

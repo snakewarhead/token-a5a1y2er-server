@@ -23,13 +23,19 @@ public enum ExchangeEnum {
         return code;
     }
 
-    public ExchangeEnum setCode(int code) {
-        this.code = code;
-        return this;
+    public boolean is(int c) {
+        return this.code == c;
     }
 
-    public static ExchangeEnum getEnum(int t) {
-        return Arrays.stream(ExchangeEnum.values()).filter(item -> t == item.getCode()).findFirst().orElse(null);
+    public boolean isNot(int c) {
+        return !(is(c));
     }
 
+    public static ExchangeEnum getEnum(int c) {
+        return Arrays.stream(ExchangeEnum.values()).filter(item -> c == item.getCode()).findFirst().orElse(null);
+    }
+
+    public static boolean contains(int c) {
+        return getEnum(c) != null;
+    }
 }

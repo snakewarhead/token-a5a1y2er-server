@@ -27,11 +27,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.cq</groupId>
-            <artifactId>m-rabbitmq</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
