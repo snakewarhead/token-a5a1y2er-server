@@ -14,8 +14,8 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
 
 @Slf4j
@@ -26,7 +26,7 @@ public class ExchangeRunningService {
     private final ServiceContext serviceContext;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
-    private Hashtable<ExchangeRunningParam, List<Future>> hashtableRunning = new Hashtable<>();
+    private ConcurrentHashMap<ExchangeRunningParam, List<Future>> mapRunning = new ConcurrentHashMap<>();
 
     public void init(int poolSize) {
         threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
@@ -35,7 +35,7 @@ public class ExchangeRunningService {
     }
 
     public void start(ExchangeRunningParam p, boolean init) {
-        if (hashtableRunning.containsKey(p)) {
+        if (mapRunning.containsKey(p)) {
             log.warn("start - Already running - {}", p.toString());
             return;
         }
@@ -63,17 +63,17 @@ public class ExchangeRunningService {
         }
 
         if (!init) {
-            hashtableRunning.put(p, futures);
+            mapRunning.put(p, futures);
         }
     }
 
     public void stop(ExchangeRunningParam p) {
-        if (!hashtableRunning.containsKey(p)) {
+        if (!mapRunning.containsKey(p)) {
             log.warn("stop - no running - {}", p.toString());
             return;
         }
 
-        List<Future> futures = hashtableRunning.remove(p);
+        List<Future> futures = mapRunning.remove(p);
         if (CollUtil.isEmpty(futures)) {
             return;
         }
