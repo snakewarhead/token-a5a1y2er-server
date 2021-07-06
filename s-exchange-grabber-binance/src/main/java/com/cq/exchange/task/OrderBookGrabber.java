@@ -67,13 +67,14 @@ public class OrderBookGrabber implements Runnable {
                 .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
                 .collect(Collectors.toList()));
 
+        // TODO: disable update for a while, client get the full data
         // save update also
-        b.setBidsUpdate(o.getBidsUpdate().stream()
-                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
-                .collect(Collectors.toList()));
-        b.setAsksUpdate(o.getAsksUpdate().stream()
-                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
-                .collect(Collectors.toList()));
+//        b.setBidsUpdate(o.getBidsUpdate().stream()
+//                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+//                .collect(Collectors.toList()));
+//        b.setAsksUpdate(o.getAsksUpdate().stream()
+//                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+//                .collect(Collectors.toList()));
 
         return b;
     }
