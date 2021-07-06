@@ -4,6 +4,7 @@ import com.cq.core.config.MqConfigCommand;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
+import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import com.cq.vo.JSONResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +22,7 @@ public class GrabberCommandController {
     private final RabbitTemplate rabbitTemplate;
 
     @GetMapping("forceOrder")
-    public JSONResult<?> forceOrder(int exchange, int tradeType, String symbol) {
+    public JSONResult<?> forceOrder(int exchange, int tradeType, String symbol, int subscribe) {
         if (!ExchangeEnum.contains(exchange)) {
             return JSONResult.error(400, "params error 1");
         }
@@ -31,7 +32,9 @@ public class GrabberCommandController {
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
         p.setAction(ExchangeRunningParam.ActionType.ForceOrder, symbol, null);
-        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), p);
+        ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG(subscribe, p);
+
+        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), msg);
 
         return JSONResult.success("");
     }
