@@ -30,18 +30,17 @@ public class ExchangeRunningService {
     public void start(ExchangeRunningParam p) {
         ExchangeContext exchangeContext = new ExchangeContext(p.getTradeType());
 
-        p.getActions().forEach(a -> {
-            if (ExchangeRunningParam.ActionType.OrderBook.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.AggTrade.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.ForceOrder.equals(a.getName())) {
-                threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
-            } else if (ExchangeRunningParam.ActionType.TakerLongShortRatio.equals(a.getName())) {
-                TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, a.getSymbols());
-                a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
-            }
-        });
+        ExchangeRunningParam.Action a = p.getAction();
+        if (ExchangeRunningParam.ActionType.OrderBook.is(a.getName())) {
+            threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
+        } else if (ExchangeRunningParam.ActionType.AggTrade.is(a.getName())) {
+            threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
+        } else if (ExchangeRunningParam.ActionType.ForceOrder.is(a.getName())) {
+            threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
+        } else if (ExchangeRunningParam.ActionType.TakerLongShortRatio.is(a.getName())) {
+            TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, a.getSymbols());
+            a.getParams().forEach(i -> threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i))));
+        }
 
     }
 }

@@ -40,8 +40,6 @@ public class ExchangeInitial implements ApplicationRunner {
         if (p == null) {
             throw new RuntimeException("must Set cmd line params");
         }
-        p.setExchange(ExchangeEnum.BINANCE.getCode());
-
         exchangeRunningService.start(p);
 
         ThreadUtil.waitForDie(Thread.currentThread());

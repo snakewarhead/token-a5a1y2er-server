@@ -30,7 +30,7 @@ public class GrabberCommandController {
         }
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
-        p.addAction(ExchangeRunningParam.ActionType.ForceOrder, symbol, null);
+        p.setAction(ExchangeRunningParam.ActionType.ForceOrder, symbol, null);
         rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), p);
 
         return JSONResult.success("");

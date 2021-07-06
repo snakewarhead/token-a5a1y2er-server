@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class ExchangeRunningParam implements Serializable {
 
     private int tradeType;
 
-    private List<Action> actions;
+    private Action action;
 
     public ExchangeRunningParam() {
     }
@@ -30,19 +29,17 @@ public class ExchangeRunningParam implements Serializable {
         this.tradeType = tradeType;
     }
 
-    public ExchangeRunningParam addAction(ActionType actionType, String symbol, String param) {
-        if (actions == null) {
-            actions = new ArrayList<>();
+    public ExchangeRunningParam setAction(ActionType actionType, String symbol, String param) {
+        if (action != null) {
+            throw new RuntimeException("action is running");
         }
 
-        Action a = new Action();
-        a.setName(actionType.name());
-        a.setSymbols(Arrays.asList(symbol));
+        action = new Action();
+        action.setName(actionType.name());
+        action.setSymbols(Arrays.asList(symbol));
         if (StrUtil.isNotEmpty(param)) {
-            a.setParams(Arrays.asList(param));
+            action.setParams(Arrays.asList(param));
         }
-
-        actions.add(a);
 
         return this;
     }
@@ -62,7 +59,11 @@ public class ExchangeRunningParam implements Serializable {
         OrderBook,
         AggTrade,
         ForceOrder,
-        TakerLongShortRatio,
+        TakerLongShortRatio;
+
+        public boolean is(String name) {
+            return name().equals(name);
+        }
     }
 
 }
