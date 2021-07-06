@@ -14,8 +14,12 @@ public class ExchangeOrderBookService {
 
     private final ExchangeOrderBookDAO exchangeOrderBookDAO;
 
+    public ExchangeOrderBook find(Integer exchangeId, Integer tradeType, String symbol) {
+        return exchangeOrderBookDAO.findByExchangeIdaAndTradeTypeAndSymbol(exchangeId, tradeType, symbol);
+    }
+
     public void save(ExchangeOrderBook orderBook) {
-        ExchangeOrderBook exist = exchangeOrderBookDAO.find(orderBook.getExchangeId(), orderBook.getTradeType(), orderBook.getSymbol());
+        ExchangeOrderBook exist = exchangeOrderBookDAO.findByExchangeIdaAndTradeTypeAndSymbol(orderBook.getExchangeId(), orderBook.getTradeType(), orderBook.getSymbol());
         if (exist != null) {
             orderBook.setId(exist.getId());
         }
