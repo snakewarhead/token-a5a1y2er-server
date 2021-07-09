@@ -16,7 +16,7 @@ public class WSConfigurer implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(exchangeTextWebSocketHandler, "ws/api/v1/exchange/data")
+        registry.addHandler(exchangeTextWebSocketHandler, "api/v1/exchange/data")
                 .addInterceptors(exchangeHandshakeInterceptor)
                 .setAllowedOrigins("*");
     }

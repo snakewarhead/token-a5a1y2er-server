@@ -1,7 +1,7 @@
 server:
-  port: 8000
+  port: 8010
 spring:
   application:
-    name: b-command
+    name: b-command-websocket
   profiles:
     include: exchange-dev, rabbitmq-dev

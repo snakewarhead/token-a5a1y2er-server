@@ -14,6 +14,14 @@ spring:
           filters:
             - StripPrefix=1
 
+        - id: b_command_websocket
+          uri: lb://ws://b-command-websocket
+          order: 1
+          predicates:
+            - Path=/ws/**
+          filters:
+            - StripPrefix=1
+
 logging:
   config: classpath:logback.xml
 eureka:

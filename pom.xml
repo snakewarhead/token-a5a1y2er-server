@@ -35,6 +35,7 @@
         <module>sc-gateway</module>
 
         <module>b-command</module>
+        <module>b-command-websocket</module>
 
         <module>m-core</module>
 
