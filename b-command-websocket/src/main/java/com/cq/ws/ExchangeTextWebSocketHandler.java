@@ -18,21 +18,21 @@ public class ExchangeTextWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        log.info(session.toString());
+        wsSessionManager.add(session.getId(), new WSSessionTTL(session));
     }
 
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-        log.info(session.toString());
+        wsSessionManager.remove(session.getId());
     }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.info(session.toString());
+        log.debug("{} - {}", session.toString(), message.getPayload());
     }
 
     @Override
     protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
-        log.info(session.toString());
+        wsSessionManager.onFresh(session.getId());
     }
 }
