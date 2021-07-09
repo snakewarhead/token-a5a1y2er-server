@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeOrderBookDAO extends MongoRepository<ExchangeOrderBook, String> {
 
-    ExchangeOrderBook findByExchangeIdaAndTradeTypeAndSymbol(Integer exchangeId, Integer tradeType, String symbol);
+    ExchangeOrderBook findByExchangeIdAndTradeTypeAndSymbol(Integer exchangeId, Integer tradeType, String symbol);
 
 }
