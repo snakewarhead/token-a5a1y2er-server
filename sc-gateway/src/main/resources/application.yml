@@ -10,12 +10,12 @@ spring:
           uri: lb://b-command
           order: 1
           predicates:
-            - Path=/command/**
+            - Path=/web/**
           filters:
             - StripPrefix=1
 
         - id: b_command_websocket
-          uri: lb://ws://b-command-websocket
+          uri: lb://b-command-websocket
           order: 1
           predicates:
             - Path=/ws/**
