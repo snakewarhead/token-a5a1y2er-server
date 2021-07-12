@@ -30,7 +30,7 @@ public class ExchangeRunningParamReceiver {
             return;
         }
 
-        if (msg.getSubscribe() != 0) {
+        if (msg.isSubscribe()) {
             exchangeRunningService.start(p, false);
         } else {
             exchangeRunningService.stop(p);

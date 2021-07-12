@@ -21,17 +21,20 @@ public class ExchangeCommandController {
 
     private final RabbitTemplate rabbitTemplate;
 
-    @GetMapping("forceOrder")
-    public JSONResult<?> forceOrder(int exchange, int tradeType, String symbol, int subscribe) {
+    @GetMapping("action")
+    public JSONResult<?> action(int exchange, int tradeType, String action, String symbol, String param, String subscribe) {
         if (!ExchangeEnum.contains(exchange)) {
             return JSONResult.error(400, "params error 1");
         }
         if (!ExchangeTradeType.contains(tradeType)) {
             return JSONResult.error(400, "params error 2");
         }
+        if (!ExchangeRunningParam.ActionType.contains(action)) {
+            return JSONResult.error(400, "params error 3");
+        }
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
-        p.setAction(ExchangeRunningParam.ActionType.ForceOrder, symbol, null);
+        p.setAction(ExchangeRunningParam.ActionType.getEnum(action), symbol, param);
         ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG(subscribe, p);
 
         rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), msg);

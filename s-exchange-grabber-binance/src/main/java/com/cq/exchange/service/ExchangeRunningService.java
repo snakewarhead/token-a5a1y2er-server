@@ -46,20 +46,21 @@ public class ExchangeRunningService {
         if (ExchangeRunningParam.ActionType.OrderBook.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
-        } else if (ExchangeRunningParam.ActionType.AggTrade.is(a.getName())) {
+        }
+        if (ExchangeRunningParam.ActionType.AggTrade.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
-        } else if (ExchangeRunningParam.ActionType.ForceOrder.is(a.getName())) {
+        }
+        if (ExchangeRunningParam.ActionType.ForceOrder.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
-        } else if (ExchangeRunningParam.ActionType.TakerLongShortRatio.is(a.getName())) {
+        }
+        if (ExchangeRunningParam.ActionType.TakerLongShortRatio.is(a.getName())) {
             TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, a.getSymbols());
             a.getParams().forEach(i -> {
                 Future f = threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i)));
                 futures.add(f);
             });
-        } else {
-            throw new RuntimeException("action type is not support");
         }
 
         if (!init) {

@@ -31,6 +31,10 @@ public class ExchangeRunningParamTest {
 
         log.info("{}", aa.equals(bb));
 
+        log.info("{}", 1 << 0);
+        log.info("{}", 1 << 1);
+        log.info("{}", 1 << 2);
+
         Assert.assertEquals(a, b);
     }
 

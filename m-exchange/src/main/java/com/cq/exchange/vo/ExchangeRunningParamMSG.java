@@ -11,10 +11,14 @@ import java.io.Serializable;
 @Data
 public class ExchangeRunningParamMSG implements Serializable {
 
-    /**
-     * 0 - unsubscribe, 1 - subscribe
-     */
-    private int subscribe;
+    public final String SUBSCRIBE = "subscribe";
+    public final String UNSUBSCRIBE = "unsubscribe";
+
+    private String subscribe;
 
     private ExchangeRunningParam param;
+
+    public boolean isSubscribe() {
+        return SUBSCRIBE.equals(subscribe);
+    }
 }

@@ -74,7 +74,7 @@ public class ExchangeRunningParam implements Serializable {
     }
 
     @Data
-    public static class Action {
+    public static class Action implements Serializable {
         String name;
         List<String> symbols;
         List<String> params;
@@ -103,14 +103,32 @@ public class ExchangeRunningParam implements Serializable {
     }
 
     public enum ActionType {
-        OrderBook,
-        AggTrade,
-        ForceOrder,
-        TakerLongShortRatio;
+        OrderBook(1 << 0),
+        AggTrade(1 << 1),
+        ForceOrder(1 << 2),
+        TakerLongShortRatio(1 << 3),
+
+        // ------ 1 << 31
+        All(0XFFFF_FFFF);
+
+        ActionType(int c) {
+            this.code = c;
+        }
+
+        private int code;
 
         public boolean is(String name) {
-            return name().equals(name);
+            return All.equals(name) || name().equals(name);
         }
+
+        public static ActionType getEnum(String n) {
+            return Arrays.stream(ActionType.values()).filter(item -> item.name().equals(n)).findFirst().orElse(null);
+        }
+
+        public static boolean contains(String n) {
+            return getEnum(n) != null;
+        }
+
     }
 
 }
