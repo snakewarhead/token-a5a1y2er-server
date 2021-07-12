@@ -2,6 +2,7 @@ package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.ExchangeContext;
+import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.task.AggTradeGrabber;
 import com.cq.exchange.task.ForceOrderGrabber;
 import com.cq.exchange.task.OrderBookGrabber;
@@ -43,19 +44,19 @@ public class ExchangeRunningService {
         List<Future> futures = new ArrayList<>();
         ExchangeContext exchangeContext = new ExchangeContext(p.getTradeType());
         ExchangeRunningParam.Action a = p.getAction();
-        if (ExchangeRunningParam.ActionType.OrderBook.is(a.getName())) {
+        if (ExchangeActionType.OrderBook.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
-        if (ExchangeRunningParam.ActionType.AggTrade.is(a.getName())) {
+        if (ExchangeActionType.AggTrade.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
-        if (ExchangeRunningParam.ActionType.ForceOrder.is(a.getName())) {
+        if (ExchangeActionType.ForceOrder.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
-        if (ExchangeRunningParam.ActionType.TakerLongShortRatio.is(a.getName())) {
+        if (ExchangeActionType.TakerLongShortRatio.is(a.getName())) {
             TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, a.getSymbols());
             a.getParams().forEach(i -> {
                 Future f = threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i)));

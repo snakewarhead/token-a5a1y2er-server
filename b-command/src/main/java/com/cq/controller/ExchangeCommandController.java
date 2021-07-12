@@ -1,6 +1,7 @@
 package com.cq.controller;
 
 import com.cq.core.config.MqConfigCommand;
+import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
@@ -29,12 +30,12 @@ public class ExchangeCommandController {
         if (!ExchangeTradeType.contains(tradeType)) {
             return JSONResult.error(400, "params error 2");
         }
-        if (!ExchangeRunningParam.ActionType.contains(action)) {
+        if (!ExchangeActionType.contains(action)) {
             return JSONResult.error(400, "params error 3");
         }
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
-        p.setAction(ExchangeRunningParam.ActionType.getEnum(action), symbol, param);
+        p.setAction(ExchangeActionType.getEnum(action), symbol, param);
         ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG(subscribe, p);
 
         rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), msg);

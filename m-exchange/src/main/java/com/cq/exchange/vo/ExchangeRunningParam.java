@@ -1,6 +1,7 @@
 package com.cq.exchange.vo;
 
 import cn.hutool.core.util.StrUtil;
+import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,7 +33,7 @@ public class ExchangeRunningParam implements Serializable {
         this.tradeType = tradeType;
     }
 
-    public ExchangeRunningParam setAction(ActionType actionType, String symbol, String param) {
+    public ExchangeRunningParam setAction(ExchangeActionType actionType, String symbol, String param) {
         if (action != null) {
             throw new RuntimeException("action is running");
         }
@@ -100,35 +101,6 @@ public class ExchangeRunningParam implements Serializable {
                     ", params=" + params +
                     '}';
         }
-    }
-
-    public enum ActionType {
-        OrderBook(1 << 0),
-        AggTrade(1 << 1),
-        ForceOrder(1 << 2),
-        TakerLongShortRatio(1 << 3),
-
-        // ------ 1 << 31
-        All(0XFFFF_FFFF);
-
-        ActionType(int c) {
-            this.code = c;
-        }
-
-        private int code;
-
-        public boolean is(String name) {
-            return All.equals(name) || name().equals(name);
-        }
-
-        public static ActionType getEnum(String n) {
-            return Arrays.stream(ActionType.values()).filter(item -> item.name().equals(n)).findFirst().orElse(null);
-        }
-
-        public static boolean contains(String n) {
-            return getEnum(n) != null;
-        }
-
     }
 
 }

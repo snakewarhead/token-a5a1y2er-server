@@ -1,5 +1,6 @@
 package com.cq.exchange.vo;
 
+import com.cq.exchange.enums.ExchangeActionType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,9 +20,9 @@ public class ExchangeRunningParamTest {
     @Test
     public void testEquals() {
         ExchangeRunningParam a = new ExchangeRunningParam(1, 2);
-        a.setAction(ExchangeRunningParam.ActionType.ForceOrder, "BTCUSDT", "aaa");
+        a.setAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
         ExchangeRunningParam b = new ExchangeRunningParam(1, 2);
-        b.setAction(ExchangeRunningParam.ActionType.ForceOrder, "BTCUSDT", "aaa");
+        b.setAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
 
         log.info("{}", a.equals(b));
         log.info("{} - {}", a.hashCode(), b.hashCode());
