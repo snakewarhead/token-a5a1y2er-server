@@ -23,6 +23,10 @@ public enum ExchangeEnum {
         return code;
     }
 
+    public String nameLowerCase() {
+        return this.name().toLowerCase();
+    }
+
     public boolean is(int c) {
         return this.code == c;
     }
@@ -33,6 +37,10 @@ public enum ExchangeEnum {
 
     public static ExchangeEnum getEnum(int c) {
         return Arrays.stream(ExchangeEnum.values()).filter(item -> c == item.getCode()).findFirst().orElse(null);
+    }
+
+    public static ExchangeEnum getEnum(String n) {
+        return Arrays.stream(ExchangeEnum.values()).filter(item -> item.name().equalsIgnoreCase(n)).findFirst().orElse(null);
     }
 
     public static boolean contains(int c) {

@@ -26,4 +26,8 @@ public class WSSessionTTL {
     public boolean isStale() {
         return new Date().getTime() - time > TTL;
     }
+
+    public boolean isClosed() {
+        return !session.isOpen();
+    }
 }

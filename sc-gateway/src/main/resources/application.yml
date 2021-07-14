@@ -5,6 +5,9 @@ spring:
     name: sc-gateway
   cloud:
     gateway:
+      httpclient:
+        websocket:
+          max-frame-payload-length: 104857600 #100M
       routes:
         - id: b_command
           uri: lb://b-command

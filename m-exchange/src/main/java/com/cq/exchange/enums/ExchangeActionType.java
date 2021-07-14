@@ -21,6 +21,10 @@ public enum ExchangeActionType {
         return All.equals(name) || name().equals(name);
     }
 
+    public boolean isNot(String name) {
+        return !is(name);
+    }
+
     public static ExchangeActionType getEnum(String n) {
         return Arrays.stream(ExchangeActionType.values()).filter(item -> item.name().equals(n)).findFirst().orElse(null);
     }

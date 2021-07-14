@@ -1,15 +1,16 @@
-package com.cq.ws;
+package com.cq.service;
 
+import com.cq.ws.WSSessionTTL;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.socket.PingMessage;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
-@Component
+@Service
 public class WSSessionManager {
 
     private ConcurrentHashMap<String, WSSessionTTL> pool = new ConcurrentHashMap<>();
@@ -39,6 +40,15 @@ public class WSSessionManager {
         return pool.get(key);
     }
 
+    public void onFresh(String key) {
+        WSSessionTTL s = get(key);
+        if (s == null) {
+            log.warn("session is null. {}", key);
+            return;
+        }
+        s.update();
+    }
+
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     public void fresh() {
         for (Map.Entry<String, WSSessionTTL> entry : pool.entrySet()) {
@@ -48,15 +58,6 @@ public class WSSessionManager {
                 log.error(e.getMessage(), e);
             }
         }
-    }
-
-    public void onFresh(String key) {
-        WSSessionTTL s = get(key);
-        if (s == null) {
-            log.warn("session is null. {}", key);
-            return;
-        }
-        s.update();
     }
 
     @Scheduled(fixedDelay = 1000 * 60 * 5)

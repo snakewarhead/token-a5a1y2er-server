@@ -1,6 +1,8 @@
 package com.cq.exchange.vo;
 
 import com.cq.exchange.enums.ExchangeActionType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Before;
@@ -26,17 +28,31 @@ public class ExchangeRunningParamTest {
 
         log.info("{}", a.equals(b));
         log.info("{} - {}", a.hashCode(), b.hashCode());
+        Assert.assertEquals(a, b);
 
         List<String> aa = Arrays.asList("BTC", "ETH");
         List<String> bb = Arrays.asList("BTC", "ETH");
-
         log.info("{}", aa.equals(bb));
 
         log.info("{}", 1 << 0);
         log.info("{}", 1 << 1);
         log.info("{}", 1 << 2);
+    }
 
-        Assert.assertEquals(a, b);
+    @Test
+    public void testExchangeRunningParamMSG() throws JsonProcessingException {
+        ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG();
+        msg.setSubscribe("subscribe");
+
+        ExchangeRunningParam c = new ExchangeRunningParam(1, 2);
+        c.setAction(ExchangeActionType.OrderBook, "BTCUSDT", "aaa");
+        msg.setParam(c);
+
+        String json = new ObjectMapper().writeValueAsString(msg);
+        log.info("{}", json);
+
+        ExchangeRunningParamMSG msgCopy = ExchangeRunningParamMSG.parse(json);
+        log.info("{}", msgCopy);
     }
 
 }

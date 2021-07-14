@@ -1,5 +1,7 @@
 package com.cq.ws;
 
+import com.cq.service.WSSessionManager;
+import com.cq.service.WSSessionPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -15,6 +17,7 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 public class ExchangeTextWebSocketHandler extends TextWebSocketHandler {
 
     private final WSSessionManager wsSessionManager;
+    private final WSSessionPublisher wsSessionPublisher;
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
@@ -28,7 +31,13 @@ public class ExchangeTextWebSocketHandler extends TextWebSocketHandler {
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
-        log.debug("{} - {}", session.toString(), message.getPayload());
+        WSSessionTTL ws = wsSessionManager.get(session.getId());
+        if (ws == null) {
+            log.warn("session ttl not found. {} - {}", session.toString(), message.getPayload());
+            return;
+        }
+
+        wsSessionPublisher.receive(session, message.getPayload());
     }
 
     @Override

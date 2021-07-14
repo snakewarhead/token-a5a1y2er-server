@@ -1,5 +1,7 @@
 package com.cq.exchange.vo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,8 +13,8 @@ import java.io.Serializable;
 @Data
 public class ExchangeRunningParamMSG implements Serializable {
 
-    public final String SUBSCRIBE = "subscribe";
-    public final String UNSUBSCRIBE = "unsubscribe";
+    public static final String SUBSCRIBE = "subscribe";
+    public static final String UNSUBSCRIBE = "unsubscribe";
 
     private String subscribe;
 
@@ -20,5 +22,9 @@ public class ExchangeRunningParamMSG implements Serializable {
 
     public boolean isSubscribe() {
         return SUBSCRIBE.equals(subscribe);
+    }
+
+    public static ExchangeRunningParamMSG parse(String m) throws JsonProcessingException {
+        return new ObjectMapper().readValue(m, ExchangeRunningParamMSG.class);
     }
 }
