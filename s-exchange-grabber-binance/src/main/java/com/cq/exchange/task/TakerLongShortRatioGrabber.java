@@ -25,54 +25,55 @@ public class TakerLongShortRatioGrabber implements Runnable {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
-    private final List<String> symbols;
 
-    private String periodStr;
-    private KlineInterval period;
+    private final String symbol;
+    private final String period;
+    private final KlineInterval periodEnum;
 
-    @Override
-    public void run() {
+    private BinanceFuturesMarketDataServiceRaw binanceFuturesMarketDataServiceRaw;
 
-        symbols.forEach(s -> {
-            new GrabberOne(s).run();
-        });
+    public TakerLongShortRatioGrabber(ServiceContext serviceContext, ExchangeContext exchangeContext, String symbol, String period) {
+        this.serviceContext = serviceContext;
+        this.exchangeContext = exchangeContext;
+        this.symbol = symbol;
+        this.period = period;
+        this.periodEnum = KlineInterval.getEnum(period);
+
+        BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getExchangeCurrent();
+        binanceFuturesMarketDataServiceRaw = (BinanceFuturesMarketDataServiceRaw) exchange.getMarketDataService();
     }
 
-    @RequiredArgsConstructor
-    class GrabberOne implements Runnable {
-
-        private final String symbol;
-
-        @Override
-        public void run() {
-            try {
-                BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getExchangeCurrent();
-                BinanceFuturesMarketDataServiceRaw service = (BinanceFuturesMarketDataServiceRaw) exchange.getMarketDataService();
-
-                List<BinanceTakerLongShortRatio> ls = service.takerlongshortRatio(symbol, period, 100, null, null);
-                List<ExchangeTakerLongShortRatio> lsAdapt = ls.stream().map(e -> adapt(symbol, e)).collect(Collectors.toList());
-
-//                a ThreadPoolTaskScheduler wrapper can maintain a pool in which store taskes that need run with times limit.
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
-            }
-        }
-    }
-
-    public String cron(String periodStr) {
-        this.periodStr = periodStr;
-        this.period = KlineInterval.getEnum(periodStr);
-
+    public static String cron(String periodStr) {
         // "5m","15m","30m","1h","2h","4h","6h","12h","1d"
         // need fast 5 multiple
         // TODO: If No new data that grabbing in current period, that need grabbing again for a while.
         if ("5m".equals(periodStr)) {
             return "3 */1 * * * ?";
         } else if ("15m".equals(periodStr)) {
-            return "3 */3 * * * ?";
+            return "3 */5 * * * ?";
         }
 
         throw new RuntimeException("This period is not supported. " + periodStr);
+    }
+
+    private boolean first = true;
+
+    private final static int MAX = 100;
+    private final static int MIN = 5;
+
+    @Override
+    public void run() {
+        try {
+            int limit = first ? MAX : MIN;
+            List<BinanceTakerLongShortRatio> ls = binanceFuturesMarketDataServiceRaw.takerlongshortRatio(symbol, periodEnum, limit, null, null);
+            List<ExchangeTakerLongShortRatio> lsAdapt = ls.stream().map(e -> adapt(symbol, e)).collect(Collectors.toList());
+
+            serviceContext.getExchangeTakerLongShortRatioService().saveAll(lsAdapt);
+
+            first = false;
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 
     public ExchangeTakerLongShortRatio adapt(String symbol, BinanceTakerLongShortRatio r) {
@@ -81,6 +82,7 @@ public class TakerLongShortRatioGrabber implements Runnable {
                 .exchangeId(ExchangeEnum.BINANCE.getCode())
                 .tradeType(exchangeContext.getTradeType().getCode())
                 .symbol(symbol)
+                .period(period)
                 .pair(pair.toString())
                 .baseSymbol(pair.base.getCurrencyCode())
                 .buyVol(r.getBuyVol())

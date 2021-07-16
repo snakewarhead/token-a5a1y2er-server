@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,9 +46,16 @@ public class ExchangeRunningParamTest {
         msg.setSubscribe("subscribe");
 
         ExchangeRunningParam c = new ExchangeRunningParam(1, 2);
-        c.setAction(ExchangeActionType.OrderBook, "BTCUSDT", "aaa");
-        msg.setParam(c);
+        c.setAction(ExchangeActionType.TakerLongShortRatio, "BTCUSDT", "5m");
+        List<String> ls = new ArrayList<>();
+        ls.add("5m");
+        ls.add("15m");
+        c.getAction().setParams(ls);
 
+        String json0 = new ObjectMapper().writeValueAsString(c);
+        log.info("{}", json0);
+
+        msg.setParam(c);
         String json = new ObjectMapper().writeValueAsString(msg);
         log.info("{}", json);
 

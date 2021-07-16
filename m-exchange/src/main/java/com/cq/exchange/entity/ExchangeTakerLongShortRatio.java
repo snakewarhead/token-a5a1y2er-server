@@ -27,6 +27,9 @@ public class ExchangeTakerLongShortRatio extends BaseEntity<ExchangeTakerLongSho
     private Integer tradeType;
 
     @Indexed
+    private String period;
+
+    @Indexed
     private String symbol;
 
     @Indexed

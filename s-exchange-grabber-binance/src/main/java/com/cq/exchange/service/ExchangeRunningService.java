@@ -57,10 +57,11 @@ public class ExchangeRunningService {
             futures.add(f);
         }
         if (ExchangeActionType.TakerLongShortRatio.is(a.getName())) {
-            TakerLongShortRatioGrabber grabber = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, a.getSymbols());
-            a.getParams().forEach(i -> {
-                Future f = threadPoolTaskScheduler.schedule(grabber, new CronTrigger(grabber.cron(i)));
-                futures.add(f);
+            a.getParams().forEach(ap -> {
+                a.getSymbols().forEach(s -> {
+                    Future f = threadPoolTaskScheduler.schedule(new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap), new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
+                    futures.add(f);
+                });
             });
         }
 
