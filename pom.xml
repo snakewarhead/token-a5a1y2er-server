@@ -54,6 +54,7 @@
         <module>s-blockchain-grabber-eth-utility</module>
 
         <module>s-exchange-grabber-binance</module>
+        <module>s-exchange-analyser</module>
 
         <module>s-web-crawler</module>
     </modules>
