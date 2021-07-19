@@ -43,6 +43,6 @@ public class ExchangeForceOrder extends BaseEntity<ExchangeForceOrder> {
     private String type;
     private String side;
 
-    private Date time;
+    private Long time;
 
 }

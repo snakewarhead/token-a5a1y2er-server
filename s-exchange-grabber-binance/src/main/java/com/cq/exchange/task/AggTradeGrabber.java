@@ -1,6 +1,5 @@
 package com.cq.exchange.task;
 
-import cn.hutool.core.date.DateUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeAggTrade;
 import com.cq.exchange.enums.ExchangeEnum;
@@ -53,7 +52,7 @@ public class AggTradeGrabber implements Runnable {
         ee.setSymbol(s);
 
         ee.setTradeId(e.aggregateTradeId);
-        ee.setTime(DateUtil.date(e.timestamp));
+        ee.setTime(e.timestamp);
 
         ee.setPrice(e.price);
         ee.setQuantity(e.quantity);

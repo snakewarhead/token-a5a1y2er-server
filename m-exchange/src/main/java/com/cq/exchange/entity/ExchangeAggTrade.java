@@ -41,6 +41,6 @@ public class ExchangeAggTrade extends BaseEntity<ExchangeAggTrade> {
     @Indexed
     private Boolean buyerMaker;
 
-    private Date time;
+    private Long time;
 
 }

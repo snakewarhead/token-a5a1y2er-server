@@ -1,6 +1,5 @@
 package com.cq.exchange.task;
 
-import cn.hutool.core.date.DateUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeForceOrder;
 import com.cq.exchange.enums.ExchangeEnum;
@@ -51,7 +50,7 @@ public class ForceOrderGrabber implements Runnable {
         ee.setExchangeId(ExchangeEnum.BINANCE.getCode());
         ee.setTradeType(exchangeContext.getTradeType().getCode());
         ee.setSymbol(s);
-        ee.setTime(DateUtil.date(e.time));
+        ee.setTime(e.time);
 
         ee.setPrice(e.price);
         ee.setAvragePrice(e.avragePrice);
