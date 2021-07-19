@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_BINANCE_GRABBER)
+@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_BINANCE_ANALYSER)
 public class ExchangeRunningParamReceiver {
 
     private final ExchangeRunningService exchangeRunningService;

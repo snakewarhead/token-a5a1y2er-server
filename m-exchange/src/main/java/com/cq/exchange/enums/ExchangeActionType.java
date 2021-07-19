@@ -3,10 +3,15 @@ package com.cq.exchange.enums;
 import java.util.Arrays;
 
 public enum ExchangeActionType {
+    // grabber
     OrderBook(1 << 0),
     AggTrade(1 << 1),
     ForceOrder(1 << 2),
     TakerLongShortRatio(1 << 3),
+
+    // analyser
+    TradeVolumeTime(1 << 16),
+    TradeVolumePrice(1 << 17),
 
     // ------ 1 << 31
     All(0XFFFF_FFFF);
@@ -23,6 +28,10 @@ public enum ExchangeActionType {
 
     public boolean isNot(String name) {
         return !is(name);
+    }
+
+    public boolean isGrabber() {
+        return code > 0 && code < TradeVolumeTime.code;
     }
 
     public static ExchangeActionType getEnum(String n) {

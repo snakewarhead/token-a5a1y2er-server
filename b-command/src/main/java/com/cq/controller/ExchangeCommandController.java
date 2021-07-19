@@ -30,22 +30,24 @@ public class ExchangeCommandController {
         if (!ExchangeTradeType.contains(tradeType)) {
             return JSONResult.error(400, "params error 2");
         }
-        if (!ExchangeActionType.contains(action)) {
+
+        ExchangeActionType actionType = ExchangeActionType.getEnum(action);
+        if (actionType == null) {
             return JSONResult.error(400, "params error 3");
         }
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
-        p.setAction(ExchangeActionType.getEnum(action), symbol, param);
+        p.setAction(actionType, symbol, param);
         ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG(subscribe, p);
 
-        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange), msg);
+        rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange, actionType), msg);
 
         return JSONResult.success("");
     }
 
-    private String mapRoutingKey(int exchange) {
+    private String mapRoutingKey(int exchange, ExchangeActionType action) {
         if (ExchangeEnum.BINANCE.is(exchange)) {
-            return MqConfigCommand.ROUTING_KEY_BINANCE;
+            return action.isGrabber() ? MqConfigCommand.ROUTING_KEY_BINANCE_GRABBER : MqConfigCommand.ROUTING_KEY_BINANCE_ANALYSER;
         }
 
         throw new IllegalStateException("Unexpected value: " + exchange);

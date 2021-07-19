@@ -6,7 +6,7 @@ A tool which analyse exchange data.
 
 - trade record
   - buy/sell taker volume
-  - by time, 5m, 1h, 4h
+  - by time, 5m, 15m, 4h
   - by price, 
   
 - force order

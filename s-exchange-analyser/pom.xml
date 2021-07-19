@@ -25,6 +25,11 @@
             <artifactId>m-exchange</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.cq</groupId>
+            <artifactId>m-rabbitmq</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
