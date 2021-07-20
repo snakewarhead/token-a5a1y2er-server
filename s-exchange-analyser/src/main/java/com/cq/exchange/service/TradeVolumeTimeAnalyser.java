@@ -1,5 +1,7 @@
 package com.cq.exchange.service;
 
+import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.enums.ExchangeTradeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,6 +14,8 @@ public class TradeVolumeTimeAnalyser implements Runnable {
 
     private final ServiceContext serviceContext;
 
+    private final ExchangeEnum exchangeEnum;
+    private final ExchangeTradeType exchangeTradeType;
     private final String symbol;
     private final String period;
 

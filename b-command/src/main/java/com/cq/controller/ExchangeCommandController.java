@@ -47,7 +47,7 @@ public class ExchangeCommandController {
 
     private String mapRoutingKey(int exchange, ExchangeActionType action) {
         if (ExchangeEnum.BINANCE.is(exchange)) {
-            return action.isGrabber() ? MqConfigCommand.ROUTING_KEY_BINANCE_GRABBER : MqConfigCommand.ROUTING_KEY_BINANCE_ANALYSER;
+            return action.isGrabber() ? MqConfigCommand.ROUTING_KEY_BINANCE_GRABBER : MqConfigCommand.ROUTING_KEY_ANALYSER;
         }
 
         throw new IllegalStateException("Unexpected value: " + exchange);

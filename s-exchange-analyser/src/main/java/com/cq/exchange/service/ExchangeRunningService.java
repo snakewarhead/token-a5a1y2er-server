@@ -2,6 +2,8 @@ package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.enums.ExchangeActionType;
+import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +38,23 @@ public class ExchangeRunningService {
             return;
         }
 
+        ExchangeEnum exchangeEnum = ExchangeEnum.getEnum(p.getExchange());
+        if (exchangeEnum == null) {
+            log.warn("exchange is not support");
+            return;
+        }
+        ExchangeTradeType tradeType = ExchangeTradeType.getEnum(p.getTradeType());
+        if (tradeType == null) {
+            log.warn("tradeType is not support");
+            return;
+        }
+
         List<Future> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.TradeVolumeTime.is(a.getName())) {
             a.getParams().forEach(ap -> {
                 a.getSymbols().forEach(s -> {
-                    Future f = threadPoolTaskScheduler.schedule(new TradeVolumeTimeAnalyser(serviceContext, s, ap).init(), new CronTrigger(TradeVolumeTimeAnalyser.cron(ap)));
+                    Future f = threadPoolTaskScheduler.schedule(new TradeVolumeTimeAnalyser(serviceContext, exchangeEnum, tradeType, s, ap).init(), new CronTrigger(TradeVolumeTimeAnalyser.cron(ap)));
                     futures.add(f);
                 });
             });

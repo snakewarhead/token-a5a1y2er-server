@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_BINANCE_ANALYSER)
+@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_ANALYSER)
 public class ExchangeRunningParamReceiver {
 
     private final ExchangeRunningService exchangeRunningService;
@@ -26,10 +26,6 @@ public class ExchangeRunningParamReceiver {
         }
 
         ExchangeRunningParam p = msg.getParam();
-        if (ExchangeEnum.BINANCE.isNot(p.getExchange())) {
-            return;
-        }
-
         if (msg.isSubscribe()) {
             exchangeRunningService.start(p, false);
         } else {
