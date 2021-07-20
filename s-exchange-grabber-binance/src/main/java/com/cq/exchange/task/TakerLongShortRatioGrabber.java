@@ -49,11 +49,9 @@ public class TakerLongShortRatioGrabber implements Runnable {
         // TODO: If No new data that grabbing in current period, that need grabbing again for a while.
         if ("5m".equals(periodStr)) {
             return "3 */1 * * * ?";
-        } else if ("15m".equals(periodStr)) {
+        } else {
             return "3 */5 * * * ?";
         }
-
-        throw new RuntimeException("This period is not supported. " + periodStr);
     }
 
     private boolean first = true;
