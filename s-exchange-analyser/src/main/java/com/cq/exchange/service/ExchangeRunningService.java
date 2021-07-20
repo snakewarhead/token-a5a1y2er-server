@@ -1,10 +1,12 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
+import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
+import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +37,15 @@ public class ExchangeRunningService {
         }
 
         List<Future> futures = new ArrayList<>();
+        ExchangeRunningParam.Action a = p.getAction();
+        if (ExchangeActionType.TradeVolumeTime.is(a.getName())) {
+            a.getParams().forEach(ap -> {
+                a.getSymbols().forEach(s -> {
+                    Future f = threadPoolTaskScheduler.schedule(new TradeVolumeTimeAnalyser(serviceContext, s, ap).init(), new CronTrigger(TradeVolumeTimeAnalyser.cron(ap)));
+                    futures.add(f);
+                });
+            });
+        }
 
         if (!init) {
             mapRunning.put(p, futures);
