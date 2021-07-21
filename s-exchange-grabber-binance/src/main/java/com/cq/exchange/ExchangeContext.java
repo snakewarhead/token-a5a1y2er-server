@@ -51,8 +51,8 @@ public class ExchangeContext {
         }
     }
 
-    public BinanceStreamingExchange getExchangeCurrentStream() {
-        return (BinanceStreamingExchange) exchangeCurrent;
+    public StreamingExchange getExchangeCurrentStream() {
+        return (StreamingExchange) exchangeCurrent;
     }
 
     private BinanceExchangeSpecification getFutureSpec(FuturesSettleType type) {
