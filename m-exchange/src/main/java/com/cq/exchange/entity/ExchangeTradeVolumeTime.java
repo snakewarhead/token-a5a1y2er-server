@@ -49,4 +49,15 @@ public class ExchangeTradeVolumeTime extends BaseEntity<ExchangeTradeVolumeTime>
     private BigDecimal qtySellerMiddle;
     private BigDecimal qtySellerBig;
 
+    public void reset() {
+        qtyBuyerTotal = BigDecimal.ZERO;
+        qtyBuyerSmall = BigDecimal.ZERO;
+        qtyBuyerMiddle = BigDecimal.ZERO;
+        qtyBuyerBig = BigDecimal.ZERO;
+
+        qtySellerTotall = BigDecimal.ZERO;
+        qtySellerSmall = BigDecimal.ZERO;
+        qtySellerMiddle = BigDecimal.ZERO;
+        qtySellerBig = BigDecimal.ZERO;
+    }
 }
