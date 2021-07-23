@@ -9,7 +9,7 @@ import com.cq.blockchain.dao.EventCreatePairDAO;
 import com.cq.blockchain.entity.ConfigEth;
 import com.cq.blockchain.entity.EventApproval;
 import com.cq.blockchain.entity.EventCreatePair;
-import com.cq.blockchain.util.MathUtil;
+import util.MathUtil;
 import com.cq.core.service.MailService;
 import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
