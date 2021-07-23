@@ -43,4 +43,8 @@ public class ExchangeTradeVolumeTimeService {
         }
         return ls.get(0);
     }
+
+    public ExchangeTradeVolumeTime save(ExchangeTradeVolumeTime v) {
+        return exchangeTradeVolumeTimeDAO.save(v);
+    }
 }

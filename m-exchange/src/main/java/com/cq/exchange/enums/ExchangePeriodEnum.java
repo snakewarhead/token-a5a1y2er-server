@@ -1,6 +1,10 @@
 package com.cq.exchange.enums;
 
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateUtil;
+
 import java.util.Arrays;
+import java.util.Date;
 
 import static java.util.concurrent.TimeUnit.*;
 
@@ -28,9 +32,15 @@ public enum ExchangePeriodEnum {
     private final String symbol;
     private final Long millis;
 
+    private final int num;
+    private final String unit;
+
     ExchangePeriodEnum(String symbol, Long millis) {
         this.millis = millis;
         this.symbol = symbol;
+
+        num = Integer.parseInt(symbol.substring(0, symbol.length() - 1));
+        unit = symbol.substring(symbol.length() - 1);
     }
 
     public Long getMillis() {
@@ -45,4 +55,22 @@ public enum ExchangePeriodEnum {
         return Arrays.stream(ExchangePeriodEnum.values()).filter(i -> i.symbol.equals(s)).findFirst().orElse(null);
     }
 
+    public Date beginOfInterval(long current) {
+        Date dateCurr = new Date(current);
+        if ("m".equals(unit)) {
+            int c = DateUtil.minute(dateCurr);
+            long begin = c / num * millis;
+            Date dateTruncate = DateUtil.truncate(dateCurr, DateField.HOUR_OF_DAY);
+            Date dateBegin = new Date(dateTruncate.getTime() + begin);
+            return dateBegin;
+        } else if ("h".equals(unit)) {
+            int c = DateUtil.hour(dateCurr, true);
+            long begin = c / num * millis;
+            Date dateTruncate = DateUtil.truncate(dateCurr, DateField.DAY_OF_MONTH);
+            Date dateBegin = new Date(dateTruncate.getTime() + begin);
+            return dateBegin;
+        } else {
+            throw new RuntimeException("symbol is not support");
+        }
+    }
 }

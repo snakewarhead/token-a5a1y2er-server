@@ -8,10 +8,10 @@ import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import util.MathUtil;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by lin on 2020-11-06.
@@ -55,37 +55,46 @@ public class TradeVolumeTimeAnalyser implements Runnable {
         if (init) {
             do {
                 // 启动时，旧的时间统计数据最后到哪个时间
-                ExchangeTradeVolumeTime last = serviceContext.getExchangeTradeVolumeTimeService().findLast(exchangeEnum.getCode(), tradeType.getCode(), symbol, period);
-                if (last == null) {
+                ExchangeTradeVolumeTime volumeLast = serviceContext.getExchangeTradeVolumeTimeService().findLast(exchangeEnum.getCode(), tradeType.getCode(), symbol, period);
+                if (volumeLast == null) {
                     break;
                 }
+                ExchangeTradeVolumeTime volumeCurr = volumeLast;
+                volumeCurr.reset();
 
                 // 那个时间之后的数据，逐一分析
-                List<ExchangeAggTrade> trades = serviceContext.getExchangeAggTradeService().find(exchangeEnum.getCode(), tradeType.getCode(), symbol, last.getTime().getTime(), null);
+                List<ExchangeAggTrade> trades = serviceContext.getExchangeAggTradeService().find(exchangeEnum.getCode(), tradeType.getCode(), symbol, volumeLast.getTime().getTime(), null);
                 if (CollUtil.isEmpty(trades)) {
                     break;
                 }
 
-                AtomicLong timeCurr = new AtomicLong(last.getTime().getTime());
-                AtomicLong timeEnd = new AtomicLong(timeCurr.get() + periodEnum.getMillis());
-                trades.forEach(t -> {
-                    if (t.getTime() >= timeEnd.get()) {
-                        新的周期了
-                        timeCurr.set(timeEnd.get());
-                        timeEnd.set(timeCurr.get() + periodEnum.getMillis());
+                long timeCurr = volumeLast.getTime().getTime();
+                long timeEnd = timeCurr + periodEnum.getMillis();
+                for (ExchangeAggTrade t : trades) {
+                    if (t.getTime() >= timeEnd) {
+                        timeCurr = periodEnum.beginOfInterval(t.getTime()).getTime();
+                        timeEnd = timeCurr + periodEnum.getMillis();
+
+                        volumeCurr = serviceContext.getExchangeTradeVolumeTimeService().find(exchangeEnum.getCode(), tradeType.getCode(), symbol, period, new Date(timeCurr));
+                        if (volumeCurr == null) {
+                            volumeCurr = new ExchangeTradeVolumeTime();
+                            volumeCurr.setExchangeId(exchangeEnum.getCode());
+                            volumeCurr.setTradeType(tradeType.getCode());
+                            volumeCurr.setSymbol(symbol);
+                            volumeCurr.setPeriod(period);
+                            volumeCurr.setTime(new Date(timeCurr));
+                        }
+                        volumeCurr.reset();
                     }
 
-                    ExchangeTradeVolumeTime v = serviceContext.getExchangeTradeVolumeTimeService().find(exchangeEnum.getCode(), tradeType.getCode(), symbol, period, new Date(timeCurr.get()));
-                    if (v == null) {
-                        v = new ExchangeTradeVolumeTime();
-                        v.setExchangeId(exchangeEnum.getCode());
-                        v.setTradeType(tradeType.getCode());
-                        v.setSymbol(symbol);
-                        v.setPeriod(period);
-                        v.setTime(new Date(timeCurr.get()));
+                    if (t.getBuyerMaker()) {
+                        volumeCurr.setQtySellerTotall(MathUtil.add(volumeCurr.getQtySellerTotall(), t.getQuantity()));
+                    } else {
+                        volumeCurr.setQtyBuyerTotal(MathUtil.add(volumeCurr.getQtyBuyerTotal(), t.getQuantity()));
                     }
-                    v.reset();
-                });
+
+                    volumeCurr = serviceContext.getExchangeTradeVolumeTimeService().save(volumeCurr);
+                }
 
             } while (true);
 
