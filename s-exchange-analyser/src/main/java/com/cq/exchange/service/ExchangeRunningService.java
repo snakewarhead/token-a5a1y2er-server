@@ -51,6 +51,18 @@ public class ExchangeRunningService {
 
         List<Future> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
+        if (ExchangeActionType.CoinInfoShort.is(a.getName())) {
+            a.getSymbols().forEach(s -> {
+                Future f = threadPoolTaskScheduler.schedule(new CoinInfoShortAnalyser(serviceContext, exchangeEnum, tradeType, s).init(), new CronTrigger(CoinInfoShortAnalyser.cron()));
+                futures.add(f);
+            });
+        }
+        if (ExchangeActionType.CoinInfoLong.is(a.getName())) {
+            a.getSymbols().forEach(s -> {
+                Future f = threadPoolTaskScheduler.schedule(new CoinInfoLongAnalyser(serviceContext, exchangeEnum, tradeType, s).init(), new CronTrigger(CoinInfoLongAnalyser.cron()));
+                futures.add(f);
+            });
+        }
         if (ExchangeActionType.TradeVolumeTime.is(a.getName())) {
             a.getParams().forEach(ap -> {
                 a.getSymbols().forEach(s -> {

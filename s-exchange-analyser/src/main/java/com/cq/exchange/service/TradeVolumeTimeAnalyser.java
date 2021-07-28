@@ -89,6 +89,10 @@ public class TradeVolumeTimeAnalyser implements Runnable {
 
                     if (t.getBuyerMaker()) {
                         volumeCurr.setQtySellerTotall(MathUtil.add(volumeCurr.getQtySellerTotall(), t.getQuantity()));
+                        // 根据历史trade获取 平滑平均交易量
+                        // 小单: < 0.5stdev
+                        // 中单：0.5stdev < q < 1.5stdev
+                        // 大单：1.5stdev
                     } else {
                         volumeCurr.setQtyBuyerTotal(MathUtil.add(volumeCurr.getQtyBuyerTotal(), t.getQuantity()));
                     }

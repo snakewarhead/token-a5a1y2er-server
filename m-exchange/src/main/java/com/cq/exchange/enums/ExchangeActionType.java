@@ -10,8 +10,10 @@ public enum ExchangeActionType {
     TakerLongShortRatio(1 << 3),
 
     // analyser
-    TradeVolumeTime(1 << 16),
-    TradeVolumePrice(1 << 17),
+    CoinInfoShort(1 << 16),
+    CoinInfoLong(1 << 17),
+    TradeVolumeTime(1 << 18),
+    TradeVolumePrice(1 << 19),
 
     // ------ 1 << 31
     All(0XFFFF_FFFF);
