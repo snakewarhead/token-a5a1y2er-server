@@ -18,22 +18,10 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_taker_long_short_ratio")
-public class ExchangeTakerLongShortRatio extends BaseEntity<ExchangeTakerLongShortRatio> {
-
-    @Indexed
-    private Integer exchangeId;
-
-    @Indexed
-    private Integer tradeType;
+public class ExchangeTakerLongShortRatio extends ExchangeEntity<ExchangeTakerLongShortRatio> {
 
     @Indexed
     private String period;
-
-    @Indexed
-    private String symbol;
-
-    @Indexed
-    private String pair;
 
     @Indexed
     private String baseSymbol;

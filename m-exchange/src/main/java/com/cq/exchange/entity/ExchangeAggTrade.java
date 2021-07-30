@@ -19,19 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_agg_trade")
-public class ExchangeAggTrade extends BaseEntity<ExchangeAggTrade> {
-
-    @Indexed
-    private Integer exchangeId;
-
-    @Indexed
-    private Integer tradeType;
-
-    @Indexed
-    private String symbol;
-
-    @Indexed
-    private String pair;
+public class ExchangeAggTrade extends ExchangeEntity<ExchangeAggTrade> {
 
     private Long tradeId;
 

@@ -19,19 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_force_order")
-public class ExchangeForceOrder extends BaseEntity<ExchangeForceOrder> {
-
-    @Indexed
-    private Integer exchangeId;
-
-    @Indexed
-    private Integer tradeType;
-
-    @Indexed
-    private String symbol;
-
-    @Indexed
-    private String pair;
+public class ExchangeForceOrder extends ExchangeEntity<ExchangeForceOrder> {
 
     private BigDecimal price;
     private BigDecimal avragePrice;

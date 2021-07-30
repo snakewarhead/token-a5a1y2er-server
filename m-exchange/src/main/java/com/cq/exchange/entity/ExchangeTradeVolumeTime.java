@@ -19,19 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_trade_volume_time")
-public class ExchangeTradeVolumeTime extends BaseEntity<ExchangeTradeVolumeTime> {
-
-    @Indexed
-    private Integer exchangeId;
-
-    @Indexed
-    private Integer tradeType;
-
-    @Indexed
-    private String symbol;
-
-    @Indexed
-    private String pair;
+public class ExchangeTradeVolumeTime extends ExchangeEntity<ExchangeTradeVolumeTime> {
 
     @Indexed
     private String period;

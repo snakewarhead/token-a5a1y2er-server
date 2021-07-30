@@ -76,17 +76,17 @@ public class TakerLongShortRatioGrabber implements Runnable {
 
     public ExchangeTakerLongShortRatio adapt(String symbol, BinanceTakerLongShortRatio r) {
         CurrencyPair pair = BinanceAdapters.adaptSymbol(symbol);
-        return ExchangeTakerLongShortRatio.builder()
-                .exchangeId(ExchangeEnum.BINANCE.getCode())
-                .tradeType(exchangeContext.getTradeType().getCode())
-                .symbol(symbol)
-                .period(period)
-                .pair(pair.toString())
-                .baseSymbol(pair.base.getCurrencyCode())
-                .buyVol(r.getBuyVol())
-                .sellVol(r.getSellVol())
-                .buySellRatio(r.getBuySellRatio())
-                .time(r.getTimestamp())
-                .build();
+        ExchangeTakerLongShortRatio rr = new ExchangeTakerLongShortRatio();
+        rr.setExchangeId(ExchangeEnum.BINANCE.getCode());
+        rr.setTradeType(exchangeContext.getTradeType().getCode());
+        rr.setSymbol(symbol);
+        rr.setPeriod(period);
+        rr.setPair(pair.toString());
+        rr.setBaseSymbol(pair.base.getCurrencyCode());
+        rr.setBuyVol(r.getBuyVol());
+        rr.setSellVol(r.getSellVol());
+        rr.setBuySellRatio(r.getBuySellRatio());
+        rr.setTime(r.getTimestamp());
+        return rr;
     }
 }

@@ -20,19 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_order_book")
-public class ExchangeOrderBook extends BaseEntity<ExchangeOrderBook> {
-
-    @Indexed
-    private Integer exchangeId;
-
-    @Indexed
-    private Integer tradeType;
-
-    @Indexed
-    private String symbol;
-
-    @Indexed
-    private String pair;
+public class ExchangeOrderBook extends ExchangeEntity<ExchangeOrderBook> {
 
     private Date time;
 

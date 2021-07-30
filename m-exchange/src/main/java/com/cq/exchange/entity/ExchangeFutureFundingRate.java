@@ -15,22 +15,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 @Document(collection = "exchange_future_perpetual_funding_rate")
-public class ExchangeFutureFundingRate extends BaseEntity<ExchangeFutureFundingRate> {
-
-  @Indexed
-  private Integer exchangeId;
-
-  @Indexed
-  private Integer tradeType;
-
-  @Indexed
-  private String name;
-
-  @Indexed
-  private String symbol;
-
-  @Indexed
-  private String pair;
+public class ExchangeFutureFundingRate extends ExchangeEntity<ExchangeFutureFundingRate> {
 
   private BigDecimal markPrice;
 
