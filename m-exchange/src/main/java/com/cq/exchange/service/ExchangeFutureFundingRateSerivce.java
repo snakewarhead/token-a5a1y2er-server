@@ -1,9 +1,9 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.util.StrUtil;
-import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import com.cq.exchange.dao.ExchangeFutureFundingRateDAO;
 import com.cq.exchange.dao.ExchangeFutureFundingRateDAODynamic;
+import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -23,8 +23,8 @@ public class ExchangeFutureFundingRateSerivce {
     private final ExchangeFutureFundingRateDAO exchangeFutureFundingRateDAO;
     private final ExchangeFutureFundingRateDAODynamic exchangeFutureFundingRateDAODynamic;
 
-    public ExchangeFutureFundingRate find(Integer exchangeId, Integer futureType, Integer settleType, String symbol) {
-        return exchangeFutureFundingRateDAO.find(exchangeId, futureType, settleType, symbol);
+    public ExchangeFutureFundingRate find(Integer exchangeId, Integer tradeType, String symbol) {
+        return exchangeFutureFundingRateDAO.findByExchangeIdAndTradeTypeAndSymbol(exchangeId, tradeType, symbol);
     }
 
     public Page<ExchangeFutureFundingRate> findByExchange(Integer exchangeId, String name, String pair, int page, int size, int direction, String fieldOfDirection) {
@@ -46,13 +46,12 @@ public class ExchangeFutureFundingRateSerivce {
     }
 
     public void save(ExchangeFutureFundingRate r) {
-        ExchangeFutureFundingRate rr = find(r.getExchangeId(), r.getFutureType(), r.getSettleType(), r.getSymbol());
+        ExchangeFutureFundingRate rr = find(r.getExchangeId(), r.getTradeType(), r.getSymbol());
 
         if (rr == null) {
             rr = new ExchangeFutureFundingRate();
             rr.setExchangeId(r.getExchangeId());
-            rr.setFutureType(r.getFutureType());
-            rr.setSettleType(r.getSettleType());
+            rr.setTradeType(r.getTradeType());
             rr.setName(r.getName());
             rr.setSymbol(r.getSymbol());
             rr.setPair(r.getPair());

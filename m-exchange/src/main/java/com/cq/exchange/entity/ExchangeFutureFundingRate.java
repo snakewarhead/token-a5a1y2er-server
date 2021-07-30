@@ -21,10 +21,7 @@ public class ExchangeFutureFundingRate extends BaseEntity<ExchangeFutureFundingR
   private Integer exchangeId;
 
   @Indexed
-  private Integer futureType;
-
-  @Indexed
-  private Integer settleType;
+  private Integer tradeType;
 
   @Indexed
   private String name;

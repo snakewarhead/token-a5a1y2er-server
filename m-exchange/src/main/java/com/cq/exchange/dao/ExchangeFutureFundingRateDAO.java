@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeFutureFundingRateDAO extends MongoRepository<ExchangeFutureFundingRate, String> {
 
-    @Query("{ 'exchangeId':?0, 'futureType':?1, 'settleType':?2, 'symbol':?3 }")
-    ExchangeFutureFundingRate find(Integer exchangeId, Integer futureType, Integer settleType, String symbol);
+    ExchangeFutureFundingRate findByExchangeIdAndTradeTypeAndSymbol(Integer exchangeId, Integer tradeType, String symbol);
 
 }
