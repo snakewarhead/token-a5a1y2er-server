@@ -52,7 +52,6 @@ public class ExchangeFutureFundingRateSerivce {
             rr = new ExchangeFutureFundingRate();
             rr.setExchangeId(r.getExchangeId());
             rr.setTradeType(r.getTradeType());
-            rr.setName(r.getName());
             rr.setSymbol(r.getSymbol());
             rr.setPair(r.getPair());
         }
