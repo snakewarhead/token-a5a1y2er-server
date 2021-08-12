@@ -2,13 +2,13 @@ package com.cq.web.task;
 
 import cn.hutool.core.thread.ThreadUtil;
 import com.cq.web.config.Config;
+import com.cq.web.service.BinanceAnnouncementCrawlerService;
 import com.cq.web.service.GeckoTwitterCrawlerService;
 import com.cq.web.service.TwitterNewsCrawlerService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,6 +24,7 @@ public class ApplicationStartup implements ApplicationRunner {
 
     private final GeckoTwitterCrawlerService geckoTwitterCrawlerService;
     private final TwitterNewsCrawlerService twitterNewsCrawlerService;
+    private final BinanceAnnouncementCrawlerService binanceAnnouncementCrawlerService;
     private final Config config;
 
     private final static long DURATION_GECKO_TWITTER_CRAWL = 1000 * 60 * 60 * 12;
@@ -71,6 +72,18 @@ public class ApplicationStartup implements ApplicationRunner {
                 twitterNewsCrawlerService.start(twittersInConfig, numRank, notices, numThread);
 
                 ThreadUtil.sleep(DURATION_TWITTER_NEWS_CRAWL);
+            }
+        } else if ("binance_announcement_crawl".equals(action)) {
+            int interval = 20000;
+            try {
+                interval = Integer.parseInt(params.get(0));
+            } catch (Exception e) {
+            }
+
+            binanceAnnouncementCrawlerService.init(config.getNotices());
+            while (true) {
+                binanceAnnouncementCrawlerService.loop();
+                ThreadUtil.sleep(interval);
             }
         } else {
             log.error("action is not match");

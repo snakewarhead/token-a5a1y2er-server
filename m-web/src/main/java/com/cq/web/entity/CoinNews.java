@@ -21,6 +21,18 @@ public class CoinNews extends BaseEntity<CoinNews> {
     private String coin_id;
     private String symbol;
 
+    @Indexed
+    private String channel;
+    @Indexed
+    private Integer type = 0;
+
     private String content;
-    private Date date;
+    private Date time;
+
+    private String param0;
+    private String param1;
+    private String param2;
+    private String param3;
+    private String param4;
+
 }
