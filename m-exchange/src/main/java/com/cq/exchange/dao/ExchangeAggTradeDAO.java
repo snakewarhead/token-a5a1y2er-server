@@ -12,6 +12,6 @@ import java.util.List;
 @Repository
 public interface ExchangeAggTradeDAO extends MongoRepository<ExchangeAggTrade, String> {
 
-    List<ExchangeAggTrade> findByExchangeIdAndTradeTypeAndSymbolAndTimeBetween(Integer exchangeId, Integer tradeType, String symbol, Long timeStart, Long timeEnd);
+    List<ExchangeAggTrade> findByExchangeIdAndTradeTypeAndSymbolAndTimeGreaterThanEqualAndTimeLessThan(Integer exchangeId, Integer tradeType, String symbol, Long timeStart, Long timeEnd);
 
 }

@@ -73,4 +73,13 @@ public enum ExchangePeriodEnum {
             throw new RuntimeException("symbol is not support");
         }
     }
+
+    public Date beforeOfInterval(long current) {
+        Date dateBegin = beginOfInterval(current);
+        if ("h".equals(unit)) {
+            return DateUtil.offsetHour(dateBegin, -num);
+        } else {
+            throw new RuntimeException("symbol is not support");
+        }
+    }
 }

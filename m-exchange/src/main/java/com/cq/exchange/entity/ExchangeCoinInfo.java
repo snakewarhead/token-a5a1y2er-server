@@ -18,7 +18,10 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
     private BigDecimal qtyAvgOrderBookBid;
     private BigDecimal qtyAvgOrderBookAsk;
 
+    private BigDecimal priceAvgTrade;
     private BigDecimal qtyAvgTradeBuy;
     private BigDecimal qtyAvgTradeSell;
+    private BigDecimal qtyStdevTradeSell;
+    private BigDecimal qtyStdevTradeBuy;
 
 }
