@@ -43,12 +43,12 @@ public enum ExchangePeriodEnum {
         unit = symbol.substring(symbol.length() - 1);
     }
 
-    public Long getMillis() {
-        return millis;
+    public String getSymbol() {
+        return symbol;
     }
 
-    public String code() {
-        return symbol;
+    public Long getMillis() {
+        return millis;
     }
 
     public static ExchangePeriodEnum getEnum(String s) {

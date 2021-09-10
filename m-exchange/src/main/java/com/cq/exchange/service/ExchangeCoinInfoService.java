@@ -15,6 +15,10 @@ public class ExchangeCoinInfoService {
     private final ExchangeCoinInfoDAO exchangeCoinInfoDAO;
 
     public void save(ExchangeCoinInfo e) {
+        ExchangeCoinInfo old = exchangeCoinInfoDAO.findByExchangeIdAndTradeTypeAndSymbolAndPeriod(e.getExchangeId(), e.getTradeType(), e.getSymbol(), e.getPeriod());
+        if (old != null) {
+            e.setId(old.getId());
+        }
         exchangeCoinInfoDAO.save(e);
     }
 

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import util.MathUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -88,13 +89,13 @@ public class TradeVolumeTimeAnalyser implements Runnable {
                     }
 
                     if (t.getBuyerMaker()) {
-                        volumeCurr.setQtySellerTotall(MathUtil.add(volumeCurr.getQtySellerTotall(), t.getQuantity()));
+                        volumeCurr.setQtySellerTotall(MathUtil.add(volumeCurr.getQtySellerTotall(), BigDecimal.valueOf(t.getQuantity())));
                         // 根据历史trade获取 平滑平均交易量
                         // 小单: < 0.5stdev
                         // 中单：0.5stdev < q < 1.5stdev
                         // 大单：1.5stdev
                     } else {
-                        volumeCurr.setQtyBuyerTotal(MathUtil.add(volumeCurr.getQtyBuyerTotal(), t.getQuantity()));
+                        volumeCurr.setQtyBuyerTotal(MathUtil.add(volumeCurr.getQtyBuyerTotal(), BigDecimal.valueOf(t.getQuantity())));
                     }
 
                     volumeCurr = serviceContext.getExchangeTradeVolumeTimeService().save(volumeCurr);

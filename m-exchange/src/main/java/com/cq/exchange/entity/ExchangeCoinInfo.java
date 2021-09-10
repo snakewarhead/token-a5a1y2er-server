@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,8 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
 
     @Indexed
     private String period;
+
+    private Date time;
 
     private BigDecimal qtyAvgOrderBookBid;
     private BigDecimal qtyAvgOrderBookAsk;

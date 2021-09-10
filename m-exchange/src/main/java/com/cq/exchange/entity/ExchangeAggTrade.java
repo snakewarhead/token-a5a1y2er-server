@@ -1,15 +1,11 @@
 package com.cq.exchange.entity;
 
-import com.cq.core.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.math.BigDecimal;
-import java.util.Date;
 
 /**
  * Created by lin on 2020-12-05.
@@ -23,8 +19,8 @@ public class ExchangeAggTrade extends ExchangeEntity<ExchangeAggTrade> {
 
     private Long tradeId;
 
-    private BigDecimal price;
-    private BigDecimal quantity;
+    private double price;
+    private double quantity;
 
     @Indexed
     private Boolean buyerMaker;

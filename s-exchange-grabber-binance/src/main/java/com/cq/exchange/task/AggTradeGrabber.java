@@ -54,8 +54,8 @@ public class AggTradeGrabber implements Runnable {
         ee.setTradeId(e.aggregateTradeId);
         ee.setTime(e.timestamp);
 
-        ee.setPrice(e.price);
-        ee.setQuantity(e.quantity);
+        ee.setPrice(e.price.doubleValue());
+        ee.setQuantity(e.quantity.doubleValue());
         ee.setBuyerMaker(e.buyerMaker);
 
         return ee;

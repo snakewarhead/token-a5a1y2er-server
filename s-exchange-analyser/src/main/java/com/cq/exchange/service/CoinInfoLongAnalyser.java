@@ -1,14 +1,15 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.math.MathUtil;
 import com.cq.exchange.entity.ExchangeAggTrade;
+import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import java.util.Date;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +21,8 @@ public class CoinInfoLongAnalyser implements Runnable {
     private final ExchangeEnum exchangeEnum;
     private final ExchangeTradeType tradeType;
     private final String symbol;
+
+    private ExchangePeriodEnum periodEnum = ExchangePeriodEnum.h4;
 
     private final static int RECENT_SIZE_AGGTRADE = 100_000;
 
@@ -39,7 +42,17 @@ public class CoinInfoLongAnalyser implements Runnable {
             return;
         }
 
-        DescriptiveStatistics stat = new DescriptiveStatistics();
+        ExchangeCoinInfo info = new ExchangeCoinInfo();
+        info.setExchangeId(exchangeEnum.getCode());
+        info.setTradeType(tradeType.getCode());
+        info.setSymbol(symbol);
+        info.setPeriod(periodEnum.getSymbol());
 
+        trades.forEach(e -> {
+
+        });
+
+        info.setTime(new Date());
+        serviceContext.getExchangeCoinInfoService().save(info);
     }
 }

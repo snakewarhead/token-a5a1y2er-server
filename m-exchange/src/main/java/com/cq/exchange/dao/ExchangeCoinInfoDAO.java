@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeCoinInfoDAO extends MongoRepository<ExchangeCoinInfo, String> {
 
+    ExchangeCoinInfo findByExchangeIdAndTradeTypeAndSymbolAndPeriod(Integer exchangeId, Integer tradeType, String symbol,String period);
 }
