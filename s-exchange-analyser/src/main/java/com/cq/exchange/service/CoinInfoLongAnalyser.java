@@ -8,7 +8,9 @@ import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import util.MathUtil;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -48,9 +50,22 @@ public class CoinInfoLongAnalyser implements Runnable {
         info.setSymbol(symbol);
         info.setPeriod(periodEnum.getSymbol());
 
-        trades.forEach(e -> {
+        BigDecimal qtyMaxTradeBuy = BigDecimal.ZERO;
+        BigDecimal qtyMaxTradeSell = BigDecimal.ZERO;
 
-        });
+        BigDecimal priceAvgTrade = BigDecimal.ZERO;
+        BigDecimal qtyAvgTradeBuy = BigDecimal.ZERO;
+        BigDecimal qtyAvgTradeSell = BigDecimal.ZERO;
+        BigDecimal qtyStdevTradeSell = BigDecimal.ZERO;
+        BigDecimal qtyStdevTradeBuy = BigDecimal.ZERO;
+
+        for (ExchangeAggTrade e : trades) {
+            if (e.getBuyerMaker()) {
+                qtyMaxTradeBuy = MathUtil.max(qtyAvgTradeBuy, BigDecimal.valueOf(e.getQuantity()));
+            } else {
+                qtyMaxTradeSell = MathUtil.max(qtyAvgTradeSell, BigDecimal.valueOf(e.getQuantity()));
+            }
+        }
 
         info.setTime(new Date());
         serviceContext.getExchangeCoinInfoService().save(info);

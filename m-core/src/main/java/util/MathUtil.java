@@ -112,6 +112,14 @@ public class MathUtil {
         return result;
     }
 
+    public static BigDecimal min(BigDecimal one, BigDecimal two) {
+        return one.compareTo(two) < 0 ? one : two;
+    }
+
+    public static BigDecimal max(BigDecimal one, BigDecimal two) {
+        return one.compareTo(two) > 0 ? one : two;
+    }
+
 
     public static MathUtil of(BigDecimal val) {
         return new MathUtil(val);
