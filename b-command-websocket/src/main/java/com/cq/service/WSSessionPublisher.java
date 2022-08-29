@@ -2,6 +2,8 @@ package com.cq.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
+
+import com.cq.core.config.MqConfigCommand;
 import com.cq.exchange.entity.ExchangeOrderBook;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
@@ -11,6 +13,8 @@ import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import com.cq.vo.JSONResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -26,6 +30,8 @@ import java.util.Map;
 @Slf4j
 @Service
 public class WSSessionPublisher {
+
+    private final RabbitTemplate rabbitTemplate;
 
     private final ExchangeOrderBookService exchangeOrderBookService;
 
@@ -92,8 +98,37 @@ public class WSSessionPublisher {
                 map.remove(session.getId());
             }
 
+            rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchangeEnum.getCode(), actionType), paramMSG);
+
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+    @Scheduled(fixedDelay = 600000)
+    public void stale() {
+        for (ExchangeRunningParam p : mapSubscribed.keySet()) {
+            int countLive = 0;
+            Map<String, WebSocketSession> m = mapSubscribed.get(p);
+            if (CollUtil.isNotEmpty(m)) {
+                for (Iterator<Map.Entry<String, WebSocketSession>> it = m.entrySet().iterator(); it.hasNext();) {
+                    WebSocketSession s = it.next().getValue();
+                    if (!s.isOpen()) {
+                        it.remove();
+                        continue;
+                    }
+                    ++countLive;
+                }
+            }
+
+            if (countLive > 0) {
+                continue;
+            }
+
+            // unsubscribe
+            ExchangeRunningParamMSG paramMSG = new ExchangeRunningParamMSG(ExchangeRunningParamMSG.UNSUBSCRIBE, p);
+            ExchangeActionType actionType = ExchangeActionType.getEnum(p.getAction().getName());
+            rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchangeEnum.getCode(), actionType), paramMSG);
         }
     }
 
@@ -106,7 +141,7 @@ public class WSSessionPublisher {
 
             ExchangeOrderBook e = exchangeOrderBookService.find(p.getExchange(), p.getTradeType(), p.getAction().getSymbols().get(0));
             if (e == null) {
-//                log.warn("no data. need grab first. {}", p.toString());
+                // log.warn("no data. need grab first. {}", p.toString());
                 continue;
             }
             JSONResult<ExchangeOrderBook> res = JSONResult.success("", e);
@@ -119,7 +154,6 @@ public class WSSessionPublisher {
             for (Iterator<Map.Entry<String, WebSocketSession>> it = m.entrySet().iterator(); it.hasNext(); ) {
                 WebSocketSession s = it.next().getValue();
                 if (!s.isOpen()) {
-                    it.remove();
                     continue;
                 }
                 try {
@@ -131,4 +165,11 @@ public class WSSessionPublisher {
         }
     }
 
+    private String mapRoutingKey(int exchange, ExchangeActionType action) {
+        if (ExchangeEnum.BINANCE.is(exchange)) {
+            return action.isGrabber() ? MqConfigCommand.ROUTING_KEY_BINANCE_GRABBER : MqConfigCommand.ROUTING_KEY_ANALYSER;
+        }
+
+        throw new IllegalStateException("Unexpected value: " + exchange);
+    }
 }
