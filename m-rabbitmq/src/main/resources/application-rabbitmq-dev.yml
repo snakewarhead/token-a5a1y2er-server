@@ -2,8 +2,8 @@ spring:
   rabbitmq:
     host: 192.168.1.105
     port: 5672
-    username: guest
-    password: guest
+    username: test
+    password: Qwe456
     listener:
       simple:
         concurrency: 4
