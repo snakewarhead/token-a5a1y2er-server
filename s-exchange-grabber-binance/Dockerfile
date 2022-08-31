@@ -2,6 +2,8 @@ FROM openjdk:11
 
 VOLUME /logs
 
+#ADD target/lib
+
 ARG JAR_FILE
 ADD target/${JAR_FILE} /app.jar
 
