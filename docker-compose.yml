@@ -6,4 +6,3 @@ services:
     volumes:
       - ./logs:/logs
     mem_limit: 1g
-
