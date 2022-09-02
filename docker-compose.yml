@@ -1,7 +1,53 @@
-version: '2'
+version: '3.9'
 services:
+  sc-register:
+    image: token-a5a1y2er/sc-register:latest
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
+  sc-gateway:
+    image: token-a5a1y2er/sc-gateway:latest
+    depends_on:
+      sc-register:
+        condition: service_completed_successfully
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
   s-exchange-grabber-binance:
     image: token-a5a1y2er/s-exchange-grabber-binance:latest
+    depends_on:
+      - sc-gateway
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
+  s-exchange-analyser:
+    image: token-a5a1y2er/s-exchange-analyser:latest
+    depends_on:
+      - sc-gateway
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
+  b-command:
+    image: token-a5a1y2er/b-command:latest
+    depends_on:
+      - sc-gateway
+    restart: always
+    volumes:
+      - ./logs:/logs
+    mem_limit: 1g
+
+  b-command-websocket:
+    image: token-a5a1y2er/b-command-websocket:latest
+    depends_on:
+      - sc-gateway
     restart: always
     volumes:
       - ./logs:/logs
