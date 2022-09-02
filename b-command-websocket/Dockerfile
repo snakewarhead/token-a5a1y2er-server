@@ -1,6 +1,7 @@
 FROM openjdk:11
 
 VOLUME /logs
+EXPOSE 8001
 
 #ADD target/lib
 
