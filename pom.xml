@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.5.RELEASE</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
 
     <groupId>com.cq</groupId>
@@ -18,11 +20,11 @@
 
     <properties>
         <java.version>11</java.version>
-        <lombok.version>1.18.12</lombok.version>
+
         <spring-boot.version>2.2.5.RELEASE</spring-boot.version>
         <spring-cloud.version>Hoxton.SR3</spring-cloud.version>
-        <spring-cloud-netflix-eureka-client.version>2.2.0.RELEASE</spring-cloud-netflix-eureka-client.version>
-        <spring-cloud-starter-openfeign.version>2.2.2.RELEASE</spring-cloud-starter-openfeign.version>
+
+        <lombok.version>1.18.12</lombok.version>
         <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
         <hutool.version>5.1.4</hutool.version>
 
@@ -62,7 +64,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
-            <version>${spring-boot.version}</version>
         </dependency>
 
         <dependency>
@@ -81,6 +82,14 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
             <dependency>
                 <groupId>com.cq</groupId>
                 <artifactId>m-core</artifactId>
@@ -117,12 +126,6 @@
                 <version>1.0.0</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-                <version>${spring-cloud-netflix-eureka-client.version}</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
@@ -133,7 +136,7 @@
                     <groupId>com.spotify</groupId>
                     <artifactId>dockerfile-maven-plugin</artifactId>
                     <version>${dockerfile-maven-version}</version>
-                    <executions>
+                    <!-- <executions>
                         <execution>
                             <id>default</id>
                             <goals>
@@ -141,7 +144,7 @@
                                 <goal>push</goal>
                             </goals>
                         </execution>
-                    </executions>
+                    </executions> -->
                     <configuration>
                         <repository>token-a5a1y2er/${project.artifactId}</repository>
                         <tag>latest</tag>
