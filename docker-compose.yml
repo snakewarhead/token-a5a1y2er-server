@@ -11,7 +11,7 @@ services:
     image: token-a5a1y2er/sc-gateway:latest
     depends_on:
       sc-register:
-        condition: service_completed_successfully
+        condition: service_started
     restart: always
     volumes:
       - ./logs:/logs
