@@ -30,4 +30,4 @@ logging:
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:6543/eureka/
+      defaultZone: http://sc-register:6543/eureka/

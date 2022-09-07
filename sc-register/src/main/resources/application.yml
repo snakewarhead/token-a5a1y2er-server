@@ -7,7 +7,7 @@ logging:
   config: classpath:logback.xml
 eureka:
   instance:
-    hostname: localhost
+    hostname: sc-register
   client:
     register-with-eureka: false
     fetch-registry: false
