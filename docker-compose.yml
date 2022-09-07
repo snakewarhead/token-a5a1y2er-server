@@ -4,7 +4,7 @@ services:
     image: token-a5a1y2er/sc-register:latest
     restart: always
     ports:
-      - "6543": "6543"
+      - "6543:6543"
     volumes:
       - ./logs:/logs
     mem_limit: 1g
@@ -16,7 +16,7 @@ services:
         condition: service_started
     restart: always
     ports:
-      - "80": "80"
+      - "80:80"
     volumes:
       - ./logs:/logs
     mem_limit: 1g
