@@ -23,6 +23,8 @@ services:
 
   s-exchange-grabber-binance:
     image: token-a5a1y2er/s-exchange-grabber-binance:latest
+    profiles:
+      - backend
     depends_on:
       - sc-gateway
     restart: always
@@ -32,6 +34,8 @@ services:
 
   s-exchange-analyser:
     image: token-a5a1y2er/s-exchange-analyser:latest
+    profiles:
+      - backend
     depends_on:
       - sc-gateway
     restart: always
@@ -41,6 +45,8 @@ services:
 
   b-command:
     image: token-a5a1y2er/b-command:latest
+    profiles:
+      - frontend
     depends_on:
       - sc-gateway
     restart: always
@@ -50,6 +56,8 @@ services:
 
   b-command-websocket:
     image: token-a5a1y2er/b-command-websocket:latest
+    profiles:
+      - frontend
     depends_on:
       - sc-gateway
     restart: always
