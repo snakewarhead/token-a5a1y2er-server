@@ -15,5 +15,6 @@ public class ServiceContext {
     private final ExchangeAggTradeService exchangeAggTradeService;
     private final ExchangeOrderBookService exchangeOrderBookService;
     private final ExchangeTakerLongShortRatioService exchangeTakerLongShortRatioService;
+    private final ExchangeFutureFundingRateSerivce exchangeFutureFundingRateSerivce;
 
 }

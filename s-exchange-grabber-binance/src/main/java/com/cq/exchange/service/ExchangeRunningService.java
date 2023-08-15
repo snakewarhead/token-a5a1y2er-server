@@ -3,10 +3,8 @@ package com.cq.exchange.service;
 import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.enums.ExchangeActionType;
-import com.cq.exchange.task.AggTradeGrabber;
-import com.cq.exchange.task.ForceOrderGrabber;
-import com.cq.exchange.task.OrderBookGrabber;
-import com.cq.exchange.task.TakerLongShortRatioGrabber;
+import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.task.*;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,10 +57,17 @@ public class ExchangeRunningService {
         if (ExchangeActionType.TakerLongShortRatio.is(a.getName())) {
             a.getParams().forEach(ap -> {
                 a.getSymbols().forEach(s -> {
-                    Future f = threadPoolTaskScheduler.schedule(new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap), new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
+                   Future f = threadPoolTaskScheduler.schedule(new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap), new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
                     futures.add(f);
                 });
             });
+        }
+        if (ExchangeActionType.FundingRate.is(a.getName())) {
+            if (ExchangeTradeType.FUTURE_USDT.isNot(p.getTradeType())) {
+                throw new RuntimeException("Only suppot future usdt");
+            }
+            Future f = threadPoolTaskScheduler.schedule(new FundingRateGrabber(serviceContext, exchangeContext).init(), new CronTrigger(FundingRateGrabber.cron(a.getParams().get(0))));
+            futures.add(f);
         }
 
         if (!init) {
