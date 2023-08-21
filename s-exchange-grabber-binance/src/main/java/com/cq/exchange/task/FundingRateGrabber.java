@@ -35,10 +35,10 @@ public class FundingRateGrabber implements Runnable {
     @Override
     public void run() {
         try {
-            List<BinanceFuturesPremiumIndex> ls = binanceFuturesMarketDataServiceRaw.premiumIndexUSDTAllSymbols();
-            if (CollUtil.isEmpty(ls)) {
-                return;
-            }
+            //List<BinanceFuturesPremiumIndex> ls = binanceFuturesMarketDataServiceRaw.premiumIndexUSDTAllSymbols();
+            //if (CollUtil.isEmpty(ls)) {
+                //return;
+            //}
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
