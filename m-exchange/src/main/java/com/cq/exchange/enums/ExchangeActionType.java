@@ -34,7 +34,7 @@ public enum ExchangeActionType {
     }
 
     public boolean isGrabber() {
-        return code > 0 && code < TradeVolumeTime.code;
+        return code > 0 && code < CoinInfoShort.code;
     }
 
     public static ExchangeActionType getEnum(String n) {
