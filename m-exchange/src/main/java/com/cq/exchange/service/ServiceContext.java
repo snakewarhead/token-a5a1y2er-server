@@ -18,4 +18,5 @@ public class ServiceContext {
 
     private final ExchangeCoinInfoService exchangeCoinInfoService;
     private final ExchangeTradeVolumeTimeService exchangeTradeVolumeTimeService;
+    private final ExchangeFutureFundingRateSerivce exchangeFutureFundingRateSerivce;
 }
