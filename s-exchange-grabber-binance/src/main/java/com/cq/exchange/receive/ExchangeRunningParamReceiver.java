@@ -7,14 +7,17 @@ import com.cq.exchange.vo.ExchangeRunningParam;
 import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_BINANCE_GRABBER)
+@RabbitListener(
+    bindings = @QueueBinding(
+        value = @Queue(name = MqConfigCommand.QUEUE_NAME_BINANCE_GRABBER, durable = "false"),
+        exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME),
+        key = {MqConfigCommand.ROUTING_KEY_BINANCE_GRABBER}))
 public class ExchangeRunningParamReceiver {
 
     private final ExchangeRunningService exchangeRunningService;
