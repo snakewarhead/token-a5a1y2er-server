@@ -1,6 +1,7 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.util.StrUtil;
+import com.cq.exchange.vo.FundingRateCoinGlass;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.Headers;
@@ -52,7 +53,11 @@ public class FundingRateGrabber implements Runnable {
                     return;
                 }
 
-                log.info(resp.body().string());
+                FundingRateCoinGlass info = serviceContext.getJsonMapper().readValue(resp.body().string(), FundingRateCoinGlass.class);
+                if (info == null) {
+                    log.error("FundingRateCoinGlass parse error");
+                    return;
+                }
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
