@@ -2,4 +2,4 @@ spring:
   data:
     mongodb:
       auto-index-creation: false
-      uri: mongodb://192.168.1.105:27017/token
+      uri: mongodb://192.168.1.105:27017/quant-token
