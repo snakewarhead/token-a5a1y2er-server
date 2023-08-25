@@ -7,10 +7,18 @@ import java.util.Arrays;
  */
 public enum ExchangeEnum {
 
+    ALL(0),
     BINANCE(1),
-    OKEX(2),
+    OKX(2),
     HUOBI(3),
     GATEIO(4),
+    DYDX(5),
+    BYBIT(6),
+    BITGET(7),
+    COINEX(8),
+    BINGX(9),
+    BITMEX(10),
+    DERIBIT(11),
     ;
 
     private int code;

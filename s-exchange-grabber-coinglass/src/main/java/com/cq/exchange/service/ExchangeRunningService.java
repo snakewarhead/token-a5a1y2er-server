@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 public class ExchangeRunningService {
 
     private final ServiceContext serviceContext;
+    private final Config config;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
     private ConcurrentHashMap<ExchangeRunningParam, List<Future>> mapRunning = new ConcurrentHashMap<>();
@@ -51,6 +52,10 @@ public class ExchangeRunningService {
 
         List<Future> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
+        if (ExchangeActionType.FundingRate.is(a.getName())) {
+            Future f = threadPoolTaskScheduler.schedule(new FundingRateGrabber(serviceContext, config).init(), new CronTrigger(FundingRateGrabber.cron(a.getParams().get(0))));
+            futures.add(f);
+        }
 
         if (!init) {
             mapRunning.put(p, futures);

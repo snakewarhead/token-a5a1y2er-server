@@ -62,13 +62,6 @@ public class ExchangeRunningService {
                 });
             });
         }
-        if (ExchangeActionType.FundingRate.is(a.getName())) {
-            if (ExchangeTradeType.FUTURE_USDT.isNot(p.getTradeType())) {
-                throw new RuntimeException("Only suppot future usdt");
-            }
-            Future f = threadPoolTaskScheduler.schedule(new FundingRateGrabber(serviceContext, exchangeContext).init(), new CronTrigger(FundingRateGrabber.cron(a.getParams().get(0))));
-            futures.add(f);
-        }
 
         if (!init) {
             mapRunning.put(p, futures);

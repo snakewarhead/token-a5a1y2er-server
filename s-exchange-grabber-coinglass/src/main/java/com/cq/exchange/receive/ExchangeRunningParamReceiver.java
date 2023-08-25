@@ -1,20 +1,22 @@
 package com.cq.exchange.receive;
 
 import com.cq.core.config.MqConfigCommand;
-import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.service.ExchangeRunningService;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.annotation.*;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
-@RabbitListener(queues = MqConfigCommand.QUEUE_NAME_ANALYSER)
+@RabbitListener(
+    bindings = @QueueBinding(
+        value = @Queue(name = MqConfigCommand.QUEUE_NAME_COINGLASS_GRABBER, durable = "false"),
+        exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME),
+        key = {MqConfigCommand.ROUTING_KEY_COINGLASS_GRABBER}))
 public class ExchangeRunningParamReceiver {
 
     private final ExchangeRunningService exchangeRunningService;

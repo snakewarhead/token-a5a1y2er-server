@@ -3,6 +3,7 @@ package com.cq.exchange.enums;
 import java.util.Arrays;
 
 public enum ExchangeTradeType {
+    ALL(0),
     SPOT(1),
     FUTURE_USDT(2),
     FUTURE_COIN(3),

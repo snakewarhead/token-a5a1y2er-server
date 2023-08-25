@@ -2,5 +2,5 @@ spring:
   application:
     name: s-exchange-grabber-coinglass
   profiles:
-    include: exchange-dev, rabbitmq-dev
+    include: dev, exchange-dev, rabbitmq-dev
 
