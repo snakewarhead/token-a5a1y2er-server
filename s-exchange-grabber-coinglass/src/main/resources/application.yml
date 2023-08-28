@@ -2,5 +2,8 @@ spring:
   application:
     name: s-exchange-grabber-coinglass
   profiles:
-    include: dev, exchange-dev, rabbitmq-dev
-
+    include: exchange, dev
+coinglass:
+  url: https://open-api.coinglass.com/
+  api:
+    secret: 0fa0a6e0cac24eeaab1f712ac7c31df3

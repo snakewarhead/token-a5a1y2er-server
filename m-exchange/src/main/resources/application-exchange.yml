@@ -1,0 +1,8 @@
+spring:
+  jackson:
+    generator:
+      WRITE_BIGDECIMAL_AS_PLAIN: true
+    deserialization:
+      USE_BIG_DECIMAL_FOR_FLOATS: true
+  profiles:
+    include: core

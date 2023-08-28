@@ -4,4 +4,4 @@ spring:
   application:
     name: b-command-websocket
   profiles:
-    include: exchange-dev, rabbitmq-dev
+    include: exchange, exchange-dev, rabbitmq-dev
