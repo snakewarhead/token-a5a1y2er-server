@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      auto-index-creation: false
+      uri: mongodb://127.0.0.1:27017/quant-token

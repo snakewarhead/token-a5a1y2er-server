@@ -2,7 +2,7 @@ spring:
   application:
     name: s-exchange-grabber-coinglass
   profiles:
-    include: exchange, dev
+    include: exchange, local
 coinglass:
   url: https://open-api.coinglass.com/
   api:

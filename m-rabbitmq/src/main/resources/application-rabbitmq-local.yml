@@ -1,0 +1,13 @@
+spring:
+  rabbitmq:
+    host: 127.0.0.1
+    port: 15672
+    username: test
+    password: Qwe456
+    listener:
+      simple:
+        concurrency: 4
+        max-concurrency: 8
+        prefetch: 50
+    virtual-host: token
+    connection-timeout: 60000
