@@ -1,5 +1,6 @@
 package com.cq.exchange.vo.fundingrate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -17,8 +18,9 @@ public class UMarginListItem {
     @JsonProperty("exchangeName")
     private String exchangeName;
 
-	@JsonProperty("exchangeLogo")
-	private String exchangeLogo;
+    @JsonIgnore
+    @JsonProperty("exchangeLogo")
+    private String exchangeLogo;
 
     @JsonProperty("status")
     private int status;

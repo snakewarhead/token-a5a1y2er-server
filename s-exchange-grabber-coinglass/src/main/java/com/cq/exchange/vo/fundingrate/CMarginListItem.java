@@ -1,5 +1,6 @@
 package com.cq.exchange.vo.fundingrate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -20,8 +21,9 @@ public class CMarginListItem {
     @JsonProperty("predictedRate")
     private BigDecimal predictedRate;
 
-	@JsonProperty("exchangeLogo")
-	private String exchangeLogo;
+    @JsonIgnore
+    @JsonProperty("exchangeLogo")
+    private String exchangeLogo;
 
     @JsonProperty("status")
     private int status;

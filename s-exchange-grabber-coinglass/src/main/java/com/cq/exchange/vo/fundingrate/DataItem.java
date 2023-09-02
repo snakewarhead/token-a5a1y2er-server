@@ -1,5 +1,6 @@
 package com.cq.exchange.vo.fundingrate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -19,7 +20,8 @@ public class DataItem {
     @JsonProperty("cMarginList")
     private List<CMarginListItem> cMarginList;
 
-	@JsonProperty("symbolLogo")
+    @JsonIgnore
+    @JsonProperty("symbolLogo")
 	private String symbolLogo;
 
     @JsonProperty("status")
