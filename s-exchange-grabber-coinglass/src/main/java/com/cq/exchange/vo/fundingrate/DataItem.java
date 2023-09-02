@@ -21,7 +21,6 @@ public class DataItem {
     private List<CMarginListItem> cMarginList;
 
     @JsonIgnore
-    @JsonProperty("symbolLogo")
 	private String symbolLogo;
 
     @JsonProperty("status")

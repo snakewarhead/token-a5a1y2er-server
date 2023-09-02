@@ -22,7 +22,6 @@ public class CMarginListItem {
     private BigDecimal predictedRate;
 
     @JsonIgnore
-    @JsonProperty("exchangeLogo")
     private String exchangeLogo;
 
     @JsonProperty("status")

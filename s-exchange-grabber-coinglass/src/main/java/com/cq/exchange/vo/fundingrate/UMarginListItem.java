@@ -19,7 +19,6 @@ public class UMarginListItem {
     private String exchangeName;
 
     @JsonIgnore
-    @JsonProperty("exchangeLogo")
     private String exchangeLogo;
 
     @JsonProperty("status")
