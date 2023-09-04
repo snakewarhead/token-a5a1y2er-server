@@ -2,5 +2,5 @@ spring:
   application:
     name: s-exchange-analyser
   profiles:
-    include: exchange, exchange-dev, rabbitmq-dev
+    include: exchange, local
 

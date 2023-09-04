@@ -36,10 +36,9 @@ public class ExchangeInitial implements ApplicationRunner {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        if (p == null) {
-            throw new RuntimeException("must Set cmd line params");
+        if (p != null) {
+            exchangeRunningService.start(p, true);
         }
-        exchangeRunningService.start(p, true);
 
         ThreadUtil.waitForDie(Thread.currentThread());
     }
