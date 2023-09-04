@@ -23,9 +23,9 @@ public class ExchangeRunningParamTest {
     @Test
     public void testEquals() {
         ExchangeRunningParam a = new ExchangeRunningParam(1, 2);
-        a.setAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
+        a.putAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
         ExchangeRunningParam b = new ExchangeRunningParam(1, 2);
-        b.setAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
+        b.putAction(ExchangeActionType.ForceOrder, "BTCUSDT", "aaa");
 
         log.info("{}", a.equals(b));
         log.info("{} - {}", a.hashCode(), b.hashCode());
@@ -46,7 +46,7 @@ public class ExchangeRunningParamTest {
         msg.setSubscribe("subscribe");
 
         ExchangeRunningParam c = new ExchangeRunningParam(1, 2);
-        c.setAction(ExchangeActionType.TakerLongShortRatio, "BTCUSDT", "5m");
+        c.putAction(ExchangeActionType.TakerLongShortRatio, "BTCUSDT", "5m");
         List<String> ls = new ArrayList<>();
         ls.add("5m");
         ls.add("15m");

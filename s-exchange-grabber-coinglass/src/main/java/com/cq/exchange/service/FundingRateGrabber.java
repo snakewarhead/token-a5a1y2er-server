@@ -96,7 +96,7 @@ public class FundingRateGrabber implements Runnable {
                 sw.start("mq");
                 ExchangeRunningParamMSG msg = ExchangeRunningParamMSG.builder()
                     .subscribe(ExchangeRunningParamMSG.SUBSCRIBE)
-                    .param(new ExchangeRunningParam().setAction(ExchangeActionType.FundingRateRank, null, null))
+                    .param(new ExchangeRunningParam().putAction(ExchangeActionType.FundingRateRank))
                     .build();
                 rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, MqConfigCommand.ROUTING_KEY_ANALYSER, msg);
                 sw.stop();

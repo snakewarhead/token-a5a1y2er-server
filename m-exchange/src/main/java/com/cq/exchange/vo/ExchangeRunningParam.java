@@ -4,10 +4,8 @@ import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -35,13 +33,11 @@ public class ExchangeRunningParam implements Serializable {
         this.tradeType = tradeType;
     }
 
-    @JsonIgnore
-    public ExchangeRunningParam setAction(ExchangeActionType actionType) {
-        return setAction(actionType, null, null);
+    public ExchangeRunningParam putAction(ExchangeActionType actionType) {
+        return putAction(actionType, null, null);
     }
 
-    @JsonIgnore
-    public ExchangeRunningParam setAction(ExchangeActionType actionType, String symbol, String param) {
+    public ExchangeRunningParam putAction(ExchangeActionType actionType, String symbol, String param) {
         if (action != null) {
             throw new RuntimeException("action is running");
         }
@@ -74,10 +70,10 @@ public class ExchangeRunningParam implements Serializable {
     @Override
     public String toString() {
         return "ExchangeRunningParam{" +
-                "exchange=" + ExchangeEnum.getEnum(exchange).name() +
-                ", tradeType=" + ExchangeTradeType.getEnum(tradeType).name() +
-                ", action=" + action +
-                '}';
+            "exchange=" + ExchangeEnum.getEnum(exchange).name() +
+            ", tradeType=" + ExchangeTradeType.getEnum(tradeType).name() +
+            ", action=" + action +
+            '}';
     }
 
     public static ExchangeRunningParam parse(String m) throws JsonProcessingException {
@@ -106,10 +102,10 @@ public class ExchangeRunningParam implements Serializable {
         @Override
         public String toString() {
             return "Action{" +
-                    "name='" + name + '\'' +
-                    ", symbols=" + symbols +
-                    ", params=" + params +
-                    '}';
+                "name='" + name + '\'' +
+                ", symbols=" + symbols +
+                ", params=" + params +
+                '}';
         }
     }
 

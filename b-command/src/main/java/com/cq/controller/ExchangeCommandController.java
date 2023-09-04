@@ -37,7 +37,7 @@ public class ExchangeCommandController {
         }
 
         ExchangeRunningParam p = new ExchangeRunningParam(exchange, tradeType);
-        p.setAction(actionType, symbol, param);
+        p.putAction(actionType, symbol, param);
         ExchangeRunningParamMSG msg = new ExchangeRunningParamMSG(subscribe, p);
 
         rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, mapRoutingKey(exchange, actionType), msg);
