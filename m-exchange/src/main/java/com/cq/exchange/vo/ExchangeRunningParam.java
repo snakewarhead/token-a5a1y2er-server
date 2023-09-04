@@ -4,8 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Builder;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -33,6 +35,12 @@ public class ExchangeRunningParam implements Serializable {
         this.tradeType = tradeType;
     }
 
+    @JsonIgnore
+    public ExchangeRunningParam setAction(ExchangeActionType actionType) {
+        return setAction(actionType, null, null);
+    }
+
+    @JsonIgnore
     public ExchangeRunningParam setAction(ExchangeActionType actionType, String symbol, String param) {
         if (action != null) {
             throw new RuntimeException("action is running");
@@ -40,7 +48,9 @@ public class ExchangeRunningParam implements Serializable {
 
         action = new Action();
         action.setName(actionType.name());
-        action.setSymbols(Arrays.asList(symbol));
+        if (StrUtil.isNotEmpty(symbol)) {
+            action.setSymbols(Arrays.asList(symbol));
+        }
         if (StrUtil.isNotEmpty(param)) {
             action.setParams(Arrays.asList(param));
         }

@@ -7,6 +7,7 @@ import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.concurrent.Future;
 public class ExchangeRunningService {
 
     private final ServiceContext serviceContext;
+    private final RabbitTemplate rabbitTemplate;
     private final Config config;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
@@ -53,7 +55,7 @@ public class ExchangeRunningService {
         List<Future> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.FundingRate.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.schedule(new FundingRateGrabber(serviceContext, config).init(), new CronTrigger(FundingRateGrabber.cron(a.getParams().get(0))));
+            Future f = threadPoolTaskScheduler.schedule(new FundingRateGrabber(serviceContext, rabbitTemplate, config).init(), new CronTrigger(FundingRateGrabber.cron(a.getParams().get(0))));
             futures.add(f);
         }
 

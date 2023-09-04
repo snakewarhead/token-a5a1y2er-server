@@ -13,6 +13,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Created by lin on 2020-10-29.
  */
@@ -63,6 +65,10 @@ public class ExchangeFutureFundingRateSerivce {
         rr.setEstimatedRate(r.getEstimatedRate());
 
         exchangeFutureFundingRateDAO.save(rr);
+    }
+
+    public void saveAll(List<ExchangeFutureFundingRate> ls) {
+        exchangeFutureFundingRateDAO.saveAll(ls);
     }
 
 }

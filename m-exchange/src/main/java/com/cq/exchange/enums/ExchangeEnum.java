@@ -19,6 +19,8 @@ public enum ExchangeEnum {
     BINGX(9),
     BITMEX(10),
     DERIBIT(11),
+    BITFINEX(12),
+    KRAKEN(13),
     ;
 
     private int code;
@@ -48,7 +50,7 @@ public enum ExchangeEnum {
     }
 
     public static ExchangeEnum getEnum(String n) {
-        return Arrays.stream(ExchangeEnum.values()).filter(item -> item.name().equalsIgnoreCase(n)).findFirst().orElse(null);
+        return Arrays.stream(ExchangeEnum.values()).filter(item -> item.name().toLowerCase().contains(n.toLowerCase())).findFirst().orElse(null);
     }
 
     public static boolean contains(int c) {

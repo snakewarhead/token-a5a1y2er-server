@@ -15,6 +15,7 @@ public enum ExchangeActionType {
     CoinInfoLong(1 << 17),
     TradeVolumeTime(1 << 18),
     TradeVolumePrice(1 << 19),
+    FundingRateRank(1 << 20),
 
     // ------ 1 << 31
     All(0XFFFF_FFFF);
