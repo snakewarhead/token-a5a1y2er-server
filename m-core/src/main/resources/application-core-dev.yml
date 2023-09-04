@@ -1,4 +1,4 @@
 eureka:
   client:
     service-url:
-      defaultZone: http://sc-register:6543/eureka/
+      defaultZone: http://192.168.1.105:6543/eureka/
