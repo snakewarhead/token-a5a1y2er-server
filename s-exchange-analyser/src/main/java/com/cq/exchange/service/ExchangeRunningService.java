@@ -72,7 +72,8 @@ public class ExchangeRunningService {
             });
         }
         if (ExchangeActionType.FundingRateRank.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.submit(new FundingRateRankAnalyser(serviceContext).init());
+
+            Future f = threadPoolTaskScheduler.submit(new FundingRateRankAnalyser(serviceContext, Long.parseLong(a.getParams().get(0))).init());
             // TODO: need to remove it when task has ready finished
 //            futures.add(f);
         }

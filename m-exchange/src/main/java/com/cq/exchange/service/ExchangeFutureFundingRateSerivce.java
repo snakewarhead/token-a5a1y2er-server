@@ -47,6 +47,25 @@ public class ExchangeFutureFundingRateSerivce {
         return exchangeFutureFundingRateDAODynamic.findByQuery(new BasicQuery(queryBuilder.get().toString()), pageable);
     }
 
+    public List<ExchangeFutureFundingRate> findInRateRank(int[] idsExchange, int typeTrade, long time, int count, int directionRate) {
+        QueryBuilder b = new QueryBuilder();
+        b.and("time").is(time);
+        b.and("tradeType").is(typeTrade);
+        b.and("exchangeId").in(idsExchange);
+
+        if (directionRate > 0) {
+            b.and("lastFundingRate").lessThan(0);
+        }
+        if (directionRate < 0) {
+            b.and("lastFundingRate").greaterThan(0);
+        }
+
+        Pageable pageable = PageRequest.of(0, count, directionRate > 0 ? Sort.Direction.ASC : Sort.Direction.DESC, "lastFundingRate");
+
+        Page<ExchangeFutureFundingRate> ps = exchangeFutureFundingRateDAODynamic.findByQuery(new BasicQuery(b.get().toString()), pageable);
+        return ps.getContent();
+    }
+
     public void save(ExchangeFutureFundingRate r) {
         ExchangeFutureFundingRate rr = find(r.getExchangeId(), r.getTradeType(), r.getSymbol());
 

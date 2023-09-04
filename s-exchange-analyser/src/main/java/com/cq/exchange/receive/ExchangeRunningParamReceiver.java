@@ -23,15 +23,20 @@ public class ExchangeRunningParamReceiver {
 
     @RabbitHandler
     public void process(ExchangeRunningParamMSG msg) {
-        if (msg == null || msg.getParam() == null) {
-            return;
-        }
+        try {
+            if (msg == null || msg.getParam() == null) {
+                return;
+            }
 
-        ExchangeRunningParam p = msg.getParam();
-        if (msg.isSubscribe()) {
-            exchangeRunningService.start(p, false);
-        } else {
-            exchangeRunningService.stop(p);
+            ExchangeRunningParam p = msg.getParam();
+            if (msg.isSubscribe()) {
+                exchangeRunningService.start(p, false);
+            } else {
+                exchangeRunningService.stop(p);
+            }
+        } catch (Exception e) {
+            // XXX: consume msg
+            log.error(e.getMessage(), e);
         }
     }
 
