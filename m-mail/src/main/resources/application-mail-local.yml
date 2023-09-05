@@ -1,0 +1,14 @@
+spring:
+  mail:
+    host: smtp.126.com
+    username: adeamsleep@126.com
+    password: MGCNDZCAMKCKRSTZ
+    properties.mail.smtp.port: 994
+    properties.mail.smtp.starttls.enable: true
+    properties.mail.smtp.starttls.required: true
+    properties.mail.smtp.ssl.enable: true
+    default-encoding: utf-8
+
+mail:
+  custom:
+    from: adeamsleep@126.com

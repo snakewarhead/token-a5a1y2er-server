@@ -1,4 +1,4 @@
 spring:
   profiles:
-    include: core-local, mongodb-local
+    include: core-local, mongodb-local, mail-local
 
