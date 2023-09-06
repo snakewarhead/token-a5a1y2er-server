@@ -1,7 +1,7 @@
 spring:
   mail:
     host: smtp.126.com
-    username: adeamsleep@126.com
+    username: xxx@xxx.com
     password: MGCNDZCAMKCKRSTZ
     properties.mail.smtp.port: 994
     properties.mail.smtp.starttls.enable: true
@@ -10,5 +10,8 @@ spring:
     default-encoding: utf-8
 
 mail:
+  remote:
+    url: http://127.0.0.1:8080/
   custom:
-    from: adeamsleep@126.com
+    from: xxx@xxx.com
+    to: xxx@xxx.com
