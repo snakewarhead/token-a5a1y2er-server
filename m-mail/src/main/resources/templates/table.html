@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+
+<p th:text="${title}"></p>
+<table border="1">
+    <thead>
+    <tr>
+        <td>idx</td>
+        <td th:each="item:${headers}" th:text="${item}"></td>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="item:${contents}">
+        <td th:text="${itemStat.count}"></td>
+        <td th:each="jtem:${item}" th:text="${jtem}"></td>
+    </tr>
+    </tbody>
+</table>
