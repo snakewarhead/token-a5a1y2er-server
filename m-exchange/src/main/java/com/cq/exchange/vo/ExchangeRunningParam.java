@@ -59,7 +59,7 @@ public class ExchangeRunningParam implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExchangeRunningParam that = (ExchangeRunningParam) o;
-        return exchange == that.exchange && tradeType == that.tradeType && Objects.equals(action, that.action);
+        return exchange == that.exchange && tradeType == that.tradeType && (action!= null && that.action != null && Objects.equals(action, that.action));
     }
 
     @Override
