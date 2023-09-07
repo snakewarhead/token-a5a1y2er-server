@@ -1,6 +1,8 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
@@ -12,6 +14,7 @@ import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Future;
@@ -72,8 +75,13 @@ public class ExchangeRunningService {
             });
         }
         if (ExchangeActionType.FundingRateRank.is(a.getName())) {
-
-            Future f = threadPoolTaskScheduler.submit(new FundingRateRankAnalyser(serviceContext, Long.parseLong(a.getParams().get(0))).init());
+            long time = Long.parseLong(a.getParams().get(0));
+            long diff = DateUtil.between(new Date(time), new Date(), DateUnit.MINUTE);
+            if (diff > 5) {
+                // consume msg after 5m
+                return;
+            }
+            Future f = threadPoolTaskScheduler.submit(new FundingRateRankAnalyser(serviceContext, time).init());
             // TODO: need to remove it when task has ready finished
 //            futures.add(f);
         }
