@@ -44,6 +44,8 @@ public class FundingRateRankAnalyser implements Runnable {
 
     @Override
     public void run() {
+        cleanStale();
+
         List<ExchangeFutureFundingRate> lsNegative = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, 1);
         List<ExchangeFutureFundingRate> lsPositive = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, -1);
         if (!needNotify(lsNegative) && !needNotify(lsPositive)) {
@@ -89,6 +91,11 @@ public class FundingRateRankAnalyser implements Runnable {
         }
 
         return over && fresh;
+    }
+
+    private void cleanStale() {
+        Long timeCurr = DateUtil.current(false);
+        stales.values().removeIf(v -> v.compareTo(timeCurr) < 0);
     }
 
     private String hash(ExchangeFutureFundingRate r) {
