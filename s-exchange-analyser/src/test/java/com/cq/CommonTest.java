@@ -38,12 +38,30 @@ public class CommonTest {
                 put("ccc", 333L);
             }
         };
+
+        // ConcurrentModificationExceptions
 //        for (Map.Entry<String, Long> e : m.entrySet()) {
 //            if ("ccc".equals(e.getKey())) {
 //                m.remove(e.getKey());
 //            }
 //        }
-        m.values().removeIf(v -> v < 333L);
+
+//        for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); ) {
+//            String k = iterator.next();
+//            if ("ccc".equals(k)) {
+//                iterator.remove();
+//            }
+//        }
+
+        for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); ) {
+            String k = iterator.next();
+            if ("ccc".equals(k)) {
+                iterator.remove();
+            }
+        }
+
+        // jdk 8+
+//        m.values().removeIf(v -> v < 333L);
 
         log.info(m.toString());
     }

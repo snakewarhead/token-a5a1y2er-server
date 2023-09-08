@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.PingMessage;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,10 +63,12 @@ public class WSSessionManager {
 
     @Scheduled(fixedDelay = 1000 * 60 * 5)
     public void cleanStale() {
-        for (Map.Entry<String, WSSessionTTL> entry : pool.entrySet()) {
-            if (entry.getValue().isStale()) {
+        for (Iterator<String> itor = pool.keySet().iterator(); itor.hasNext(); ) {
+            String k = itor.next();
+            WSSessionTTL v = pool.get(k);
+            if (v.isStale()) {
                 try {
-                    removeAndClose(entry.getKey());
+                    removeAndClose(k);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
