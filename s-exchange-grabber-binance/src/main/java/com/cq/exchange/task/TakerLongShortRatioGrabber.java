@@ -11,7 +11,7 @@ import org.knowm.xchange.binance.BinanceFuturesExchange;
 import org.knowm.xchange.binance.dto.marketdata.BinanceTakerLongShortRatio;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
-import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.instrument.Instrument;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -75,14 +75,14 @@ public class TakerLongShortRatioGrabber implements Runnable {
     }
 
     public ExchangeTakerLongShortRatio adapt(String symbol, BinanceTakerLongShortRatio r) {
-        CurrencyPair pair = BinanceAdapters.adaptSymbol(symbol);
+        Instrument pair = BinanceAdapters.adaptSymbol(symbol, true);
         ExchangeTakerLongShortRatio rr = new ExchangeTakerLongShortRatio();
         rr.setExchangeId(ExchangeEnum.BINANCE.getCode());
         rr.setTradeType(exchangeContext.getTradeType().getCode());
         rr.setSymbol(symbol);
         rr.setPeriod(period);
         rr.setPair(pair.toString());
-        rr.setBaseSymbol(pair.base.getCurrencyCode());
+        rr.setBaseSymbol(pair.getBase().getCurrencyCode());
         rr.setBuyVol(r.getBuyVol());
         rr.setSellVol(r.getSellVol());
         rr.setBuySellRatio(r.getBuySellRatio());

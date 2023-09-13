@@ -55,7 +55,7 @@
 
         <dependency>
             <groupId>org.knowm.xchange</groupId>
-            <artifactId>xchange-stream-binance</artifactId>
+            <artifactId>xchange-stream-binance-old</artifactId>
             <version>100.0.0-SNAPSHOT</version>
         </dependency>
 

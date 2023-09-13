@@ -27,7 +27,7 @@ public class AggTradeGrabber implements Runnable {
     public Runnable init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
-        symbols.forEach(s -> builder.addAggTrades(BinanceAdapters.adaptSymbol(s)));
+        symbols.forEach(s -> builder.addAggTrades(BinanceAdapters.adaptSymbol(s, true)));
         ProductSubscription subscription = builder.build();
 
         exchangeContext.getExchangeCurrentStream().connect(subscription).blockingAwait();
@@ -38,7 +38,7 @@ public class AggTradeGrabber implements Runnable {
     public void run() {
         symbols.forEach(s -> {
             BinanceFutureStreamingMarketDataService service = (BinanceFutureStreamingMarketDataService) exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService();
-            service.getAggTrade(BinanceAdapters.adaptSymbol(s)).subscribe(
+            service.getAggTrade(BinanceAdapters.adaptSymbol(s, true)).subscribe(
                     e -> serviceContext.getExchangeAggTradeService().save(adapt(s, e)),
                     throwable -> log.error("ERROR in getting agg trades: ", throwable)
             );

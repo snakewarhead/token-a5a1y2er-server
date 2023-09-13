@@ -27,7 +27,7 @@ public class OrderBookGrabber implements Runnable {
     public Runnable init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
-        symbols.forEach(s -> builder.addOrderbook(BinanceAdapters.adaptSymbol(s)));
+        symbols.forEach(s -> builder.addOrderbook(BinanceAdapters.adaptSymbol(s, true)));
         ProductSubscription subscription = builder.build();
 
         exchangeContext.getExchangeCurrentStream().connect(subscription).blockingAwait();
@@ -37,7 +37,7 @@ public class OrderBookGrabber implements Runnable {
     @Override
     public void run() {
         symbols.forEach(s -> {
-            exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService().getOrderBook(BinanceAdapters.adaptSymbol(s)).subscribe(
+            exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService().getOrderBook(BinanceAdapters.adaptSymbol(s, true)).subscribe(
                     orderBook -> {
                         DiffOrderBook diffOrderBook = (DiffOrderBook) orderBook;
 
