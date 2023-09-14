@@ -1,7 +1,6 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import com.cq.core.config.MqConfigCommand;
 import com.cq.exchange.entity.ExchangeFutureFundingRate;
@@ -45,9 +44,9 @@ public class FundingRateGrabber implements Runnable {
         url = config.getUrl() + path;
 
         headers = new Headers.Builder()
-            .add("accept", "application/json")
-            .add("coinglassSecret", config.getApiSecret())
-            .build();
+                .add("accept", "application/json")
+                .add("coinglassSecret", config.getApiSecret())
+                .build();
 
         return this;
     }
@@ -56,25 +55,20 @@ public class FundingRateGrabber implements Runnable {
     public void run() {
         try {
             long timeCurrent = DateUtil.current(false);
-            StopWatch sw = new StopWatch("funding rate");
 
             Request req = new Request.Builder()
-                .url(url)
-                .get()
-                .headers(headers)
-                .build();
+                    .url(url)
+                    .get()
+                    .headers(headers)
+                    .build();
 
-            sw.start("request");
             try (Response resp = httpClient.newCall(req).execute()) {
-                sw.stop();
                 if (!resp.isSuccessful()) {
                     log.error(resp.toString());
                     return;
                 }
 
-                sw.start("parse");
                 FundingRateCoinGlass info = serviceContext.getJsonMapper().readValue(resp.body().string(), FundingRateCoinGlass.class);
-                sw.stop();
                 if (info == null) {
                     log.error("FundingRateCoinGlass parse error");
                     return;
@@ -83,25 +77,17 @@ public class FundingRateGrabber implements Runnable {
                     log.error("FundingRateCoinGlass get failed");
                     return;
                 }
-                sw.start("adapt");
                 List<ExchangeFutureFundingRate> ls = adapt(info, timeCurrent);
-                sw.stop();
 
                 // store in db
-                sw.start("store");
                 serviceContext.getExchangeFutureFundingRateSerivce().saveAll(ls);
-                sw.stop();
 
                 // send to analyze
-                sw.start("mq");
                 ExchangeRunningParamMSG msg = ExchangeRunningParamMSG.builder()
-                    .subscribe(ExchangeRunningParamMSG.SUBSCRIBE)
-                    .param(new ExchangeRunningParam().putAction(ExchangeActionType.FundingRateRank, null, timeCurrent + ""))
-                    .build();
+                        .subscribe(ExchangeRunningParamMSG.SUBSCRIBE)
+                        .param(new ExchangeRunningParam().putAction(ExchangeActionType.FundingRateRank, null, timeCurrent + ""))
+                        .build();
                 rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, MqConfigCommand.ROUTING_KEY_ANALYSER, msg);
-                sw.stop();
-
-                log.info(sw.prettyPrint());
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
