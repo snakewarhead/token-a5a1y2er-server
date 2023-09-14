@@ -9,6 +9,8 @@ public enum ExchangeActionType {
     ForceOrder(1 << 2),
     TakerLongShortRatio(1 << 3),
     FundingRate(1 << 4),
+    AllTicker(1 << 5),
+    KLine(1 << 6),
 
     // analyser
     CoinInfoShort(1 << 16),

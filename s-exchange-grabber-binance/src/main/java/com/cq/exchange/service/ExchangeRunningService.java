@@ -62,6 +62,10 @@ public class ExchangeRunningService {
                 });
             });
         }
+        if (ExchangeActionType.AllTicker.is(a.getName())) {
+            Future f = threadPoolTaskScheduler.submit(new AllTickerGrabber(serviceContext, exchangeContext).init());
+            futures.add(f);
+        }
 
         if (!init) {
             mapRunning.put(p, futures);

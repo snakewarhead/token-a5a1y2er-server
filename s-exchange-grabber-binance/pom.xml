@@ -36,6 +36,12 @@
             <artifactId>m-exchange</artifactId>
         </dependency>
 
+        <!-- <version.github.mmazi>3.0</version.github.mmazi> -->
+        <dependency>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>
         <dependency>
             <groupId>org.knowm.xchange</groupId>
             <artifactId>xchange-core</artifactId>
