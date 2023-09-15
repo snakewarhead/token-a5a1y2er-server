@@ -40,7 +40,7 @@ public class ExchangeRunningService {
         }
 
         List<Future> futures = new ArrayList<>();
-        ExchangeContext exchangeContext = new ExchangeContext(p.getTradeType());
+        ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.OrderBook.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());

@@ -3,3 +3,12 @@ spring:
     mongodb:
       auto-index-creation: false
       uri: mongodb://192.168.1.105:27017/quant-token
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG

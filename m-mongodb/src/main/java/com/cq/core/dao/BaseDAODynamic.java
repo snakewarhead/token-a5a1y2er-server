@@ -11,16 +11,19 @@ import org.springframework.data.mongodb.core.BulkOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.util.Pair;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by lin on 2020-09-24.
  */
 @Slf4j
-public class BaseDAODynamic<T> {
+public class BaseDAODynamic<T extends BaseEntity> {
 
     protected final Class<T> clazz;
 
@@ -47,6 +50,27 @@ public class BaseDAODynamic<T> {
             return 0;
         }
         return res.getInsertedCount();
+    }
+
+    public int bulkUpsert(boolean isOrdered, List<Pair<Query, Update>> updates) {
+        BulkOperations.BulkMode m = isOrdered ? BulkOperations.BulkMode.ORDERED : BulkOperations.BulkMode.UNORDERED;
+        BulkWriteResult res = mongoTemplate.bulkOps(m, clazz).upsert(updates).execute();
+
+        if (!res.wasAcknowledged()) {
+            return 0;
+        }
+        return res.getInsertedCount() + res.getModifiedCount();
+    }
+
+    public int bulkUpsertWrap(boolean isOrdered, List<Pair<Query, T>> updates) {
+        List<Pair<Query, Update>> uw = updates.stream().map(i -> {
+            org.bson.Document d = (org.bson.Document) mongoTemplate.getConverter().convertToMongoType(i.getSecond());
+            org.bson.Document du = new org.bson.Document();
+            du.append("$set", d);
+            Update u = Update.fromDocument(d, "_id");
+            return Pair.of(i.getFirst(), u);
+        }).collect(Collectors.toList());
+        return bulkUpsert(isOrdered, uw);
     }
 
     public void createView(Class<? extends BaseEntity<?>> viewIn, Class<? extends BaseEntity<?>> viewOn, String pipeline) {
