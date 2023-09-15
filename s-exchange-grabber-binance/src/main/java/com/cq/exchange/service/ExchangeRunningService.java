@@ -3,7 +3,6 @@ package com.cq.exchange.service;
 import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.enums.ExchangeActionType;
-import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.task.*;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +63,11 @@ public class ExchangeRunningService {
         }
         if (ExchangeActionType.AllTicker.is(a.getName())) {
             Future f = threadPoolTaskScheduler.submit(new AllTickerGrabber(serviceContext, exchangeContext).init());
+            futures.add(f);
+        }
+        if (ExchangeActionType.KLine.is(a.getName())) {
+            KLineGrabber g = new KLineGrabber(serviceContext, exchangeContext, a.getParams().get(0));
+            Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
             futures.add(f);
         }
 

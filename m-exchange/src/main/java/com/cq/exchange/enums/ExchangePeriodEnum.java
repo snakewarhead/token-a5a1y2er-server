@@ -51,6 +51,14 @@ public enum ExchangePeriodEnum {
         return millis;
     }
 
+    public int getNum() {
+        return num;
+    }
+
+    public String getUnit() {
+        return unit;
+    }
+
     public static ExchangePeriodEnum getEnum(String s) {
         return Arrays.stream(ExchangePeriodEnum.values()).filter(i -> i.symbol.equals(s)).findFirst().orElse(null);
     }
