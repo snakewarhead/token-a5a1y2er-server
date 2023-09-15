@@ -27,7 +27,7 @@ public class ExchangeTickerService {
             qb.and("exchangeId").is(i.getExchangeId());
             qb.and("tradeType").is(i.getTradeType());
             qb.and("symbol").is(i.getSymbol());
-            Query q = new BasicQuery(qb.toString());
+            Query q = new BasicQuery(qb.get().toString());
             return Pair.of(q, i);
         }).collect(Collectors.toList());
         exchangeTickerDAODynamic.bulkUpsertWrap(false, updates);

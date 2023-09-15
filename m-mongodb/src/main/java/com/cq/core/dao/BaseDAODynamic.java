@@ -59,7 +59,7 @@ public class BaseDAODynamic<T extends BaseEntity> {
         if (!res.wasAcknowledged()) {
             return 0;
         }
-        return res.getInsertedCount() + res.getModifiedCount();
+        return res.getUpserts().size() + res.getModifiedCount();
     }
 
     public int bulkUpsertWrap(boolean isOrdered, List<Pair<Query, T>> updates) {
@@ -67,7 +67,7 @@ public class BaseDAODynamic<T extends BaseEntity> {
             org.bson.Document d = (org.bson.Document) mongoTemplate.getConverter().convertToMongoType(i.getSecond());
             org.bson.Document du = new org.bson.Document();
             du.append("$set", d);
-            Update u = Update.fromDocument(d, "_id");
+            Update u = Update.fromDocument(du);
             return Pair.of(i.getFirst(), u);
         }).collect(Collectors.toList());
         return bulkUpsert(isOrdered, uw);

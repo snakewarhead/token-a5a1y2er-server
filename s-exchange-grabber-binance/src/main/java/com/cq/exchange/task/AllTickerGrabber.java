@@ -57,6 +57,7 @@ public class AllTickerGrabber implements Runnable {
         et.setExchangeId(exchangeContext.getExchangeEnum().getCode());
         et.setTradeType(exchangeContext.getTradeType().getCode());
         et.setSymbol(t.getInstrument().toString());
+        et.setPair(t.getInstrument().toString());
         return et;
     }
 }
