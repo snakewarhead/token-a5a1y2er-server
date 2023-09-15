@@ -11,6 +11,7 @@ public enum ExchangeActionType {
     FundingRate(1 << 4),
     AllTicker(1 << 5),
     KLine(1 << 6),
+    CoinInfoRaw(1 << 7),
 
     // analyser
     CoinInfoShort(1 << 16),
