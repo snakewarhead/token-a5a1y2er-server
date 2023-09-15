@@ -4,7 +4,6 @@ import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.service.ServiceContext;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceFuturesExchange;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
@@ -13,7 +12,6 @@ import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
  * Created by lin on 2020-11-06.
  */
 @Slf4j
-@RequiredArgsConstructor
 public class KLineGrabber implements Runnable {
 
     private final ServiceContext serviceContext;
