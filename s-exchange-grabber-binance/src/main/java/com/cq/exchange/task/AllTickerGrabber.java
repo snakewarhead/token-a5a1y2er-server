@@ -6,6 +6,7 @@ import com.cq.exchange.service.ServiceContext;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.dto.marketdata.Ticker;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class AllTickerGrabber implements Runnable {
                 .build();
         et.setExchangeId(exchangeContext.getExchangeEnum().getCode());
         et.setTradeType(exchangeContext.getTradeType().getCode());
-        et.setSymbol(t.getInstrument().toString());
+        et.setSymbol(BinanceAdapters.toSymbol(t.getInstrument()));
         et.setPair(t.getInstrument().toString());
         return et;
     }
