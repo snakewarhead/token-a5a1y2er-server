@@ -16,6 +16,7 @@ public class ServiceContext {
 
     private final ExchangeCoinInfoRawService exchangeCoinInfoRawService;
     private final ExchangeTickerService exchangeTickerService;
+    private final ExchangeKlineService exchangeKlineService;
 
     private final ExchangeForceOrderService exchangeForceOrderService;
     private final ExchangeAggTradeService exchangeAggTradeService;
