@@ -3,7 +3,7 @@
 ## install
 
 ```cmd
-docker run -d --hostname rabbit-xx --name rabbit-xx -e RABBITMQ_DEFAULT_USER=user -e RABBITMQ_DEFAULT_PASS=password -p 5672:5672 -p 15672:15672 rabbitmq:3-management
+docker run -d --hostname test0 --name rabbitmq -p 15672:15672 -p 5672:5672 -e RABBITMQ_DEFAULT_USER=test -e RABBITMQ_DEFAULT_PASS=Qwe456 -e RABBITMQ_DEFAULT_VHOST=token rabbitmq:3-management
 ```
 
 ## management

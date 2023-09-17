@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
  * Created by lin on 2020-09-24.
  */
 @Slf4j
-public class BaseDAODynamic<T extends BaseEntity> {
+public class BaseDAODynamic<T> {
 
     protected final Class<T> clazz;
 
