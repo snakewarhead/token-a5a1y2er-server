@@ -1,6 +1,7 @@
 package com.cq.exchange.task;
 
 import com.cq.exchange.ExchangeContext;
+import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.service.ServiceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -10,12 +11,11 @@ import org.knowm.xchange.binance.dto.meta.exchangeinfo.BinanceExchangeInfo;
 import org.knowm.xchange.binance.dto.meta.exchangeinfo.Filter;
 import org.knowm.xchange.binance.dto.meta.exchangeinfo.Symbol;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataService;
-import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
 import org.knowm.xchange.currency.CurrencyPair;
-import org.knowm.xchange.dto.meta.InstrumentMetaData;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lin on 2020-11-06.
@@ -36,59 +36,63 @@ public class CoinInfoRawGrabber implements Runnable {
     public CoinInfoRawGrabber init() {
         BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getExchangeCurrent();
         marketDataService = (BinanceFuturesMarketDataService) exchange.getMarketDataService();
+        return this;
     }
 
     @Override
     public void run() {
         try {
+            List<ExchangeCoinInfoRaw> ls = new ArrayList<>();
             BinanceExchangeInfo exchangeInfo = marketDataService.getExchangeInfo();
             for (Symbol s : exchangeInfo.getSymbols()) {
-                int pairPrecision = 8;
-                int amountPrecision = 8;
+                String symbol = s.getSymbol();
+                String pair = new CurrencyPair(s.getBaseAsset(), s.getQuoteAsset()).toString();
 
-                BigDecimal minQty = null;
-                BigDecimal maxQty = null;
-                BigDecimal stepSize = null;
+                int status = s.getStatus().equals("TRADING") ? 1 : 0;
 
-                BigDecimal counterMinQty = null;
-                BigDecimal counterMaxQty = null;
+                int pricePrecision = 8;
+                BigDecimal priceMax = null;
 
-                Filter[] filters = s.getFilters();
+                int quantityPrecision = 8;
+                BigDecimal quantityMin = null;
+                BigDecimal quantityMax = null;
+                BigDecimal quantityStep = null;
 
-                CurrencyPair currentCurrencyPair = new CurrencyPair(s.getBaseAsset(),
-                        s.getQuoteAsset());
+                BigDecimal amountMin = null;
 
-                for (Filter filter : filters) {
+                for (Filter filter : s.getFilters()) {
                     if (filter.getFilterType().equals("PRICE_FILTER")) {
-                        pairPrecision = Math.min(pairPrecision, BinanceAdapters.numberOfDecimals(filter.getTickSize()));
-                        counterMaxQty = new BigDecimal(filter.getMaxPrice()).stripTrailingZeros();
+                        pricePrecision = Math.min(pricePrecision, BinanceAdapters.numberOfDecimals(filter.getTickSize()));
+                        priceMax = new BigDecimal(filter.getMaxPrice()).stripTrailingZeros();
                     } else if (filter.getFilterType().equals("LOT_SIZE")) {
-                        amountPrecision = Math.min(amountPrecision, BinanceAdapters.numberOfDecimals(filter.getStepSize()));
-                        minQty = new BigDecimal(filter.getMinQty()).stripTrailingZeros();
-                        maxQty = new BigDecimal(filter.getMaxQty()).stripTrailingZeros();
-                        stepSize = new BigDecimal(filter.getStepSize()).stripTrailingZeros();
+                        quantityPrecision = Math.min(quantityPrecision, BinanceAdapters.numberOfDecimals(filter.getStepSize()));
+                        quantityMin = new BigDecimal(filter.getMinQty()).stripTrailingZeros();
+                        quantityMax = new BigDecimal(filter.getMaxQty()).stripTrailingZeros();
+                        quantityStep = new BigDecimal(filter.getStepSize()).stripTrailingZeros();
                     } else if (filter.getFilterType().equals("MIN_NOTIONAL")) {
-                        counterMinQty = new BigDecimal(filter.getNotional()).stripTrailingZeros();
+                        amountMin = new BigDecimal(filter.getNotional()).stripTrailingZeros();
                     }
                 }
 
-                instruments.put(
-                        currentCurrencyPair,
-                        new InstrumentMetaData.Builder()
-                                .tradingFee(BigDecimal.valueOf(0.1))
-                                .minimumAmount(minQty)
-                                .maximumAmount(maxQty)
-                                .counterMinimumAmount(counterMinQty)
-                                .counterMaximumAmount(counterMaxQty)
-                                .volumeScale(amountPrecision)
-                                .priceScale(pairPrecision)
-                                .amountStepSize(stepSize)
-                                .marketOrderEnabled(Arrays.asList(s.getOrderTypes()).contains("MARKET"))
-                                .build());
+                ExchangeCoinInfoRaw info = ExchangeCoinInfoRaw.builder()
+                        .status(status)
+                        .tradingFee(BigDecimal.valueOf(0.0002))
+                        .pricePrecision(pricePrecision)
+                        .priceMax(priceMax)
+                        .quantityPrecision(quantityPrecision)
+                        .quantityMin(quantityMin)
+                        .quantityMax(quantityMax)
+                        .quantityStep(quantityStep)
+                        .amountMin(amountMin)
+                        .build();
+                info.setExchangeId(exchangeContext.getExchangeEnum().getCode());
+                info.setTradeType(exchangeContext.getTradeType().getCode());
+                info.setSymbol(symbol);
+                info.setPair(pair);
 
+                ls.add(info);
             }
-
-
+            serviceContext.getExchangeCoinInfoRawService().saveAll(ls);
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }

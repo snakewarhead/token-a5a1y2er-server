@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceContext {
 
+    private final ExchangeCoinInfoRawService exchangeCoinInfoRawService;
     private final ExchangeTickerService exchangeTickerService;
 
     private final ExchangeForceOrderService exchangeForceOrderService;
