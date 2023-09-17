@@ -2,4 +2,12 @@ spring:
   data:
     mongodb:
       auto-index-creation: false
-      uri: mongodb://test:Qwe456@192.168.0.200:27017/quant-token
+      uri: mongodb://test:Qwe456@192.168.0.200:27017/quant-token?authSource=admin
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
