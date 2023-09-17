@@ -4,6 +4,8 @@ import com.cq.core.entity.BaseEntity;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.util.Date;
+
 @Data
 public class ExchangeEntity<T> extends BaseEntity<T> {
 
@@ -18,5 +20,7 @@ public class ExchangeEntity<T> extends BaseEntity<T> {
 
     @Indexed
     protected String pair;
+
+    protected Date dateUpdate = new Date();
 
 }
