@@ -14,7 +14,11 @@ import java.math.BigDecimal;
 @Builder
 @Document(collection = "exchange_coin_info_raw")
 public class ExchangeCoinInfoRaw extends ExchangeEntity<ExchangeCoinInfoRaw> {
+    /**
+     * 0 - disable, 1 - trading
+     */
     private int status;
+
     private BigDecimal tradingFee;
     private Integer pricePrecision;
     private BigDecimal priceMax;

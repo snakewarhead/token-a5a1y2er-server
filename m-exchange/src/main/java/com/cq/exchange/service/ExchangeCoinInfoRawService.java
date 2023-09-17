@@ -32,4 +32,8 @@ public class ExchangeCoinInfoRawService {
         }).collect(Collectors.toList());
         exchangeCoinInfoRawDAODynamic.bulkUpsertWrap(false, updates);
     }
+
+    public List<ExchangeCoinInfoRaw> find(Integer exchangeId, Integer tradeType, Integer status) {
+        return exchangeCoinInfoRawDAO.findByExchangeIdAndTradeTypeAndStatus(exchangeId, tradeType, status);
+    }
 }
