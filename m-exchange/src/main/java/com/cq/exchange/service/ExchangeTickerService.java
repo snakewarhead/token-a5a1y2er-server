@@ -16,20 +16,12 @@ import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
-public class ExchangeTickerService {
+public class ExchangeTickerService extends ExchangeBaseService<ExchangeTicker> {
 
     private final ExchangeTickerDAO exchangeTickerDAO;
     private final ExchangeTickerDAODynamic exchangeTickerDAODynamic;
 
     public void saveAll(List<ExchangeTicker> ls) {
-        List<Pair<Query, ExchangeTicker>> updates = ls.stream().map(i -> {
-            QueryBuilder qb = new QueryBuilder();
-            qb.and("exchangeId").is(i.getExchangeId());
-            qb.and("tradeType").is(i.getTradeType());
-            qb.and("symbol").is(i.getSymbol());
-            Query q = new BasicQuery(qb.get().toString());
-            return Pair.of(q, i);
-        }).collect(Collectors.toList());
-        exchangeTickerDAODynamic.bulkUpsertWrap(false, updates);
+        saveAll(exchangeTickerDAODynamic, ls);
     }
 }
