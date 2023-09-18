@@ -32,13 +32,22 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
     @Override
     public void run() {
-        // all symbol trading
-        List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
+        try {
+            // all symbol trading
+            List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
+            for (ExchangeCoinInfoRaw i : ls) {
+                try {
+                    // average volume of klines which will been trimed with 2X variance
 
-        // average volume of klines which will been trimed with 2X variance
+                    // volume of ticker is over
 
-        // volume of ticker is over
-
-        // notify
+                    // notify
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
     }
 }
