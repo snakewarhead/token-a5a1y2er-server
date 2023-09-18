@@ -59,6 +59,10 @@ public enum ExchangePeriodEnum {
         return unit;
     }
 
+    public boolean is(ExchangePeriodEnum e) {
+        return this.symbol.equals(e.symbol);
+    }
+
     public static ExchangePeriodEnum getEnum(String s) {
         return Arrays.stream(ExchangePeriodEnum.values()).filter(i -> i.symbol.equals(s)).findFirst().orElse(null);
     }

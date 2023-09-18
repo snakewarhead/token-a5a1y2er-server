@@ -85,6 +85,11 @@ public class ExchangeRunningService {
             // TODO: need to remove it when task has ready finished
 //            futures.add(f);
         }
+        if (ExchangeActionType.VolumeChangeQuick.is(a.getName())) {
+            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType).init(a.getParams().get(0));
+            Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
+            futures.add(f);
+        }
 
         if (!init) {
             mapRunning.put(p, futures);
