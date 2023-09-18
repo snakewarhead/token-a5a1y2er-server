@@ -6,6 +6,10 @@ import com.cq.exchange.dao.ExchangeKlineDAODynamic;
 import com.cq.exchange.entity.ExchangeKline;
 import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.util.Pair;
@@ -45,4 +49,8 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         exchangeKlineDAODynamic.bulkUpsertWrap(false, updates);
     }
 
+    public Page<ExchangeKline> findLast(Integer exchangeId, Integer tradeType, String symbol, String period, Integer num) {
+        Pageable pageable = PageRequest.of(0, num, Sort.Direction.DESC, "openTime");
+        return exchangeKlineDAO.findByExchangeIdAndTradeTypeAndSymbolAndPeriodOrder(exchangeId, tradeType, symbol, period, pageable);
+    }
 }

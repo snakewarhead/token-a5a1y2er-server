@@ -27,6 +27,7 @@
         <lombok.version>1.18.12</lombok.version>
         <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
         <hutool.version>5.1.4</hutool.version>
+        <math.version>3.6.1</math.version>
 
         <skipTests>true</skipTests>
     </properties>
@@ -127,6 +128,11 @@
                 <version>1.0.0</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-math3</artifactId>
+                <version>${math.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
