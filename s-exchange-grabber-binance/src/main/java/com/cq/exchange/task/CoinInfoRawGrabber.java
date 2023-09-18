@@ -29,7 +29,7 @@ public class CoinInfoRawGrabber implements Runnable {
 
     private BinanceFuturesMarketDataService marketDataService;
 
-    public static String cron() {
+    public String cron() {
         return "10 1 0 * * ?";
     }
 

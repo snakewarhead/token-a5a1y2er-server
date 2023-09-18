@@ -71,7 +71,11 @@ public class ExchangeRunningService {
             futures.add(f);
         }
         if (ExchangeActionType.CoinInfoRaw.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.schedule(new CoinInfoRawGrabber(serviceContext, exchangeContext).init(), new CronTrigger(CoinInfoRawGrabber.cron()));
+            CoinInfoRawGrabber g = new CoinInfoRawGrabber(serviceContext, exchangeContext).init();
+            // run on startup
+            threadPoolTaskScheduler.submit(g);
+            // run in schedule
+            Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
             futures.add(f);
         }
 
