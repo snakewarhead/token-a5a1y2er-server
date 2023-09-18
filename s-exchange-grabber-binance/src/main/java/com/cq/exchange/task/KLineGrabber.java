@@ -1,5 +1,6 @@
 package com.cq.exchange.task;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.ExchangeContext;
@@ -45,7 +46,7 @@ public class KLineGrabber implements Runnable {
 
     public String cron() {
         if ("m".equals(periodEnum.getUnit())) {
-            return StrUtil.format("5 0/{} * * * ?", periodEnum.getNum());
+            return StrUtil.format("2 0/{} * * * ?", periodEnum.getNum());
         }
         return null;
     }
@@ -63,6 +64,9 @@ public class KLineGrabber implements Runnable {
                 try {
                     List<BinanceKline> klines = binanceFuturesMarketDataServiceRaw.klines(i.getSymbol(), KlineInterval.getEnum(periodEnum.getSymbol()), limit, null, null);
                     List<ExchangeKline> klinesAdapt = klines.stream().map(this::adapt).collect(Collectors.toList());
+                    if (CollUtil.isEmpty(klinesAdapt)) {
+                        continue;
+                    }
                     serviceContext.getExchangeKlineService().saveAll(klinesAdapt);
 
                     if (first) {
