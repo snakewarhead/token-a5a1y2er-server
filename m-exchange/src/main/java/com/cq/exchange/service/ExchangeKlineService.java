@@ -1,5 +1,6 @@
 package com.cq.exchange.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.dao.ExchangeKlineDAO;
 import com.cq.exchange.dao.ExchangeKlineDAODynamic;
 import com.cq.exchange.entity.ExchangeKline;
@@ -21,6 +22,16 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
     private final ExchangeKlineDAODynamic exchangeKlineDAODynamic;
 
     public void saveAll(List<ExchangeKline> ls) {
+        if (CollUtil.isEmpty(ls)) {
+            return;
+        }
+        ExchangeKline temp = ls.get(0);
+        ExchangeKline latest = exchangeKlineDAO.findFirstByExchangeIdAndTradeTypeAndSymbolAndPeriodOrderByOpenTimeDesc(temp.getExchangeId(), temp.getTradeType(), temp.getSymbol(), temp.getPeriod());
+
+        if (latest != null) {
+            ls = ls.stream().filter(i -> i.getOpenTime() > latest.getOpenTime()).collect(Collectors.toList());
+        }
+
         List<Pair<Query, ExchangeKline>> updates = ls.stream().map(i -> {
             QueryBuilder qb = new QueryBuilder();
             qb.and("exchangeId").is(i.getExchangeId());

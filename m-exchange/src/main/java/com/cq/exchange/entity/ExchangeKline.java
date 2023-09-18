@@ -21,7 +21,8 @@ import java.math.BigDecimal;
 @Document(collection = "exchange_kline")
 public class ExchangeKline extends ExchangeEntity<ExchangeKline> {
 
-    private String interval;
+    @Indexed
+    private String period;
 
     @Indexed
     private long openTime;

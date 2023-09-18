@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeKlineDAO extends MongoRepository<ExchangeKline, String> {
 
+    ExchangeKline findFirstByExchangeIdAndTradeTypeAndSymbolAndPeriodOrderByOpenTimeDesc(Integer exchangeId, Integer tradeType, String symbol, String period);
 }

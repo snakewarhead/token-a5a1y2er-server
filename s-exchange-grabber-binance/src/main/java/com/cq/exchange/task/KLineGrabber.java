@@ -79,8 +79,10 @@ public class KLineGrabber implements Runnable {
     }
 
     private ExchangeKline adapt(BinanceKline i) {
+        String symbol = BinanceAdapters.toSymbol(i.getInstrument());
+        String pair = BinanceAdapters.adaptSymbol(symbol, false).toString();
         ExchangeKline l = ExchangeKline.builder()
-                .interval(periodEnum.getSymbol())
+                .period(periodEnum.getSymbol())
                 .openTime(i.getOpenTime())
                 .closeTime(i.getCloseTime())
                 .open(i.getOpen())
@@ -95,8 +97,8 @@ public class KLineGrabber implements Runnable {
                 .build();
         l.setExchangeId(exchangeContext.getExchangeEnum().getCode());
         l.setTradeType(exchangeContext.getTradeType().getCode());
-        l.setSymbol(BinanceAdapters.toSymbol(i.getInstrument()));
-        l.setPair(i.getInstrument().toString());
+        l.setSymbol(symbol);
+        l.setPair(pair);
         return l;
     }
 }
