@@ -1,5 +1,6 @@
 package com.cq.exchange.task;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.thread.ThreadUtil;
 import com.cq.exchange.service.ExchangeRunningService;
 import com.cq.exchange.vo.ExchangeRunningParam;
@@ -8,6 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by lin on 2020-11-06.
@@ -20,7 +24,7 @@ public class ExchangeInitial implements ApplicationRunner {
     private final ExchangeRunningService exchangeRunningService;
 
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         int poolSize = 8;
         try {
             poolSize = Integer.parseInt(args.getOptionValues("threadPoolSize").get(0));
@@ -29,17 +33,21 @@ public class ExchangeInitial implements ApplicationRunner {
         }
         exchangeRunningService.init(poolSize);
 
-        ExchangeRunningParam p = null;
+        List<ExchangeRunningParam> ps = new ArrayList<>();
         try {
-            String params = args.getOptionValues("params").get(0);
-            p = ExchangeRunningParam.parse(params);
+            List<String> params = args.getOptionValues("params");
+            for (String p : params) {
+                ExchangeRunningParam pp = ExchangeRunningParam.parse(p);
+                ps.add(pp);
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-        if (p == null) {
-            throw new RuntimeException("must Set cmd line params");
+        if (CollUtil.isNotEmpty(ps)) {
+            for (ExchangeRunningParam p : ps) {
+                exchangeRunningService.start(p, true);
+            }
         }
-        exchangeRunningService.start(p, true);
 
         ThreadUtil.waitForDie(Thread.currentThread());
     }
