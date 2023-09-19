@@ -67,7 +67,6 @@ public class CoinInfoLongAnalyser implements Runnable {
             }
         }
 
-        info.setTime(new Date());
         serviceContext.getExchangeCoinInfoService().save(info);
     }
 }

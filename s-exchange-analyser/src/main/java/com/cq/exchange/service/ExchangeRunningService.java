@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
+import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ public class ExchangeRunningService {
         threadPoolTaskScheduler.initialize();
     }
 
-    public void start(ExchangeRunningParam p, boolean init) {
+    public void start(ExchangeRunningParam p, boolean init) throws Exception {
         if (mapRunning.containsKey(p)) {
             log.warn("start - Already running - {}", p.toString());
             return;
@@ -55,10 +56,10 @@ public class ExchangeRunningService {
         List<Future> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.CoinInfoShort.is(a.getName())) {
-            a.getSymbols().forEach(s -> {
-                Future f = threadPoolTaskScheduler.schedule(new CoinInfoShortAnalyser(serviceContext, exchangeEnum, tradeType, s).init(), new CronTrigger(CoinInfoShortAnalyser.cron()));
-                futures.add(f);
-            });
+            String period = a.getParams().get(0);
+            CoinInfoShortAnalyser as = new CoinInfoShortAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period)).init();
+            Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
+            futures.add(f);
         }
         if (ExchangeActionType.CoinInfoLong.is(a.getName())) {
             a.getSymbols().forEach(s -> {
@@ -86,7 +87,8 @@ public class ExchangeRunningService {
 //            futures.add(f);
         }
         if (ExchangeActionType.VolumeChangeQuick.is(a.getName())) {
-            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType).init(a.getParams().get(0));
+            String period = a.getParams().get(0);
+            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period)).init();
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
             futures.add(f);
         }
