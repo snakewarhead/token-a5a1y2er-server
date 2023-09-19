@@ -4,10 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import util.JsonUtil;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +59,7 @@ public class ExchangeRunningParam implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ExchangeRunningParam that = (ExchangeRunningParam) o;
-        return exchange == that.exchange && tradeType == that.tradeType && (action!= null && that.action != null && Objects.equals(action, that.action));
+        return exchange == that.exchange && tradeType == that.tradeType && (action != null && that.action != null && Objects.equals(action, that.action));
     }
 
     @Override
@@ -70,14 +70,14 @@ public class ExchangeRunningParam implements Serializable {
     @Override
     public String toString() {
         return "ExchangeRunningParam{" +
-            "exchange=" + ExchangeEnum.getEnum(exchange).name() +
-            ", tradeType=" + ExchangeTradeType.getEnum(tradeType).name() +
-            ", action=" + action +
-            '}';
+                "exchange=" + ExchangeEnum.getEnum(exchange).name() +
+                ", tradeType=" + ExchangeTradeType.getEnum(tradeType).name() +
+                ", action=" + action +
+                '}';
     }
 
-    public static ExchangeRunningParam parse(String m) throws JsonProcessingException {
-        return new ObjectMapper().readValue(m, ExchangeRunningParam.class);
+    public static ExchangeRunningParam parse(String m) throws IOException {
+        return JsonUtil.toObjectStrict(m, ExchangeRunningParam.class);
     }
 
     @Data
@@ -102,10 +102,10 @@ public class ExchangeRunningParam implements Serializable {
         @Override
         public String toString() {
             return "Action{" +
-                "name='" + name + '\'' +
-                ", symbols=" + symbols +
-                ", params=" + params +
-                '}';
+                    "name='" + name + '\'' +
+                    ", symbols=" + symbols +
+                    ", params=" + params +
+                    '}';
         }
     }
 
