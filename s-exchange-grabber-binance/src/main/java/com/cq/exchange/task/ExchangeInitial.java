@@ -33,20 +33,20 @@ public class ExchangeInitial implements ApplicationRunner {
         }
         exchangeRunningService.init(poolSize);
 
-        List<ExchangeRunningParam> ps = new ArrayList<>();
         try {
+            List<ExchangeRunningParam> ps = new ArrayList<>();
             List<String> params = args.getOptionValues("params");
             for (String p : params) {
                 ExchangeRunningParam pp = ExchangeRunningParam.parse(p);
                 ps.add(pp);
             }
+            if (CollUtil.isNotEmpty(ps)) {
+                for (ExchangeRunningParam p : ps) {
+                    exchangeRunningService.start(p, true);
+                }
+            }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
-        }
-        if (CollUtil.isNotEmpty(ps)) {
-            for (ExchangeRunningParam p : ps) {
-                exchangeRunningService.start(p, true);
-            }
         }
 
         ThreadUtil.waitForDie(Thread.currentThread());
