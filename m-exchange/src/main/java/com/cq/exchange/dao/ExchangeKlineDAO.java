@@ -14,5 +14,5 @@ public interface ExchangeKlineDAO extends MongoRepository<ExchangeKline, String>
 
     ExchangeKline findFirstByExchangeIdAndTradeTypeAndSymbolAndPeriodOrderByOpenTimeDesc(Integer exchangeId, Integer tradeType, String symbol, String period);
 
-    Page<ExchangeKline> findByExchangeIdAndTradeTypeAndSymbolAndPeriodOrder(Integer exchangeId, Integer tradeType, String symbol, String period, Pageable pageable);
+    Page<ExchangeKline> findByExchangeIdAndTradeTypeAndSymbolAndPeriod(Integer exchangeId, Integer tradeType, String symbol, String period, Pageable pageable);
 }

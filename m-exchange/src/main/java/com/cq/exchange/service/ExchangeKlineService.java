@@ -51,6 +51,6 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
 
     public Page<ExchangeKline> findLast(Integer exchangeId, Integer tradeType, String symbol, String period, Integer num) {
         Pageable pageable = PageRequest.of(0, num, Sort.Direction.DESC, "openTime");
-        return exchangeKlineDAO.findByExchangeIdAndTradeTypeAndSymbolAndPeriodOrder(exchangeId, tradeType, symbol, period, pageable);
+        return exchangeKlineDAO.findByExchangeIdAndTradeTypeAndSymbolAndPeriod(exchangeId, tradeType, symbol, period, pageable);
     }
 }
