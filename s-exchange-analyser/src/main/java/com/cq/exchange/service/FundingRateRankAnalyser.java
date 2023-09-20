@@ -84,7 +84,7 @@ public class FundingRateRankAnalyser implements Runnable {
 
         String hash = hash(r);
         Long timeStale = stales.get(hash);
-        Long timeCurr = DateUtil.current(false);
+        Long timeCurr = DateUtil.current();
         boolean fresh = timeStale == null || timeStale.compareTo(timeCurr) < 0;
         if (fresh) {
             stales.put(hash, timeCurr + TIME_STALE);
@@ -94,7 +94,7 @@ public class FundingRateRankAnalyser implements Runnable {
     }
 
     private void cleanStale() {
-        Long timeCurr = DateUtil.current(false);
+        Long timeCurr = DateUtil.current();
         stales.values().removeIf(v -> v.compareTo(timeCurr) < 0);
     }
 

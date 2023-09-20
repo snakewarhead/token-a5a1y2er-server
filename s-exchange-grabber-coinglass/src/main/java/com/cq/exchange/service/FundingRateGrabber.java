@@ -54,7 +54,7 @@ public class FundingRateGrabber implements Runnable {
     @Override
     public void run() {
         try {
-            long timeCurrent = DateUtil.current(false);
+            long timeCurrent = DateUtil.current();
 
             Request req = new Request.Builder()
                     .url(url)

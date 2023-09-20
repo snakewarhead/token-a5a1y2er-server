@@ -26,7 +26,7 @@
 
         <lombok.version>1.18.12</lombok.version>
         <dockerfile-maven-version>1.4.10</dockerfile-maven-version>
-        <hutool.version>5.1.4</hutool.version>
+        <hutool.version>5.8.22</hutool.version>
         <math.version>3.6.1</math.version>
 
         <skipTests>true</skipTests>

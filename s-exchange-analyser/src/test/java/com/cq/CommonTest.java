@@ -14,7 +14,7 @@ public class CommonTest {
 
     @Test
     public void LongCompare() {
-        Long a = DateUtil.current(false);
+        Long a = DateUtil.current();
         Long b = a + 4 * 60 * 1000;
         Assert.assertTrue(a < b);
         Assert.assertTrue(a.compareTo(b) < 0);
