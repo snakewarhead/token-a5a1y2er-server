@@ -27,6 +27,8 @@ public class MailClient {
     private String url;
     @Value("${mail.custom.to}")
     private String to;
+    @Value("${mail.custom.me}")
+    private String me;
 
     @PostConstruct
     private void init() {
@@ -56,5 +58,14 @@ public class MailClient {
             }
             log.info("mail sended {}", resp.body().string());
         }
+    }
+
+    public void sendTextMe(String subject, String text) throws IOException {
+        MailMsg m = MailMsg.builder()
+                .subject(subject)
+                .text(text)
+                .emails(me)
+                .build();
+        send(m);
     }
 }

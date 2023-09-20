@@ -28,4 +28,9 @@ public class MainClientTest {
                 .build();
         mailClient.send(m);
     }
+
+    @Test
+    public void testSendTextMe() throws IOException {
+        mailClient.sendTextMe("test", "error");
+    }
 }

@@ -15,3 +15,5 @@ mail:
   custom:
     from: xxx@xxx.com
     to: xxx@xxx.com
+    me: xxx@xxx.com
+

@@ -11,7 +11,8 @@ spring:
 
 mail:
   remote:
-    url: http://192.168.1.102:8080/
+    url: http://127.0.0.1:8080/
   custom:
     from: xxx@xxx.com
     to: xxx@xxx.com
+    me: xxx@xxx.com
