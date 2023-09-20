@@ -1,6 +1,6 @@
 package com.cq.exchange.service;
 
-import cn.hutool.core.map.FixedLinkedHashMap;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
@@ -14,8 +14,10 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,8 +28,10 @@ public class CoinInfoShortAnalyser implements Runnable {
     private final ExchangeTradeType tradeType;
     private final ExchangePeriodEnum periodEnum;
 
+    private final static int COUNT_RETRY = 2;
     private final static int LIMIT_KLINES = 1000;
-    private Map<String, KlineInfo> mapKlines = new HashMap<>();
+    private final static int LIMIT_KLINES_MIN = 10;
+    private Map<String, LinkedList<ExchangeKline>> symbolKlines = new HashMap<>();
 
     public CoinInfoShortAnalyser init() {
         return this;
@@ -43,20 +47,69 @@ public class CoinInfoShortAnalyser implements Runnable {
     @Override
     public void run() {
         try {
-            // all symbol trading
             List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
             for (ExchangeCoinInfoRaw info : ls) {
                 try {
-                    DescriptiveStatistics stats = mapStatistics.get(info.getSymbol());
-                    int limit = stats == null ? LIMIT_KLINES : 1;
+                    // continuous klines
+                    boolean updated = true;
+                    int count = COUNT_RETRY;
+                    LinkedList<ExchangeKline> ksCached;
+                    while (count-- > 0) {
+                        ksCached = symbolKlines.get(info.getSymbol());
+                        boolean nocached = CollUtil.isEmpty(ksCached);
+                        List<ExchangeKline> klines = serviceContext.getExchangeKlineService().findOlder(
+                                exchangeEnum.getCode(),
+                                tradeType.getCode(),
+                                info.getSymbol(),
+                                periodEnum.getSymbol(),
+                                nocached ? LIMIT_KLINES : LIMIT_KLINES_MIN
+                        );
+                        if (CollUtil.isEmpty(klines)) {
+                            log.error("klines is empty. {}", info.getSymbol());
+                            break;
+                        }
 
-                    List<ExchangeKline> klines = serviceContext.getExchangeKlineService().findLast(
-                            exchangeEnum.getCode(),
-                            tradeType.getCode(),
-                            info.getSymbol(),
-                            periodEnum.getSymbol(),
-                            limit
-                    ).toList();
+                        if (nocached) {
+                            ksCached = new LinkedList<>(klines);
+                            symbolKlines.put(info.getSymbol(), ksCached);
+                            break;
+                        } else {
+                            // is continuous?
+                            ExchangeKline kc = ksCached.peekLast();
+                            ExchangeKline kn = klines.get(0);
+                            if (kn.getOpenTime() > serviceContext.getExchangeKlineService().nextPeriod(kc)) {
+                                // this is not continuous, so retrieve all again
+                                symbolKlines.remove(info.getSymbol());
+                                log.warn("klines is not continuous. {}", info.getSymbol());
+                                continue;
+                            }
+
+                            // has updated?
+                            klines = klines.stream().filter(i -> i.getOpenTime() > kc.getOpenTime()).collect(Collectors.toList());
+                            if (CollUtil.isEmpty(klines)) {
+                                // there is nothing to update
+                                updated = false;
+                                break;
+                            }
+
+                            // fill the news
+
+                        }
+                    }
+                    if (count <= 0) {
+                        log.error("retry fail. {}", info.getSymbol());
+                        continue;
+                    }
+                    if (CollUtil.isEmpty(ksCached)) {
+                        log.error("ksCached is empty. {}", info.getSymbol());
+                        continue;
+                    }
+
+                    // updating the coin info
+                    if (!updated) {
+                        continue;
+                    }
+
                     double[] volumes = klines.stream().mapToDouble(i -> NumberUtils.toDouble(i.getVolume().toPlainString())).toArray();
 
                     if (stats == null) {
@@ -91,11 +144,5 @@ public class CoinInfoShortAnalyser implements Runnable {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
-    }
-
-    private final class KlineInfo {
-        FixedLinkedHashMap<String, ExchangeKline> klines = new FixedLinkedHashMap(LIMIT_KLINES);
-        double[] volumes;
-        double[] volumeQuotes;
     }
 }
