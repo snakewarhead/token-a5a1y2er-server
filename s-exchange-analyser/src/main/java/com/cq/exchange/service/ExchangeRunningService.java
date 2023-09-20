@@ -57,7 +57,7 @@ public class ExchangeRunningService {
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.CoinInfoShort.is(a.getName())) {
             String period = a.getParams().get(0);
-            CoinInfoShortAnalyser as = new CoinInfoShortAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period)).init();
+            CoinInfoShortAnalyser as = new CoinInfoShortAnalyser(threadPoolTaskScheduler, serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period)).init();
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
             futures.add(f);
         }

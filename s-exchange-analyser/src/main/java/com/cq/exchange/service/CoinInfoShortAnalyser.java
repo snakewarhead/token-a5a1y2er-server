@@ -1,6 +1,7 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.util.FastMath;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -23,6 +25,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class CoinInfoShortAnalyser implements Runnable {
+
+    private final ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private final ServiceContext serviceContext;
     private final ExchangeEnum exchangeEnum;
@@ -51,7 +55,25 @@ public class CoinInfoShortAnalyser implements Runnable {
     public void run() {
         try {
             List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
-            for (ExchangeCoinInfoRaw info : ls) {
+
+            int partitionSize = threadPoolTaskScheduler.getPoolSize();
+            List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, partitionSize);
+            for (var p : ps) {
+                threadPoolTaskScheduler.submit(new ActionSub(p));
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+        }
+    }
+
+    @RequiredArgsConstructor
+    final class ActionSub implements Runnable {
+
+        final List<ExchangeCoinInfoRaw> infos;
+
+        @Override
+        public void run() {
+            for (ExchangeCoinInfoRaw info : infos) {
                 try {
                     // continuous klines
                     boolean updated = true;
@@ -173,8 +195,6 @@ public class CoinInfoShortAnalyser implements Runnable {
                     log.error(e.getMessage(), e);
                 }
             }
-        } catch (Exception e) {
-            log.error(e.getMessage(), e);
         }
     }
 }
