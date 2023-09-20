@@ -22,4 +22,7 @@ public class ExchangeCoinInfoService {
         exchangeCoinInfoDAO.save(e);
     }
 
+    public ExchangeCoinInfo find(Integer exchangeId, Integer tradeType, String symbol,String period) {
+        return exchangeCoinInfoDAO.findByExchangeIdAndTradeTypeAndSymbolAndPeriod(exchangeId, tradeType, symbol, period);
+    }
 }

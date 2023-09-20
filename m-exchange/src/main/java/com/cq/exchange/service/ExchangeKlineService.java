@@ -52,6 +52,10 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         return CollUtil.reverse(ls);
     }
 
+    public ExchangeKline findLatest(Integer exchangeId, Integer tradeType, String symbol, String period) {
+        return exchangeKlineDAO.findFirstByExchangeIdAndTradeTypeAndSymbolAndPeriodOrderByOpenTimeDesc(exchangeId, tradeType, symbol, period);
+    }
+
     public long nextPeriod(ExchangeKline k) {
         ExchangePeriodEnum p = ExchangePeriodEnum.getEnum(k.getPeriod());
         return k.getOpenTime() + p.getMillis();

@@ -14,6 +14,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -88,7 +89,8 @@ public class ExchangeRunningService {
         }
         if (ExchangeActionType.VolumeChangeQuick.is(a.getName())) {
             String period = a.getParams().get(0);
-            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period)).init();
+            BigDecimal multiple = new BigDecimal(a.getParams().get(1));
+            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), multiple).init();
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
             futures.add(f);
         }
