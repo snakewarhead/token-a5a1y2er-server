@@ -44,22 +44,22 @@ public class FundingRateRankAnalyser implements Runnable {
 
     @Override
     public void run() {
-        cleanStale();
-
-        List<ExchangeFutureFundingRate> lsNegative = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, 1);
-        List<ExchangeFutureFundingRate> lsPositive = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, -1);
-        if (!needNotify(lsNegative) && !needNotify(lsPositive)) {
-            return;
-        }
-        ExchangeFutureFundingRate rn = lsNegative.get(0);
-        ExchangeFutureFundingRate rp = lsPositive.get(0);
-        ExchangeFutureFundingRate rmore = rn.getLastFundingRate().abs().compareTo(rp.getLastFundingRate().abs()) > 0 ? rn : rp;
-
-        // notify in html
-        String t0 = htmlTable("负费率", lsNegative);
-        String t1 = htmlTable("正费率", lsPositive);
-
         try {
+            cleanStale();
+
+            List<ExchangeFutureFundingRate> lsNegative = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, 1);
+            List<ExchangeFutureFundingRate> lsPositive = serviceContext.getExchangeFutureFundingRateSerivce().findInRateRank(IDS_EXCHANGE, TYPE_TRADE, timeQuery, NUM_RANK, -1);
+            if (!needNotify(lsNegative) && !needNotify(lsPositive)) {
+                return;
+            }
+            ExchangeFutureFundingRate rn = lsNegative.get(0);
+            ExchangeFutureFundingRate rp = lsPositive.get(0);
+            ExchangeFutureFundingRate rmore = rn.getLastFundingRate().abs().compareTo(rp.getLastFundingRate().abs()) > 0 ? rn : rp;
+
+            // notify in html
+            String t0 = htmlTable("负费率", lsNegative);
+            String t1 = htmlTable("正费率", lsPositive);
+
             MailMsg msg = MailMsg.builder()
                     .subject("funding rate rank")
                     .text(t0 + t1)
