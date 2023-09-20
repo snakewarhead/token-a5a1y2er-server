@@ -46,8 +46,8 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         exchangeKlineDAODynamic.bulkUpsertWrap(false, updates);
     }
 
-    public List<ExchangeKline> findOlder(Integer exchangeId, Integer tradeType, String symbol, String period, Integer num) {
-        List<ExchangeKline> ls = exchangeKlineDAO.findMore(exchangeId, tradeType, symbol, period, "openTime", -1, 1, num);
+    public List<ExchangeKline> findOlder(Integer exchangeId, Integer tradeType, String symbol, String period, Integer skip, Integer limit) {
+        List<ExchangeKline> ls = exchangeKlineDAO.findMore(exchangeId, tradeType, symbol, period, "openTime", -1, skip, limit);
         // klines need to be reverse
         return CollUtil.reverse(ls);
     }

@@ -10,7 +10,6 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -38,6 +37,11 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
     private BigDecimal qtyStdevTradeBuy;
 
     private BigDecimal qtyStdevVolume;
-    private BigDecimal qtyAvgSmoothVolume;
+    private BigDecimal qtyStdevVolumeRate;  // stdev / mean
+    private BigDecimal qtyAvgSmoothVolume;  // mean of volume filtered by stdev * multiple
+
+    private BigDecimal qtyAvgVolumeQuote;
+
+    private BigDecimal qtyAvgPriceVolatilityRate;
 
 }
