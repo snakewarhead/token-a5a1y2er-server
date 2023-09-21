@@ -30,6 +30,9 @@ public class ExchangeContext {
     private BinanceFutureStreamingExchange exchangeFutureCoin;
     private BinanceStreamingExchange exchangeSpot;
 
+    private info.bitrich.xchangestream.binancefuture.BinanceFutureStreamingExchange exchangeFutureNew;
+    private info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeSpotNew;
+
     public ExchangeContext(int exchangeEnum, int tradeType) {
         this.exchangeEnum = ExchangeEnum.getEnum(exchangeEnum);
         this.tradeType = ExchangeTradeType.getEnum(tradeType);
