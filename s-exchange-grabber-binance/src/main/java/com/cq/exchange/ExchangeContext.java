@@ -2,13 +2,11 @@ package com.cq.exchange;
 
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
-import com.cq.exchange.service.*;
-import info.bitrich.xchangestream.binance.BinanceFutureStreamingExchange;
-import info.bitrich.xchangestream.binance.BinanceStreamingExchange;
+import info.bitrich.xchangestream.binance.old.BinanceFutureStreamingExchange;
+import info.bitrich.xchangestream.binance.old.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.BaseExchange;
 import org.knowm.xchange.ExchangeSpecification;
@@ -16,7 +14,6 @@ import org.knowm.xchange.binance.BinanceExchangeSpecification;
 import org.knowm.xchange.binance.BinanceFuturesCoin;
 import org.knowm.xchange.binance.BinanceFuturesUSDT;
 import org.knowm.xchange.binance.dto.FuturesSettleType;
-import org.springframework.stereotype.Component;
 
 /**
  * Created by lin on 2020-11-06.

@@ -4,7 +4,7 @@ import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeAggTrade;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.service.ServiceContext;
-import info.bitrich.xchangestream.binance.BinanceFutureStreamingMarketDataService;
+import info.bitrich.xchangestream.binance.old.BinanceFutureStreamingMarketDataService;
 import info.bitrich.xchangestream.core.ProductSubscription;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
