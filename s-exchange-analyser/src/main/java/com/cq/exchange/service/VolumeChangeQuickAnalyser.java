@@ -82,7 +82,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                     }
 
                     // notify
-                    String ct = htmlTable("", info, kline);
+                    String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
                     MailMsg msg = MailMsg.builder()
                             .subject("volume change quick")
                             .text(ct)
@@ -102,22 +102,73 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         }
     }
 
-    private String htmlTable(String tilte, ExchangeCoinInfo info, ExchangeKline kline) {
-        // VolumeChangeQuickAnalyser
+    private String htmlTable(String tilte, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
+        // open time
         // symbol exchange
         List<String> headers = new ArrayList<>();
         headers.add("symbol");
         headers.add("exchange");
+        headers.add("量比");
+        headers.add("价格");
+        headers.add("振幅");
+        headers.add("平均振幅");
+        headers.add("买入额主动(U)");
+        headers.add("成交额(U)");
+        headers.add("成交额平均(U)");
+        headers.add("成交量");
+        headers.add("成交量平均");
+        headers.add("成交量标准差");
+        headers.add("成交量标准差率");
 
         List<List<String>> contents = new ArrayList<>();
         List<String> ct = new ArrayList<>();
-
         ct.add(info.getSymbol());
         ct.add(ExchangeEnum.getEnum(info.getExchangeId()).name());
 
+        // 量比
+        {
+            BigDecimal n = MathUtil.div(kline.getVolume(), info.getQtyAvgSmoothVolume());
+            ct.add(MathUtil.stripRate(n));
+        }
+
+        // 价格
+        ct.add(MathUtil.strip(kline.getClose(), infoRaw.getPricePrecision()));
+
+        // 振幅 - |H - L| / O
+        {
+            BigDecimal n = MathUtil.of(kline.getHigh()).sub(kline.getLow()).abs().div(kline.getOpen()).to();
+            ct.add(MathUtil.stripRate(n));
+        }
+
+        // 平均振幅
+        ct.add(MathUtil.stripRate(info.getAvgPriceVolatilityRate()));
+
+        // 买入额主动(U)
+        ct.add(MathUtil.strip(kline.getTakerBuyQuoteVolume(), 2));
+
+        // 成交额(U)
+        ct.add(MathUtil.strip(kline.getQuoteVolume(), 2));
+
+        // 成交额平均(U)
+        ct.add(MathUtil.strip(info.getQtyAvgVolumeQuote(), 2));
+
+        // 成交量
+        ct.add(MathUtil.strip(kline.getVolume(), infoRaw.getQuantityPrecision()));
+
+        // 成交量平均
+        ct.add(MathUtil.strip(info.getQtyAvgSmoothVolume(), infoRaw.getQuantityPrecision()));
+
+        // 成交量标准差
+        ct.add(MathUtil.strip(info.getQtyStdevVolume(), infoRaw.getQuantityPrecision()));
+
+        // 成交量标准差率
+        ct.add(MathUtil.stripRate(info.getQtyStdevVolumeRate()));
+
         contents.add(ct);
 
-        return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents);
+        String extend = "成交量标准差率 = 标准差 / 平均值";
+
+        return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents, extend);
     }
 
 }
