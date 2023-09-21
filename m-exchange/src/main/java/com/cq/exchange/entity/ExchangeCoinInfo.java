@@ -42,6 +42,6 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
 
     private BigDecimal qtyAvgVolumeQuote;
 
-    private BigDecimal qtyAvgPriceVolatilityRate;
+    private BigDecimal avgPriceVolatilityRate;
 
 }

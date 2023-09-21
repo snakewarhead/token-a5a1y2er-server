@@ -184,7 +184,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                             .qtyStdevVolumeRate(BigDecimal.valueOf(qtyStdevVolumeRate))
                             .qtyAvgSmoothVolume(BigDecimal.valueOf(qtyAvgSmoothVolume))
                             .qtyAvgVolumeQuote(BigDecimal.valueOf(qtyAvgVolumeQuote))
-                            .qtyAvgPriceVolatilityRate(BigDecimal.valueOf(qtyAvgPriceVolatilityRate))
+                            .avgPriceVolatilityRate(BigDecimal.valueOf(qtyAvgPriceVolatilityRate))
                             .build();
                     infoRipe.setExchangeId(exchangeEnum.getCode());
                     infoRipe.setTradeType(tradeType.getCode());
