@@ -6,8 +6,8 @@ import java.math.RoundingMode;
 
 public class MathUtil {
 
+    public final static int RATE_PRECISION = 4;
     public final static int RESULT_SCALE = 8;
-
     private final static int CAL_SCALE = 12;
 
     private final static BigDecimal NEG_ONE = new BigDecimal("-1");
@@ -61,11 +61,14 @@ public class MathUtil {
         return one.stripTrailingZeros().toPlainString();
     }
 
-    public static String stripTrailingZeros(BigDecimal one, int scale) {
+    public static String strip(BigDecimal one, int scale) {
         return one.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
+    public static String stripRate(BigDecimal one) {
+        return strip(one, RATE_PRECISION);
+    }
 
-    public static String stripTrailingZeros(BigDecimal one) {
+    public static String strip(BigDecimal one) {
         return one.stripTrailingZeros().toPlainString();
     }
 
