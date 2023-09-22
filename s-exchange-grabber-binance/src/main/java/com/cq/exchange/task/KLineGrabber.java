@@ -14,6 +14,7 @@ import org.knowm.xchange.binance.BinanceFuturesExchange;
 import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ public class KLineGrabber implements Runnable {
     private final static int MAX = 1000;    // weight - 5
     private final static int MIN = 99;      // weight - 1
 
+    private final ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final ExchangePeriodEnum periodEnum;
@@ -35,7 +38,8 @@ public class KLineGrabber implements Runnable {
     private BinanceFuturesMarketDataServiceRaw binanceFuturesMarketDataServiceRaw;
     private boolean first = true;
 
-    public KLineGrabber(ServiceContext serviceContext, ExchangeContext exchangeContext, String period) {
+    public KLineGrabber(ThreadPoolTaskScheduler threadPoolTaskScheduler, ServiceContext serviceContext, ExchangeContext exchangeContext, String period) {
+        this.threadPoolTaskScheduler = threadPoolTaskScheduler;
         this.serviceContext = serviceContext;
         this.exchangeContext = exchangeContext;
         this.periodEnum = ExchangePeriodEnum.getEnum(period);

@@ -9,6 +9,7 @@ import info.bitrich.xchangestream.core.StreamingExchangeFactory;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.BaseExchange;
+import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.binance.BinanceExchangeSpecification;
 import org.knowm.xchange.binance.BinanceFuturesCoin;
@@ -132,7 +133,7 @@ public class ExchangeContext {
         spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, "192.168.1.100");
         spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
 
-        //    spec.setShouldLoadRemoteMetaData(false);
+        spec.setShouldLoadRemoteMetaData(false);
 
         BinanceStreamingExchange exchange =
                 (BinanceStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
@@ -143,4 +144,23 @@ public class ExchangeContext {
         return exchange;
     }
 
+    public info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeSpotNew() {
+        return (info.bitrich.xchangestream.binance.BinanceStreamingExchange) exchangeInner(info.bitrich.xchangestream.binance.BinanceStreamingExchange.class);
+    }
+
+    public info.bitrich.xchangestream.binancefuture.BinanceFutureStreamingExchange exchangeFutureNew() {
+        return (info.bitrich.xchangestream.binancefuture.BinanceFutureStreamingExchange) exchangeInner(info.bitrich.xchangestream.binancefuture.BinanceFutureStreamingExchange.class);
+    }
+
+    private StreamingExchange exchangeInner(Class<? extends Exchange> exchangeClass) {
+        final ExchangeSpecification spec = new ExchangeSpecification(exchangeClass);
+        spec.setProxyHost("192.168.1.100");
+        spec.setProxyPort(1083);
+
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, "192.168.1.100");
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
+
+        spec.setShouldLoadRemoteMetaData(false);
+        return (info.bitrich.xchangestream.binance.BinanceStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
+    }
 }

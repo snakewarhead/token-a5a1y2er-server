@@ -66,7 +66,7 @@ public class ExchangeRunningService {
             futures.add(f);
         }
         if (ExchangeActionType.KLine.is(a.getName())) {
-            KLineGrabber g = new KLineGrabber(serviceContext, exchangeContext, a.getParams().get(0));
+            KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, a.getParams().get(0));
             Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
             futures.add(f);
         }
