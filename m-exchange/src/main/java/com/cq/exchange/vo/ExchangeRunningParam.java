@@ -5,7 +5,7 @@ import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import lombok.Data;
-import util.JsonUtil;
+import com.cq.util.JsonUtil;
 
 import java.io.IOException;
 import java.io.Serializable;

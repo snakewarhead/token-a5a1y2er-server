@@ -1,4 +1,4 @@
-package util;
+package com.cq.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

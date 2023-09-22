@@ -16,7 +16,7 @@ import org.web3j.abi.datatypes.generated.Uint128;
 import org.web3j.abi.datatypes.generated.Uint256;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
-import util.MathUtil;
+import com.cq.util.MathUtil;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;

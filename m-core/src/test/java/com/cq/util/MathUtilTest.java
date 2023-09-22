@@ -1,8 +1,8 @@
-package com.cq.vo.util;
+package com.cq.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import util.MathUtil;
+import com.cq.util.MathUtil;
 
 import java.math.BigDecimal;
 
