@@ -39,21 +39,24 @@ public class ExchangeRunningService {
         }
 
         List<Future> futures = new ArrayList<>();
-        ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.OrderBook.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
         if (ExchangeActionType.AggTrade.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             Future f = threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
         if (ExchangeActionType.ForceOrder.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             Future f = threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
             futures.add(f);
         }
         if (ExchangeActionType.TakerLongShortRatio.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             a.getParams().forEach(ap -> {
                 a.getSymbols().forEach(s -> {
                     Future f = threadPoolTaskScheduler.schedule(new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap), new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
@@ -62,15 +65,19 @@ public class ExchangeRunningService {
             });
         }
         if (ExchangeActionType.AllTicker.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             Future f = threadPoolTaskScheduler.submit(new AllTickerGrabber(serviceContext, exchangeContext).init());
             futures.add(f);
         }
         if (ExchangeActionType.KLine.is(a.getName())) {
-            KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, a.getParams().get(0));
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
+            ExchangeContext exchangeContextNew = new ExchangeContext(p.getExchange(), p.getTradeType(), true);
+            KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, exchangeContextNew, a.getParams().get(0));
             Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
             futures.add(f);
         }
         if (ExchangeActionType.CoinInfoRaw.is(a.getName())) {
+            ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
             CoinInfoRawGrabber g = new CoinInfoRawGrabber(serviceContext, exchangeContext).init();
             // run on startup
             threadPoolTaskScheduler.submit(g);

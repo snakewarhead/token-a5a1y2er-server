@@ -31,27 +31,46 @@ public class ExchangeContext {
     private BinanceFutureStreamingExchange exchangeFutureCoin;
     private BinanceStreamingExchange exchangeSpot;
 
-    private info.bitrich.xchangestream.binancefuture.BinanceFutureStreamingExchange exchangeFutureNew;
-    private info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeSpotNew;
+    private info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeNew;
 
     public ExchangeContext(int exchangeEnum, int tradeType) {
+        this(exchangeEnum, tradeType, false);
+    }
+
+    public ExchangeContext(int exchangeEnum, int tradeType, boolean isNew) {
         this.exchangeEnum = ExchangeEnum.getEnum(exchangeEnum);
         this.tradeType = ExchangeTradeType.getEnum(tradeType);
-        switch (this.tradeType) {
-            case SPOT:
-                exchangeSpot();
-                break;
 
-            case FUTURE_USDT:
-                exchangeFutureUSDT();
-                break;
+        if (!isNew) {
+            switch (this.tradeType) {
+                case SPOT:
+                    exchangeSpot();
+                    break;
 
-            case FUTURE_COIN:
-                exchangeFutureCoin();
-                break;
+                case FUTURE_USDT:
+                    exchangeFutureUSDT();
+                    break;
 
-            default:
-                throw new RuntimeException("exchange is null");
+                case FUTURE_COIN:
+                    exchangeFutureCoin();
+                    break;
+
+                default:
+                    throw new RuntimeException("exchange is null");
+            }
+        } else {
+            switch (this.tradeType) {
+                case SPOT:
+                    exchangeNew = exchangeSpotNew();
+                    break;
+
+                case FUTURE_USDT:
+                    exchangeNew = exchangeFutureNew();
+                    break;
+
+                default:
+                    throw new RuntimeException("exchange is null");
+            }
         }
     }
 
@@ -161,6 +180,6 @@ public class ExchangeContext {
         spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
 
         spec.setShouldLoadRemoteMetaData(false);
-        return (info.bitrich.xchangestream.binance.BinanceStreamingExchange) StreamingExchangeFactory.INSTANCE.createExchange(spec);
+        return StreamingExchangeFactory.INSTANCE.createExchange(spec);
     }
 }
