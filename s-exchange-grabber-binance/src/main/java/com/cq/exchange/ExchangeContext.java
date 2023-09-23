@@ -2,6 +2,7 @@ package com.cq.exchange;
 
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.utils.Config;
 import info.bitrich.xchangestream.binance.old.BinanceFutureStreamingExchange;
 import info.bitrich.xchangestream.binance.old.BinanceStreamingExchange;
 import info.bitrich.xchangestream.core.StreamingExchange;
@@ -92,11 +93,11 @@ public class ExchangeContext {
 //        spec.setApiKey(apiKey);
 //        spec.setSecretKey(apiSecret);
 
-        spec.setProxyHost("192.168.1.100");
-        spec.setProxyPort(1083);
+        spec.setProxyHost(Config.host);
+        spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, "192.168.1.100");
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
 
         spec.setShouldLoadRemoteMetaData(false);
 
@@ -146,11 +147,11 @@ public class ExchangeContext {
 //        spec.setApiKey(apiKey);
 //        spec.setSecretKey(apiSecret);
 
-        spec.setProxyHost("192.168.1.100");
-        spec.setProxyPort(1083);
+        spec.setProxyHost(Config.host);
+        spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, "192.168.1.100");
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
 
         spec.setShouldLoadRemoteMetaData(false);
 
@@ -173,11 +174,11 @@ public class ExchangeContext {
 
     private StreamingExchange exchangeInner(Class<? extends Exchange> exchangeClass) {
         final ExchangeSpecification spec = new ExchangeSpecification(exchangeClass);
-        spec.setProxyHost("192.168.1.100");
-        spec.setProxyPort(1083);
+        spec.setProxyHost(Config.host);
+        spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, "192.168.1.100");
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, 1082);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
 
         spec.setShouldLoadRemoteMetaData(false);
         return StreamingExchangeFactory.INSTANCE.createExchange(spec);
