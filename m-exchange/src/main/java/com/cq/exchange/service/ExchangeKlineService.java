@@ -22,6 +22,18 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
     private final ExchangeKlineDAO exchangeKlineDAO;
     private final ExchangeKlineDAODynamic exchangeKlineDAODynamic;
 
+    public static Query buildQuery(ExchangeKline e) {
+        QueryBuilder qb = new QueryBuilder();
+        qb.and("exchangeId").is(e.getExchangeId());
+        qb.and("tradeType").is(e.getTradeType());
+        qb.and("symbol").is(e.getSymbol());
+        qb.and("pair").is(e.getPair());
+
+        qb.and("openTime").is(e.getOpenTime());
+
+        return new BasicQuery(qb.get().toString());
+    }
+
     public void saveAll(List<ExchangeKline> ls) {
         if (CollUtil.isEmpty(ls)) {
             return;
@@ -33,17 +45,12 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
             ls = ls.stream().filter(i -> i.getOpenTime() > latest.getOpenTime()).collect(Collectors.toList());
         }
 
-        List<Pair<Query, ExchangeKline>> updates = ls.stream().map(i -> {
-            QueryBuilder qb = new QueryBuilder();
-            qb.and("exchangeId").is(i.getExchangeId());
-            qb.and("tradeType").is(i.getTradeType());
-            qb.and("symbol").is(i.getSymbol());
-            qb.and("pair").is(i.getPair());
-            qb.and("openTime").is(i.getOpenTime());
-            Query q = new BasicQuery(qb.get().toString());
-            return Pair.of(q, i);
-        }).collect(Collectors.toList());
+        List<Pair<Query, ExchangeKline>> updates = ls.stream().map(i -> Pair.of(buildQuery(i), i)).collect(Collectors.toList());
         exchangeKlineDAODynamic.bulkUpsertWrap(false, updates);
+    }
+
+    public void updateOne(ExchangeKline e) {
+        exchangeKlineDAODynamic.upsertWrap(buildQuery(e), e);
     }
 
     public List<ExchangeKline> findOlder(Integer exchangeId, Integer tradeType, String symbol, String period, Integer skip, Integer limit) {

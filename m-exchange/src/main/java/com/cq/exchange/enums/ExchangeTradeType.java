@@ -27,6 +27,10 @@ public enum ExchangeTradeType {
         return !(is(c));
     }
 
+    public boolean isFuture() {
+        return code > 1;
+    }
+
     public static ExchangeTradeType getEnum(int c) {
         return Arrays.stream(ExchangeTradeType.values()).filter(item -> c == item.getCode()).findFirst().orElse(null);
     }

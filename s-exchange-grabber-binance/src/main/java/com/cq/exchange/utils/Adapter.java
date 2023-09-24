@@ -1,11 +1,24 @@
 package com.cq.exchange.utils;
 
+import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.entity.ExchangeKline;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.mongodb.QueryBuilder;
+import info.bitrich.xchangestream.binance.KlineSubscription;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
+import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
+import org.knowm.xchange.instrument.Instrument;
+import org.springframework.data.mongodb.core.query.BasicQuery;
+import org.springframework.data.mongodb.core.query.Query;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class Adapter {
     private Adapter() {
@@ -33,6 +46,15 @@ public class Adapter {
         l.setSymbol(symbol);
         l.setPair(pair);
         return l;
+    }
+
+    public static KlineSubscription adaptKlineSubscription(List<ExchangeCoinInfoRaw> infos, ExchangeTradeType tradeType, ExchangePeriodEnum periodEnum) {
+        Set<KlineInterval> klineIntervals = Set.of(KlineInterval.getEnum(periodEnum.getSymbol()));
+        Map<Instrument, Set<KlineInterval>> klineSubscriptionMap = infos.stream()
+                .map(i -> BinanceAdapters.adaptSymbol(i.getSymbol(), tradeType.isFuture()))
+                .collect(Collectors.toMap(Function.identity(), c -> klineIntervals));
+
+        return new KlineSubscription(klineSubscriptionMap);
     }
 
 }
