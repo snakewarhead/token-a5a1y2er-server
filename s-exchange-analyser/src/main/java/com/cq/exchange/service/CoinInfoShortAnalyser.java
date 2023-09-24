@@ -55,9 +55,13 @@ public class CoinInfoShortAnalyser implements Runnable {
     public void run() {
         try {
             List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
+            if (CollUtil.isEmpty(ls)) {
+                log.error("List<ExchangeCoinInfoRaw> is empty");
+                return;
+            }
 
-            int partitionSize = threadPoolTaskScheduler.getPoolSize();
-            List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, partitionSize);
+            int size = ls.size() / threadPoolTaskScheduler.getPoolSize() + ls.size() % threadPoolTaskScheduler.getPoolSize();
+            List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, size);
             for (var p : ps) {
                 threadPoolTaskScheduler.submit(new ActionSub(p));
             }

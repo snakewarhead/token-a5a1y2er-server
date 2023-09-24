@@ -63,7 +63,13 @@ public class KLineGrabber implements Runnable {
     public void run() {
         try {
             List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeContext.getExchangeEnum().getCode(), exchangeContext.getTradeType().getCode(), 1);
-            List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, NUM_THREADS);
+            if (CollUtil.isEmpty(ls)) {
+                log.error("List<ExchangeCoinInfoRaw> is empty");
+                return;
+            }
+
+            int size = ls.size() / NUM_THREADS + ls.size() % NUM_THREADS;
+            List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, size);
             for (var p : ps) {
                 threadPoolTaskScheduler.submit(new ActionSub(p));
             }
