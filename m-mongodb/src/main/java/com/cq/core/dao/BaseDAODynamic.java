@@ -2,6 +2,7 @@ package com.cq.core.dao;
 
 import com.cq.core.entity.BaseEntity;
 import com.mongodb.bulk.BulkWriteResult;
+import com.mongodb.client.result.UpdateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,6 +41,17 @@ public class BaseDAODynamic<T> {
 
         List<T> ls = mongoTemplate.find(query.with(pageable), clazz);
         return new PageImpl(ls, pageable, total);
+    }
+
+    public boolean upsert(Query q, Update u) {
+        UpdateResult res = mongoTemplate.upsert(q, u, clazz);
+        return res.wasAcknowledged();
+    }
+
+    public boolean upsertWrap(Query q, T t) {
+        org.bson.Document d = (org.bson.Document) mongoTemplate.getConverter().convertToMongoType(t);
+        Update u = Update.fromDocument(d);
+        return upsert(q, u);
     }
 
     public int bulkInsert(boolean isOrdered, List<T> ls) {
