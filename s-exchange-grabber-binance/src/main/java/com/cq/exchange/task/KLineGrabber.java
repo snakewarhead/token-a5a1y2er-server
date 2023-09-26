@@ -2,7 +2,9 @@ package com.cq.exchange.task;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.entity.ExchangeKline;
@@ -19,6 +21,7 @@ import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -75,6 +78,9 @@ public class KLineGrabber implements Runnable {
         final List<ExchangeCoinInfoRaw> infos;
 
         void klineFromHttp(int limit, boolean needRest) {
+            StopWatch sw = new StopWatch();
+            sw.start(StrUtil.format("{} - infos: {}, limit: {}", this.getClass().getName(), infos.size(), limit));
+
             BinanceFuturesMarketDataServiceRaw binanceFuturesMarketDataServiceRaw = (BinanceFuturesMarketDataServiceRaw) exchangeOld.getMarketDataService();
 
             for (ExchangeCoinInfoRaw i : infos) {
@@ -95,6 +101,9 @@ public class KLineGrabber implements Runnable {
                     log.error(e.getMessage(), e);
                 }
             }
+
+            sw.stop();
+            log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
         }
 
         @Override
