@@ -181,6 +181,7 @@ public class ExchangeContext {
         spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
 
         spec.setShouldLoadRemoteMetaData(false);
+
         return StreamingExchangeFactory.INSTANCE.createExchange(spec);
     }
 }

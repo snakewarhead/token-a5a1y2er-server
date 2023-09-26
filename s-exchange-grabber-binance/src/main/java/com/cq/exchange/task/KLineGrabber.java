@@ -27,36 +27,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class KLineGrabber implements Runnable {
 
-    private final static int INTERVAL_IN_REST = 500; // 2400 weights per minute
-    private final static int INTERVAL_IN_FINAL = 5000;
+    private final static long INTERVAL_IN_REST = 500L; // 2400 weights per minute
+    private final static long INTERVAL_IN_FINAL = 100000L;
     private final static int MAX = 1000;    // weight - 5
-    private final static int MIN = 10;      // weight - 1
+    private final static int MIN = 99;      // weight - 1
     private final static int NUM_THREADS = 2;
 
     private final ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
-    private final ExchangeContext exchangeContextNew;
     private final ExchangePeriodEnum periodEnum;
 
-    private BinanceFuturesMarketDataServiceRaw binanceFuturesMarketDataServiceRaw;
-
-    private info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeNew;
-    private info.bitrich.xchangestream.binance.BinanceStreamingMarketDataService binanceStreamingMarketDataServiceNew;
-
-    public KLineGrabber(ThreadPoolTaskScheduler threadPoolTaskScheduler, ServiceContext serviceContext, ExchangeContext exchangeContext, ExchangeContext exchangeContextNew, String period) {
+    public KLineGrabber(ThreadPoolTaskScheduler threadPoolTaskScheduler, ServiceContext serviceContext, ExchangeContext exchangeContext, String period) {
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
         this.serviceContext = serviceContext;
         this.exchangeContext = exchangeContext;
-        this.exchangeContextNew = exchangeContextNew;
         this.periodEnum = ExchangePeriodEnum.getEnum(period);
-
-        BinanceFuturesExchange exchange = (BinanceFuturesExchange) exchangeContext.getExchangeCurrent();
-        binanceFuturesMarketDataServiceRaw = (BinanceFuturesMarketDataServiceRaw) exchange.getMarketDataService();
-
-        exchangeNew = exchangeContextNew.getExchangeNew();
-        binanceStreamingMarketDataServiceNew = exchangeNew.getStreamingMarketDataService();
     }
 
     @Override
@@ -71,7 +58,9 @@ public class KLineGrabber implements Runnable {
             int size = ls.size() / NUM_THREADS + ls.size() % NUM_THREADS;
             List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, size);
             for (var p : ps) {
-                threadPoolTaskScheduler.submit(new ActionSub(p));
+                // exchangeContextNew per thread
+                ExchangeContext exchangeContextNew = new ExchangeContext(exchangeContext.getExchangeEnum().getCode(), exchangeContext.getTradeType().getCode(), true);
+                threadPoolTaskScheduler.submit(new ActionSub((BinanceFuturesExchange) exchangeContext.getExchangeCurrent(), exchangeContextNew.getExchangeNew(), p));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
@@ -81,9 +70,13 @@ public class KLineGrabber implements Runnable {
     @RequiredArgsConstructor
     final class ActionSub implements Runnable {
 
+        private final BinanceFuturesExchange exchangeOld;
+        final info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeNew;
         final List<ExchangeCoinInfoRaw> infos;
 
         void klineFromHttp(int limit, boolean needRest) {
+            BinanceFuturesMarketDataServiceRaw binanceFuturesMarketDataServiceRaw = (BinanceFuturesMarketDataServiceRaw) exchangeOld.getMarketDataService();
+
             for (ExchangeCoinInfoRaw i : infos) {
                 try {
                     List<BinanceKline> klines = binanceFuturesMarketDataServiceRaw.klines(i.getSymbol(), KlineInterval.getEnum(periodEnum.getSymbol()), limit, null, null);
@@ -110,10 +103,10 @@ public class KLineGrabber implements Runnable {
             klineFromHttp(MAX, true);
 
             // latest kline from websocket api
-            exchangeNew.connect(Adapter.adaptKlineSubscription(infos, exchangeContextNew.getTradeType(), periodEnum)).blockingAwait();
+            exchangeNew.connect(Adapter.adaptKlineSubscription(infos, exchangeContext.getTradeType(), periodEnum)).blockingAwait();
             for (ExchangeCoinInfoRaw i : infos) {
-                binanceStreamingMarketDataServiceNew
-                        .getKlines(BinanceAdapters.adaptSymbol(i.getSymbol(), exchangeContextNew.getTradeType().isFuture()), KlineInterval.getEnum(periodEnum.getSymbol()))
+                exchangeNew.getStreamingMarketDataService()
+                        .getKlines(BinanceAdapters.adaptSymbol(i.getSymbol(), exchangeContext.getTradeType().isFuture()), KlineInterval.getEnum(periodEnum.getSymbol()))
                         .subscribe(kl -> {
                             ExchangeKline klAdapt = Adapter.adaptKline(kl, exchangeContext.getExchangeEnum(), exchangeContext.getTradeType(), periodEnum);
                             serviceContext.getExchangeKlineService().updateOne(klAdapt);

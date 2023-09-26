@@ -71,8 +71,7 @@ public class ExchangeRunningService {
         }
         if (ExchangeActionType.KLine.is(a.getName())) {
             ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
-            ExchangeContext exchangeContextNew = new ExchangeContext(p.getExchange(), p.getTradeType(), true);
-            KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, exchangeContextNew, a.getParams().get(0));
+            KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, a.getParams().get(0));
             Future f = threadPoolTaskScheduler.submit(g);
             futures.add(f);
         }
