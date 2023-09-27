@@ -1,6 +1,7 @@
 package com.cq.exchange.service;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.cq.core.vo.MailMsg;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,6 +48,9 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
     @Override
     public void run() {
+        StopWatch sw = new StopWatch();
+        sw.start(StrUtil.format("{}", this.getClass().getName()));
+
         try {
             List<ExchangeCoinInfoRaw> symbols = serviceContext.getExchangeCoinInfoRawService().find(exchangeEnum.getCode(), tradeType.getCode(), 1);
             for (var s : symbols) {
@@ -82,6 +87,10 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                         continue;
                     }
 
+                    // update db
+                    info.setMultipleVolume(volumeMultiple);
+                    serviceContext.getExchangeCoinInfoService().updateOne(info);
+
                     // notify
                     String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
                     MailMsg msg = MailMsg.builder()
@@ -93,11 +102,6 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                                     .build())
                             .build();
                     serviceContext.getMailClient().send(msg);
-
-                    // update db
-                    info.setMultipleVolume(volumeMultiple);
-                    serviceContext.getExchangeCoinInfoService().updateOne(info);
-
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
@@ -105,6 +109,9 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
+        sw.stop();
+        log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
     }
 
     private String htmlTable(String tilte, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
@@ -171,7 +178,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
         contents.add(ct);
 
-        String extend = "成交量标准差率 = 标准差 / 平均值";
+        String extend = "成交量标准差率 = 标准差 / 平均值 (衡量波动幅度)";
 
         return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents, extend);
     }
