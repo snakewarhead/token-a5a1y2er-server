@@ -10,9 +10,9 @@ import com.cq.exchange.entity.ExchangeKline;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.util.MathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import com.cq.util.MathUtil;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -36,11 +36,12 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         return this;
     }
 
-    public String cron() throws Exception {
-        if ("5m".equals(periodEnum.getSymbol())) {
-            return "30 0/1 * * * ?";
+    public String cron(String c) throws Exception {
+        ExchangePeriodEnum cp = ExchangePeriodEnum.getEnum(c);
+        if ("m".equals(cp.getUnit())) {
+            return StrUtil.format("30 0/{} * * * ?", cp.getNum());
         }
-        throw new Exception(StrUtil.format("period not support - {}", periodEnum.getSymbol()));
+        throw new Exception(StrUtil.format("cron not support - {}", cp.getSymbol()));
     }
 
     @Override
@@ -75,8 +76,8 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                         continue;
                     }
 
-                    BigDecimal smoothVolumeMultiple = MathUtil.mul(info.getQtyAvgSmoothVolume(), multipleChange);
-                    if (kline.getVolume().compareTo(smoothVolumeMultiple) < 0) {
+                    BigDecimal volumeMultiple = MathUtil.div(kline.getVolume(), info.getQtyAvgSmoothVolume());
+                    if (volumeMultiple.compareTo(multipleChange) < 0) {
                         // no over
                         continue;
                     }
@@ -92,6 +93,10 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                                     .build())
                             .build();
                     serviceContext.getMailClient().send(msg);
+
+                    // update db
+                    info.setMultipleVolume(volumeMultiple);
+                    serviceContext.getExchangeCoinInfoService().updateOne(info);
 
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
