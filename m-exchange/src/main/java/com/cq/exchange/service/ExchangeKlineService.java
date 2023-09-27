@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +30,7 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         qb.and("symbol").is(e.getSymbol());
         qb.and("pair").is(e.getPair());
 
+        qb.and("period").is(e.getPeriod());
         qb.and("openTime").is(e.getOpenTime());
 
         return new BasicQuery(qb.get().toString());
@@ -55,8 +57,9 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
 
     public List<ExchangeKline> findOlder(Integer exchangeId, Integer tradeType, String symbol, String period, Integer skip, Integer limit) {
         List<ExchangeKline> ls = exchangeKlineDAO.findMore(exchangeId, tradeType, symbol, period, "openTime", -1, skip, limit);
+        List<ExchangeKline> lsCopy = new ArrayList<>(ls);
         // klines need to be reverse
-        return CollUtil.reverse(ls);
+        return CollUtil.reverse(lsCopy);
     }
 
     public ExchangeKline findLatest(Integer exchangeId, Integer tradeType, String symbol, String period) {

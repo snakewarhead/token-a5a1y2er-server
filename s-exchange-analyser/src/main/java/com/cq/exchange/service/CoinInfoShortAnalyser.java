@@ -2,6 +2,7 @@ package com.cq.exchange.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
@@ -16,10 +17,11 @@ import org.apache.commons.math3.util.FastMath;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,7 +40,7 @@ public class CoinInfoShortAnalyser implements Runnable {
     private final static int LIMIT_KLINES_MIN = 10;
     private final static int MULTIPLE_STDEV = 4;    // 标准差的倍数，在这个倍数之外的数据认为是意外的
 
-    private Map<String, LinkedList<ExchangeKline>> symbolKlines = new HashMap<>();
+    private Map<String, LinkedList<ExchangeKline>> symbolKlines = new ConcurrentHashMap<>();
 
     public CoinInfoShortAnalyser init() {
         return this;
@@ -77,6 +79,9 @@ public class CoinInfoShortAnalyser implements Runnable {
 
         @Override
         public void run() {
+            StopWatch sw = new StopWatch();
+            sw.start(StrUtil.format("{} - infos: {}", this.getClass().getName(), infos.size()));
+
             for (ExchangeCoinInfoRaw info : infos) {
                 try {
                     // continuous klines
@@ -126,7 +131,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                             LinkedList<ExchangeKline> finalKsCached = ksCached;
                             klines.forEach(i -> {
                                 // fixed size queue
-                                if (finalKsCached.size() == LIMIT_KLINES) {
+                                if (finalKsCached.size() >= LIMIT_KLINES) {
                                     finalKsCached.poll();
                                 }
                                 finalKsCached.offer(i);
@@ -199,6 +204,9 @@ public class CoinInfoShortAnalyser implements Runnable {
                     log.error(e.getMessage(), e);
                 }
             }
+
+            sw.stop();
+            log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
         }
     }
 }

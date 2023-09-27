@@ -21,7 +21,7 @@ public interface ExchangeKlineDAO extends MongoRepository<ExchangeKline, String>
 
     @Aggregation(value = {
             "{ '$match': { 'exchangeId': ?0, 'tradeType': ?1, 'symbol': ?2, 'period': ?3 } }",
-            "{ '$sort': { '?4': ?5 }",
+            "{ '$sort': { '?4': ?5 } }",
             "{ '$skip': ?6 }",
             "{ '$limit': ?7 }",
     })
