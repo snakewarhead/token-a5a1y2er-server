@@ -1,5 +1,7 @@
 package com.cq.exchange.task;
 
+import cn.hutool.core.date.StopWatch;
+import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.service.ServiceContext;
@@ -16,6 +18,7 @@ import org.knowm.xchange.currency.CurrencyPair;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by lin on 2020-11-06.
@@ -41,6 +44,9 @@ public class CoinInfoRawGrabber implements Runnable {
 
     @Override
     public void run() {
+        StopWatch sw = new StopWatch();
+        sw.start(StrUtil.format("{}", this.getClass().getName()));
+
         try {
             List<ExchangeCoinInfoRaw> ls = new ArrayList<>();
             BinanceExchangeInfo exchangeInfo = marketDataService.getExchangeInfo();
@@ -96,6 +102,9 @@ public class CoinInfoRawGrabber implements Runnable {
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
+
+        sw.stop();
+        log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
     }
 
 }
