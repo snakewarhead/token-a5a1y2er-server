@@ -1,5 +1,6 @@
 package com.cq.exchange.service;
 
+import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.dao.ExchangeCoinInfoDAO;
 import com.cq.exchange.dao.ExchangeCoinInfoDAODynamic;
 import com.cq.exchange.entity.ExchangeCoinInfo;
@@ -52,6 +53,9 @@ public class ExchangeCoinInfoService {
     }
 
     public void saveAll(List<ExchangeCoinInfo> ls) {
+        if (CollUtil.isEmpty(ls)) {
+            return;
+        }
         List<Pair<Query, ExchangeCoinInfo>> updates = ls.stream().map(i -> Pair.of(buildQuery(i), i)).collect(Collectors.toList());
         exchangeCoinInfoDAODynamic.bulkUpsertWrap(false, updates);
     }

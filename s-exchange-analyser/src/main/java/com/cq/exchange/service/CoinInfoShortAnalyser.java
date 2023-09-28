@@ -36,7 +36,6 @@ public class CoinInfoShortAnalyser implements Runnable {
     private final ExchangeTradeType tradeType;
     private final ExchangePeriodEnum periodEnum;
 
-    private final static int NUM_THREADS = 2;
     private final static int COUNT_RETRY = 2;
     private final static int LIMIT_KLINES = 1000;
     private final static int LIMIT_KLINES_MIN = 10;
@@ -64,7 +63,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                 return;
             }
 
-            int size = ls.size() / NUM_THREADS + ls.size() % NUM_THREADS;
+            int size = ls.size() / threadPoolTaskScheduler.getPoolSize() + ls.size() % threadPoolTaskScheduler.getPoolSize();
             List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, size);
             for (var p : ps) {
                 threadPoolTaskScheduler.submit(new ActionSub(p));
