@@ -81,15 +81,15 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                         continue;
                     }
 
+                    // update db
                     BigDecimal volumeMultiple = MathUtil.div(kline.getVolume(), info.getQtyAvgSmoothVolume());
+                    info.setMultipleVolume(volumeMultiple);
+                    serviceContext.getExchangeCoinInfoService().updateOne(info);
+
                     if (volumeMultiple.compareTo(multipleChange) < 0) {
                         // no over
                         continue;
                     }
-
-                    // update db
-                    info.setMultipleVolume(volumeMultiple);
-                    serviceContext.getExchangeCoinInfoService().updateOne(info);
 
                     // notify
                     String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);

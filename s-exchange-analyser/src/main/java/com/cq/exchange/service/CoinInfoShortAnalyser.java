@@ -36,10 +36,11 @@ public class CoinInfoShortAnalyser implements Runnable {
     private final ExchangeTradeType tradeType;
     private final ExchangePeriodEnum periodEnum;
 
+    private final static int NUM_THREADS = 2;
     private final static int COUNT_RETRY = 2;
     private final static int LIMIT_KLINES = 1000;
     private final static int LIMIT_KLINES_MIN = 10;
-    private final static int MULTIPLE_STDEV = 4;    // 标准差的倍数，在这个倍数之外的数据认为是意外的
+    private final static int MULTIPLE_STDEV = 4;    // the data is unexpected when over this multiple
 
     private Map<String, LinkedList<ExchangeKline>> symbolKlines = new ConcurrentHashMap<>();
 
@@ -63,7 +64,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                 return;
             }
 
-            int size = ls.size() / threadPoolTaskScheduler.getPoolSize() + ls.size() % threadPoolTaskScheduler.getPoolSize();
+            int size = ls.size() / NUM_THREADS + ls.size() % NUM_THREADS;
             List<List<ExchangeCoinInfoRaw>> ps = ListUtil.partition(ls, size);
             for (var p : ps) {
                 threadPoolTaskScheduler.submit(new ActionSub(p));
