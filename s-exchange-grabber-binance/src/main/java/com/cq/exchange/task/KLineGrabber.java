@@ -91,7 +91,7 @@ public class KLineGrabber implements Runnable {
                         log.error("klines is empty {}, limit - {}", i.getSymbol(), limit);
                         continue;
                     }
-                    serviceContext.getExchangeKlineService().saveAll(klinesAdapt);
+                    serviceContext.getExchangeKlineService().saveNews(klinesAdapt);
 
                     // get each kline with sleeping a while on first time
                     if (needRest) {

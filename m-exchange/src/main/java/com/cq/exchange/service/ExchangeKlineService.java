@@ -36,7 +36,7 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         return new BasicQuery(qb.get().toString());
     }
 
-    public void saveAll(List<ExchangeKline> ls) {
+    public void saveNews(List<ExchangeKline> ls) {
         if (CollUtil.isEmpty(ls)) {
             return;
         }
@@ -45,6 +45,9 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
 
         if (latest != null) {
             ls = ls.stream().filter(i -> i.getOpenTime() > latest.getOpenTime()).collect(Collectors.toList());
+        }
+        if (CollUtil.isEmpty(ls)) {
+            return;
         }
 
         List<Pair<Query, ExchangeKline>> updates = ls.stream().map(i -> Pair.of(buildQuery(i), i)).collect(Collectors.toList());
