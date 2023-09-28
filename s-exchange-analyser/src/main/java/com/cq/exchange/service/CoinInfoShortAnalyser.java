@@ -17,6 +17,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +83,7 @@ public class CoinInfoShortAnalyser implements Runnable {
             StopWatch sw = new StopWatch();
             sw.start(StrUtil.format("{} - infos: {}", this.getClass().getName(), infos.size()));
 
+            List<ExchangeCoinInfo> infosRipe = new ArrayList<>();
             for (ExchangeCoinInfoRaw info : infos) {
                 try {
                     // continuous klines
@@ -136,6 +138,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                                 }
                                 finalKsCached.offer(i);
                             });
+                            break;
                         }
                     }
                     if (count <= 0) {
@@ -199,11 +202,14 @@ public class CoinInfoShortAnalyser implements Runnable {
                     infoRipe.setTradeType(tradeType.getCode());
                     infoRipe.setSymbol(info.getSymbol());
                     infoRipe.setPair(info.getPair());
-                    serviceContext.getExchangeCoinInfoService().save(infoRipe);
+
+                    infosRipe.add(infoRipe);
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
             }
+
+            serviceContext.getExchangeCoinInfoService().saveAll(infosRipe);
 
             sw.stop();
             log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));

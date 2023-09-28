@@ -7,7 +7,11 @@ import com.mongodb.QueryBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.query.BasicQuery;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by lin on 2020-11-10.
@@ -45,5 +49,10 @@ public class ExchangeCoinInfoService {
 
     public void updateOne(ExchangeCoinInfo e) {
         exchangeCoinInfoDAODynamic.upsertWrap(buildQuery(e), e);
+    }
+
+    public void saveAll(List<ExchangeCoinInfo> ls) {
+        List<Pair<Query, ExchangeCoinInfo>> updates = ls.stream().map(i -> Pair.of(buildQuery(i), i)).collect(Collectors.toList());
+        exchangeCoinInfoDAODynamic.bulkUpsertWrap(false, updates);
     }
 }
