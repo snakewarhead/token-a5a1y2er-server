@@ -1,6 +1,8 @@
 package com.cq;
 
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.thread.ThreadUtil;
+import com.cq.exchange.NotifyContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
@@ -53,16 +55,42 @@ public class CommonTest {
 //            }
 //        }
 
-        for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); ) {
-            String k = iterator.next();
-            if ("ccc".equals(k)) {
-                iterator.remove();
-            }
-        }
+//        for (Iterator<String> iterator = m.keySet().iterator(); iterator.hasNext(); ) {
+//            String k = iterator.next();
+//            if ("ccc".equals(k)) {
+//                iterator.remove();
+//            }
+//        }
 
         // jdk 8+
-//        m.values().removeIf(v -> v < 333L);
+        m.values().removeIf(v -> v < 333L);
 
         log.info(m.toString());
+    }
+
+    @Test
+    public void NotifyContext() {
+        NotifyContext nc = new NotifyContext(10 * 1000);
+
+        log.info("1 - {}", nc.fresh("a"));
+        log.info("2 - {}", nc.fresh("a"));
+
+        ThreadUtil.sleep(5 * 1000);
+
+        log.info("3 - {}", nc.fresh("b"));
+        log.info("4 - {}", nc.fresh("c"));
+
+        log.info("5 - {}", nc.fresh("a"));
+
+        ThreadUtil.sleep(5 * 1000);
+
+//        nc.clean();
+
+        log.info("6 - {}", nc.fresh("a"));
+
+        log.info("3 - {}", nc.fresh("b"));
+        log.info("4 - {}", nc.fresh("c"));
+
+        log.info("m - {}", nc.getStales().toString());
     }
 }

@@ -5,6 +5,7 @@ import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.cq.core.vo.MailMsg;
+import com.cq.exchange.NotifyContext;
 import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.entity.ExchangeKline;
@@ -31,10 +32,13 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
     private final static long TIME_STALE_NOTIFY = 24 * 3600 * 1000;
     private final static long PERIOD_STALE_TOLERANCE = 3L;
+
     private long periodStaleTolerance;
+    private NotifyContext notifyContext;
 
     public VolumeChangeQuickAnalyser init() {
         periodStaleTolerance = periodEnum.getMillis() * PERIOD_STALE_TOLERANCE;
+        notifyContext = new NotifyContext(TIME_STALE_NOTIFY);
         return this;
     }
 
@@ -92,16 +96,18 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                     }
 
                     // notify
-                    String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
-                    MailMsg msg = MailMsg.builder()
-                            .subject("volume change quick")
-                            .text(ct)
-                            .silent(MailMsg.Silent.builder()
-                                    .hash(SecureUtil.md5(info.getSymbol()))
-                                    .deadline(TIME_STALE_NOTIFY)
-                                    .build())
-                            .build();
-                    serviceContext.getMailClient().send(msg);
+                    if (notifyContext.fresh(s.getSymbol())) {
+                        String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
+                        MailMsg msg = MailMsg.builder()
+                                .subject("volume change quick")
+                                .text(ct)
+                                .silent(MailMsg.Silent.builder()
+                                        .hash(SecureUtil.md5(info.getSymbol()))
+                                        .deadline(TIME_STALE_NOTIFY)
+                                        .build())
+                                .build();
+                        serviceContext.getMailClient().send(msg);
+                    }
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
                 }
