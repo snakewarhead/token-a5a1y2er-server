@@ -2,17 +2,17 @@ package com.cq.exchange.utils;
 
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.entity.ExchangeKline;
+import com.cq.exchange.entity.ExchangeOrderBook;
+import com.cq.exchange.entity.ExchangeOrderBookDiff;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
-import com.mongodb.QueryBuilder;
 import info.bitrich.xchangestream.binance.KlineSubscription;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.dto.marketdata.BinanceKline;
 import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
+import org.knowm.xchange.dto.marketdata.DiffOrderBook;
 import org.knowm.xchange.instrument.Instrument;
-import org.springframework.data.mongodb.core.query.BasicQuery;
-import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.List;
 import java.util.Map;
@@ -57,4 +57,44 @@ public class Adapter {
         return new KlineSubscription(klineSubscriptionMap);
     }
 
+    public static ExchangeOrderBook adaptOrderBook(String symbol, ExchangeEnum exchangeEnum, ExchangeTradeType tradeType, DiffOrderBook o) {
+        ExchangeOrderBook b = new ExchangeOrderBook();
+        b.setExchangeId(exchangeEnum.getCode());
+        b.setTradeType(tradeType.getCode());
+        b.setSymbol(symbol);
+        b.setPair(BinanceAdapters.adaptSymbol(symbol, false).toString());
+        b.setTime(o.getTimeStamp());
+
+        b.setUpdateIdLast(o.getLastUpdateId());
+
+        b.setBids(o.getBids().stream()
+                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
+                .collect(Collectors.toList()));
+        b.setAsks(o.getAsks().stream()
+                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
+                .collect(Collectors.toList()));
+
+        return b;
+    }
+
+    public static ExchangeOrderBookDiff wrapOrderBook(String symbol, ExchangeEnum exchangeEnum, ExchangeTradeType tradeType, DiffOrderBook o) {
+        ExchangeOrderBookDiff b = new ExchangeOrderBookDiff();
+        b.setExchangeId(exchangeEnum.getCode());
+        b.setTradeType(tradeType.getCode());
+        b.setSymbol(symbol);
+        b.setPair(BinanceAdapters.adaptSymbol(symbol, false).toString());
+
+        b.setUpdateIdLast(o.getLastUpdateId());
+        b.setUpdateIdFirst(o.getFirstUpdateId());
+        b.setUpdateIdLastLast(o.getLastLastUpdateId());
+
+        b.setBidsUpdate(o.getBidsUpdate().stream()
+                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+                .collect(Collectors.toList()));
+        b.setAsksUpdate(o.getAsksUpdate().stream()
+                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+                .collect(Collectors.toList()));
+
+        return b;
+    }
 }

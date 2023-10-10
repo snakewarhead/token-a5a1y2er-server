@@ -1,10 +1,11 @@
 package com.cq.exchange.entity;
 
-import com.cq.core.entity.BaseEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -19,16 +20,18 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@CompoundIndexes({
+        @CompoundIndex(def = "{exchangeId: 1, tradeType: 1, symbol: 1}", unique = true)
+})
 @Document(collection = "exchange_order_book")
 public class ExchangeOrderBook extends ExchangeEntity<ExchangeOrderBook> {
 
     private Date time;
 
+    private long updateIdLast;
+
     private List<Order> asks;
     private List<Order> bids;
-
-    private List<Order> asksUpdate;
-    private List<Order> bidsUpdate;
 
     @Data
     @AllArgsConstructor
