@@ -16,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @CompoundIndexes({
-        @CompoundIndex(def = "{exchangeId: 1, tradeType: 1, symbol: 1, pair: 1}", unique = true)
+        @CompoundIndex(def = "{exchangeId: 1, tradeType: 1, symbol: 1}", unique = true)
 })
 @Document(collection = "exchange_ticker")
 public class ExchangeTicker extends ExchangeEntity<ExchangeTicker> {

@@ -18,7 +18,6 @@ public class ExchangeBaseService<T extends ExchangeEntity> {
             qb.and("exchangeId").is(i.getExchangeId());
             qb.and("tradeType").is(i.getTradeType());
             qb.and("symbol").is(i.getSymbol());
-            qb.and("pair").is(i.getPair());
             Query q = new BasicQuery(qb.get().toString());
             return Pair.of(q, i);
         }).collect(Collectors.toList());
