@@ -1,4 +1,4 @@
-package com.cq.exchange.service;
+package com.cq.exchange.task;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
@@ -10,6 +10,7 @@ import com.cq.exchange.entity.ExchangeKline;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.service.ServiceContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;

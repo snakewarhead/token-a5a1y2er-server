@@ -1,4 +1,4 @@
-package com.cq.exchange.service;
+package com.cq.exchange.task;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.StopWatch;
@@ -12,6 +12,7 @@ import com.cq.exchange.entity.ExchangeKline;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.service.ServiceContext;
 import com.cq.util.MathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

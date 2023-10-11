@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.task.FundingRateGrabber;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package com.cq.exchange.service;
+package com.cq.exchange.task;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -7,6 +7,8 @@ import com.cq.exchange.entity.ExchangeFutureFundingRate;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
+import com.cq.exchange.service.Config;
+import com.cq.exchange.service.ServiceContext;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import com.cq.exchange.vo.fundingrate.FundingRateCoinGlass;
