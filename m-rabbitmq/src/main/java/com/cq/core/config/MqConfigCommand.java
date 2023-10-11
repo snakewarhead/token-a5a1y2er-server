@@ -1,6 +1,5 @@
 package com.cq.core.config;
 
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -21,11 +20,19 @@ public class MqConfigCommand {
     public static final String QUEUE_NAME_ANALYSER = "queue_command_analyser";
     public static final String ROUTING_KEY_ANALYSER = "routing_key_command_analyser";
 
-//    @Bean
-//    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-//        RabbitTemplate rabbitTemplate = new RabbitTemplate();
-//        rabbitTemplate.setConnectionFactory(connectionFactory);
-//        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
-//        return rabbitTemplate;
-//    }
+    public static final String QUEUE_NAME_NOTIFY_ORDERBOOK_DIFF = "queue_command_notify_orderbook_diff";
+    public static final String ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF = "routing_key_command_notify_orderbook_diff";
+
+    @Bean
+    public RabbitTemplate rabbitTemplateJson(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        rabbitTemplate.setMessageConverter(new Jackson2JsonMessageConverter());
+        return rabbitTemplate;
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+        RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
+        return rabbitTemplate;
+    }
 }

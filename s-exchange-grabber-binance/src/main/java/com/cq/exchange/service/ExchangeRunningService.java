@@ -7,6 +7,7 @@ import com.cq.exchange.task.*;
 import com.cq.exchange.vo.ExchangeRunningParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.concurrent.Future;
 public class ExchangeRunningService {
 
     private final ServiceContext serviceContext;
+    private final RabbitTemplate rabbitTemplateJson;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
     private ConcurrentHashMap<ExchangeRunningParam, List<Future>> mapRunning = new ConcurrentHashMap<>();
@@ -42,7 +44,7 @@ public class ExchangeRunningService {
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.OrderBook.is(a.getName())) {
             ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
-            Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
+            Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, rabbitTemplateJson, a.getSymbols(), !init).init());
             futures.add(f);
         }
         if (ExchangeActionType.AggTrade.is(a.getName())) {
