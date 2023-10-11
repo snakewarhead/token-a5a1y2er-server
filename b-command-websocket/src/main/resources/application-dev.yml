@@ -1,0 +1,3 @@
+spring:
+  profiles:
+    include: exchange-dev, rabbitmq-dev
