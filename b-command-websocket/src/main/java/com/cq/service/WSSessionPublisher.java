@@ -2,9 +2,9 @@ package com.cq.service;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
-
 import com.cq.core.config.MqConfigCommand;
 import com.cq.exchange.entity.ExchangeOrderBook;
+import com.cq.exchange.entity.ExchangeOrderBookDiff;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.service.ExchangeOrderBookService;
@@ -13,9 +13,13 @@ import com.cq.exchange.vo.ExchangeRunningParamMSG;
 import com.cq.vo.JSONResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import org.springframework.amqp.rabbit.annotation.Exchange;
+import org.springframework.amqp.rabbit.annotation.Queue;
+import org.springframework.amqp.rabbit.annotation.QueueBinding;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.socket.TextMessage;
@@ -111,7 +115,7 @@ public class WSSessionPublisher {
             int countLive = 0;
             Map<String, WebSocketSession> m = mapSubscribed.get(p);
             if (CollUtil.isNotEmpty(m)) {
-                for (Iterator<Map.Entry<String, WebSocketSession>> it = m.entrySet().iterator(); it.hasNext();) {
+                for (Iterator<Map.Entry<String, WebSocketSession>> it = m.entrySet().iterator(); it.hasNext(); ) {
                     WebSocketSession s = it.next().getValue();
                     if (!s.isOpen()) {
                         it.remove();
@@ -132,7 +136,7 @@ public class WSSessionPublisher {
         }
     }
 
-    @Scheduled(fixedDelay = 1000)
+    //    @Scheduled(fixedDelay = 1000)
     public void pushOrderBook() {
         for (ExchangeRunningParam p : mapSubscribed.keySet()) {
             if (ExchangeActionType.OrderBook.isNot(p.getAction().getName())) {
@@ -163,6 +167,16 @@ public class WSSessionPublisher {
                 }
             }
         }
+    }
+
+    @RabbitListener(
+            bindings = {@QueueBinding(
+                    value = @Queue(name = MqConfigCommand.QUEUE_NAME_NOTIFY_ORDERBOOK_DIFF, durable = "false"),
+                    exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME, durable = "false"),
+                    key = {MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF})})
+//    public void orderBookDiff(ExchangeOrderBookDiff o) {
+    public void orderBookDiff(@Payload Object o) {
+        log.info(o.toString());
     }
 
     private String mapRoutingKey(int exchange, ExchangeActionType action) {
