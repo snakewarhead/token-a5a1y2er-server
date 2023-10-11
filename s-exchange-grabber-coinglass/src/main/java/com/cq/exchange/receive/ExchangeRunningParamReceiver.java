@@ -13,10 +13,10 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 @Component
 @RabbitListener(
-    bindings = @QueueBinding(
-        value = @Queue(name = MqConfigCommand.QUEUE_NAME_COINGLASS_GRABBER, durable = "false"),
-        exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME),
-        key = {MqConfigCommand.ROUTING_KEY_COINGLASS_GRABBER}))
+        bindings = {@QueueBinding(
+                value = @Queue(name = MqConfigCommand.QUEUE_NAME_COINGLASS_GRABBER, durable = "false"),
+                exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME, durable = "false"),
+                key = {MqConfigCommand.ROUTING_KEY_COINGLASS_GRABBER})})
 public class ExchangeRunningParamReceiver {
 
     private final ExchangeRunningService exchangeRunningService;
