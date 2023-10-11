@@ -174,8 +174,7 @@ public class WSSessionPublisher {
                     value = @Queue(name = MqConfigCommand.QUEUE_NAME_NOTIFY_ORDERBOOK_DIFF, durable = "false"),
                     exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME, durable = "false"),
                     key = {MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF})})
-//    public void orderBookDiff(ExchangeOrderBookDiff o) {
-    public void orderBookDiff(@Payload Object o) {
+    public void orderBookDiff(ExchangeOrderBookDiff o) {
         log.info(o.toString());
     }
 

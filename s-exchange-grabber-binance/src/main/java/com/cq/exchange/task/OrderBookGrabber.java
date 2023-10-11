@@ -24,7 +24,7 @@ public class OrderBookGrabber implements Runnable {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
-    private final RabbitTemplate rabbitTemplateJson;
+    private final RabbitTemplate rabbitTemplate;
 
     private final List<String> symbols;
     private final boolean needNotify;
@@ -54,7 +54,7 @@ public class OrderBookGrabber implements Runnable {
                         if (needNotify) {
                             // send notify message to another services by amqp whether the orderupdates are comming.
                             ExchangeOrderBookDiff wraped = Adapter.wrapOrderBook(s, exchangeContext.getExchangeEnum(), exchangeContext.getTradeType(), diffOrderBook);
-                            rabbitTemplateJson.convertAndSend(MqConfigCommand.EXCHANGE_NAME, MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF, wraped);
+                            rabbitTemplate.convertAndSend(MqConfigCommand.EXCHANGE_NAME, MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF, wraped);
                         }
                     },
                     throwable -> log.error(StrUtil.format("ERROR in getting order book: {} - ", s), throwable)

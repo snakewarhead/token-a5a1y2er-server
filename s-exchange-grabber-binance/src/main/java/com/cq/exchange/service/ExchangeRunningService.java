@@ -23,7 +23,7 @@ import java.util.concurrent.Future;
 public class ExchangeRunningService {
 
     private final ServiceContext serviceContext;
-    private final RabbitTemplate rabbitTemplateJson;
+    private final RabbitTemplate rabbitTemplate;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
     private ConcurrentHashMap<ExchangeRunningParam, List<Future>> mapRunning = new ConcurrentHashMap<>();
@@ -44,7 +44,7 @@ public class ExchangeRunningService {
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.OrderBook.is(a.getName())) {
             ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
-            Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, rabbitTemplateJson, a.getSymbols(), !init).init());
+            Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, rabbitTemplate, a.getSymbols(), !init).init());
             futures.add(f);
         }
         if (ExchangeActionType.AggTrade.is(a.getName())) {

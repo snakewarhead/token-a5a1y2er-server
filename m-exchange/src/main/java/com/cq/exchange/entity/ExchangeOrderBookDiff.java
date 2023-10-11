@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -16,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ExchangeOrderBookDiff extends ExchangeEntity {
+public class ExchangeOrderBookDiff extends ExchangeEntity implements Serializable {
 
     private long updateIdLastLast;
     private long updateIdLast;
