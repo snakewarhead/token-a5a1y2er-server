@@ -3,6 +3,7 @@ package com.cq.exchange.task;
 import cn.hutool.core.util.StrUtil;
 import com.cq.core.config.MqConfigCommand;
 import com.cq.exchange.ExchangeContext;
+import com.cq.exchange.entity.ExchangeOrderBook;
 import com.cq.exchange.entity.ExchangeOrderBookDiff;
 import com.cq.exchange.service.ServiceContext;
 import com.cq.exchange.utils.Adapter;
@@ -45,11 +46,14 @@ public class OrderBookGrabber implements Runnable {
             exchangeContext.getExchangeCurrentStream().getStreamingMarketDataService().getOrderBook(BinanceAdapters.adaptSymbol(s, false)).subscribe(
                     orderBook -> {
                         DiffOrderBook diffOrderBook = (DiffOrderBook) orderBook;
-
-                        serviceContext.getExchangeOrderBookService().save(Adapter.adaptOrderBook(s, exchangeContext.getExchangeEnum(), exchangeContext.getTradeType(), diffOrderBook));
-
-                        // TODO: save all in first time or DiffOrderBook.isFullUpdate == true
-                        // TODO: update partial next time.
+                        ExchangeOrderBook adapted = Adapter.adaptOrderBook(s, exchangeContext.getExchangeEnum(), exchangeContext.getTradeType(), diffOrderBook);
+                        if (diffOrderBook.isFullUpdate()) {
+                            // save all in first time or DiffOrderBook.isFullUpdate == true
+                            serviceContext.getExchangeOrderBookService().save(adapted);
+                        } else {
+                            // update partial next time.
+                            serviceContext.getExchangeOrderBookService().save(adapted);
+                        }
 
                         if (needNotify) {
                             // send notify message to another services by amqp whether the orderupdates are comming.

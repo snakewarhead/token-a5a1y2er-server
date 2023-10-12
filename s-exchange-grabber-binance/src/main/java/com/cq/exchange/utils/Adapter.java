@@ -67,12 +67,21 @@ public class Adapter {
 
         b.setUpdateIdLast(o.getLastUpdateId());
 
-        b.setBids(o.getBids().stream()
-                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
-                .collect(Collectors.toList()));
-        b.setAsks(o.getAsks().stream()
-                .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
-                .collect(Collectors.toList()));
+        if (o.isFullUpdate()) {
+            b.setBids(o.getBids().stream()
+                    .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
+                    .collect(Collectors.toList()));
+            b.setAsks(o.getAsks().stream()
+                    .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitPrice(), limitOrder.getOriginalAmount()))
+                    .collect(Collectors.toList()));
+        } else {
+            b.setBids(o.getBidsUpdate().stream()
+                    .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+                    .collect(Collectors.toList()));
+            b.setAsks(o.getAsksUpdate().stream()
+                    .map(limitOrder -> new ExchangeOrderBook.Order(limitOrder.getLimitOrder().getLimitPrice(), limitOrder.getTotalVolume()))
+                    .collect(Collectors.toList()));
+        }
 
         return b;
     }
