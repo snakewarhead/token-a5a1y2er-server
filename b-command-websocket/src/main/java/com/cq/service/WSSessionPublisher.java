@@ -158,23 +158,28 @@ public class WSSessionPublisher {
                     exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME, durable = "false"),
                     key = {MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF})})
     public void orderBookDiff(ExchangeOrderBookDiff o) {
-        ExchangeRunningParam p = new ExchangeRunningParam(o.getExchangeId(), o.getTradeType()).putAction(ExchangeActionType.OrderBook, o.getSymbol(), null);
-        Map<String, WebSocketSession> m = mapSubscribed.get(p);
-        if (CollUtil.isEmpty(m)) {
-            return;
-        }
-        var res = JSONResult.success("", o);
-
-        m.values().parallelStream().forEach(i -> {
-            try {
-                if (!i.isOpen()) {
-                    return;
-                }
-                i.sendMessage(new TextMessage(res.toJSONString()));
-            } catch (Exception e) {
-                log.error(e.getMessage(), e);
+        try {
+            ExchangeRunningParam p = new ExchangeRunningParam(o.getExchangeId(), o.getTradeType()).putAction(ExchangeActionType.OrderBook, o.getSymbol(), null);
+            Map<String, WebSocketSession> m = mapSubscribed.get(p);
+            if (CollUtil.isEmpty(m)) {
+                return;
             }
-        });
+            var res = JSONResult.success("", o);
+
+            m.values().parallelStream().forEach(i -> {
+                try {
+                    if (!i.isOpen()) {
+                        return;
+                    }
+                    i.sendMessage(new TextMessage(res.toJSONString()));
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
+        } catch (Exception e) {
+            // do not requeue to mq
+            log.error(e.getMessage(), e);
+        }
     }
 
     private String mapRoutingKey(int exchange, ExchangeActionType action) {
