@@ -28,7 +28,6 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         qb.and("exchangeId").is(e.getExchangeId());
         qb.and("tradeType").is(e.getTradeType());
         qb.and("symbol").is(e.getSymbol());
-        qb.and("pair").is(e.getPair());
 
         qb.and("period").is(e.getPeriod());
         qb.and("openTime").is(e.getOpenTime());
