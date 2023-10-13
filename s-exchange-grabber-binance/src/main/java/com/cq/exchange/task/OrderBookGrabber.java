@@ -52,7 +52,7 @@ public class OrderBookGrabber implements Runnable {
                             serviceContext.getExchangeOrderBookService().save(adapted);
                         } else {
                             // update partial next time.
-                            serviceContext.getExchangeOrderBookService().save(adapted);
+                            serviceContext.getExchangeOrderBookService().updateDiff(adapted);
                         }
 
                         if (needNotify) {

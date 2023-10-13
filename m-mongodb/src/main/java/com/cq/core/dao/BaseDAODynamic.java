@@ -48,6 +48,11 @@ public class BaseDAODynamic<T> {
         return res.wasAcknowledged();
     }
 
+    public boolean updateFirst(Query q, Update u) {
+        UpdateResult res = mongoTemplate.updateFirst(q, u, clazz);
+        return res.wasAcknowledged();
+    }
+
     public boolean upsertWrap(Query q, T t) {
         org.bson.Document d = (org.bson.Document) mongoTemplate.getConverter().convertToMongoType(t);
         Update u = Update.fromDocument(d);
