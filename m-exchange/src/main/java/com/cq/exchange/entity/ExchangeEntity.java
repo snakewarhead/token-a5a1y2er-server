@@ -4,10 +4,11 @@ import com.cq.core.entity.BaseEntity;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.Indexed;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class ExchangeEntity<T> extends BaseEntity<T> {
+public class ExchangeEntity<T> extends BaseEntity<T> implements Serializable {
 
     @Indexed
     protected Integer exchangeId;
