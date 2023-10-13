@@ -19,9 +19,9 @@ import org.springframework.amqp.rabbit.annotation.QueueBinding;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.socket.PingMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -106,6 +106,23 @@ public class WSSessionPublisher {
 
         } catch (Exception e) {
             log.error(e.getMessage(), e);
+        }
+    }
+
+    @Scheduled(fixedDelay = 30000)
+    public void ping() {
+        for (ExchangeRunningParam p : mapSubscribed.keySet()) {
+            Map<String, WebSocketSession> m = mapSubscribed.get(p);
+            if (CollUtil.isEmpty(m)) {
+                continue;
+            }
+            m.values().parallelStream().forEach(i -> {
+                try {
+                    i.sendMessage(new PingMessage());
+                } catch (Exception e) {
+                    log.error(e.getMessage(), e);
+                }
+            });
         }
     }
 
