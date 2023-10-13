@@ -117,6 +117,9 @@ public class WSSessionPublisher {
             }
             m.values().parallelStream().forEach(i -> {
                 try {
+                    if (!i.isOpen()) {
+                        return;
+                    }
                     i.sendMessage(new PingMessage());
                 } catch (Exception e) {
                     log.error(e.getMessage(), e);
