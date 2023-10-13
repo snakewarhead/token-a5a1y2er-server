@@ -3,7 +3,6 @@ package com.cq.service;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.core.config.MqConfigCommand;
-import com.cq.exchange.entity.ExchangeOrderBook;
 import com.cq.exchange.entity.ExchangeOrderBookDiff;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.enums.ExchangeEnum;
@@ -153,46 +152,29 @@ public class WSSessionPublisher {
         }
     }
 
-    //    @Scheduled(fixedDelay = 1000)
-    public void pushOrderBook() {
-        for (ExchangeRunningParam p : mapSubscribed.keySet()) {
-            if (ExchangeActionType.OrderBook.isNot(p.getAction().getName())) {
-                continue;
-            }
-
-            ExchangeOrderBook e = exchangeOrderBookService.find(p.getExchange(), p.getTradeType(), p.getAction().getSymbols().get(0));
-            if (e == null) {
-                // log.warn("no data. need grab first. {}", p.toString());
-                continue;
-            }
-            JSONResult<ExchangeOrderBook> res = JSONResult.success("", e);
-
-            // closed session should be removed
-            Map<String, WebSocketSession> m = mapSubscribed.get(p);
-            if (CollUtil.isEmpty(m)) {
-                continue;
-            }
-            for (Iterator<Map.Entry<String, WebSocketSession>> it = m.entrySet().iterator(); it.hasNext(); ) {
-                WebSocketSession s = it.next().getValue();
-                if (!s.isOpen()) {
-                    continue;
-                }
-                try {
-                    s.sendMessage(new TextMessage(res.toJSONString()));
-                } catch (Exception ex) {
-                    log.error(ex.getMessage(), ex);
-                }
-            }
-        }
-    }
-
     @RabbitListener(
             bindings = {@QueueBinding(
                     value = @Queue(name = MqConfigCommand.QUEUE_NAME_NOTIFY_ORDERBOOK_DIFF, durable = "false"),
                     exchange = @Exchange(name = MqConfigCommand.EXCHANGE_NAME, durable = "false"),
                     key = {MqConfigCommand.ROUTING_KEY_NOTIFY_ORDERBOOK_DIFF})})
     public void orderBookDiff(ExchangeOrderBookDiff o) {
-        log.info(o.toString());
+        ExchangeRunningParam p = new ExchangeRunningParam(o.getExchangeId(), o.getTradeType()).putAction(ExchangeActionType.OrderBook, o.getSymbol(), null);
+        Map<String, WebSocketSession> m = mapSubscribed.get(p);
+        if (CollUtil.isEmpty(m)) {
+            return;
+        }
+        var res = JSONResult.success("", o);
+
+        m.values().parallelStream().forEach(i -> {
+            try {
+                if (!i.isOpen()) {
+                    return;
+                }
+                i.sendMessage(new TextMessage(res.toJSONString()));
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
     }
 
     private String mapRoutingKey(int exchange, ExchangeActionType action) {
