@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class TakerLongShortRatioGrabber implements Runnable {
+public class TakerLongShortRatioGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;

@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class CoinInfoRawGrabber implements Runnable {
+public class CoinInfoRawGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;

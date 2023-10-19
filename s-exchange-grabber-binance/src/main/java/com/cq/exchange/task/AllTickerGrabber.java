@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
-public class AllTickerGrabber implements Runnable {
+public class AllTickerGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
 
-    public Runnable init() {
+    public Grabber init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
         builder.setAllTicker(true);
@@ -35,6 +35,11 @@ public class AllTickerGrabber implements Runnable {
             List<ExchangeTicker> lst = ls.stream().map(this::adapt).collect(Collectors.toList());
             serviceContext.getExchangeTickerService().saveAll(lst);
         });
+    }
+
+    @Override
+    public void close() {
+        exchangeContext.getExchangeCurrentStream().disconnect().blockingAwait();
     }
 
     private ExchangeTicker adapt(Ticker t) {

@@ -18,13 +18,13 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class AggTradeGrabber implements Runnable {
+public class AggTradeGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 
-    public Runnable init() {
+    public Grabber init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
         symbols.forEach(s -> builder.addAggTrades(BinanceAdapters.adaptSymbol(s, true)));
@@ -43,6 +43,11 @@ public class AggTradeGrabber implements Runnable {
                     throwable -> log.error("ERROR in getting agg trades: ", throwable)
             );
         });
+    }
+
+    @Override
+    public void close() {
+        exchangeContext.getExchangeCurrentStream().disconnect().blockingAwait();
     }
 
     private ExchangeAggTrade adapt(String s, BinanceAggTrades e) {

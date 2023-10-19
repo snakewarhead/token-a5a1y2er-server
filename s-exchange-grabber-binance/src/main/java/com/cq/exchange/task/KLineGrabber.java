@@ -3,6 +3,7 @@ package com.cq.exchange.task;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.date.StopWatch;
+import cn.hutool.core.lang.Pair;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.ExchangeContext;
@@ -20,7 +21,9 @@ import org.knowm.xchange.binance.dto.marketdata.KlineInterval;
 import org.knowm.xchange.binance.service.BinanceFuturesMarketDataServiceRaw;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  * Created by lin on 2020-11-06.
  */
 @Slf4j
-public class KLineGrabber implements Runnable {
+public class KLineGrabber implements Grabber {
 
     private final static long INTERVAL_IN_REST = 500L; // 2400 weights per minute
     private final static long INTERVAL_IN_FINAL = 100000L;
@@ -41,6 +44,8 @@ public class KLineGrabber implements Runnable {
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final ExchangePeriodEnum periodEnum;
+
+    private List<Pair<Future, Grabber>> futures = new ArrayList<>();
 
     public KLineGrabber(ThreadPoolTaskScheduler threadPoolTaskScheduler, ServiceContext serviceContext, ExchangeContext exchangeContext, String period) {
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
@@ -63,15 +68,32 @@ public class KLineGrabber implements Runnable {
             for (var p : ps) {
                 // exchangeContextNew per thread
                 ExchangeContext exchangeContextNew = new ExchangeContext(exchangeContext.getExchangeEnum().getCode(), exchangeContext.getTradeType().getCode(), true);
-                threadPoolTaskScheduler.submit(new ActionSub((BinanceFuturesExchange) exchangeContext.getExchangeCurrent(), exchangeContextNew.getExchangeNew(), p));
+                ActionSub as = new ActionSub((BinanceFuturesExchange) exchangeContext.getExchangeCurrent(), exchangeContextNew.getExchangeNew(), p);
+                Future f = threadPoolTaskScheduler.submit(as);
+
+                futures.add(Pair.of(f, as));
             }
         } catch (Exception e) {
             log.error(e.getMessage(), e);
         }
     }
 
+    @Override
+    public void close() {
+        futures.forEach(f -> {
+            try {
+                f.getKey().cancel(true);
+                f.getValue().close();
+            } catch (Exception e) {
+                log.error(e.getMessage(), e);
+            }
+        });
+
+        futures.clear();
+    }
+
     @RequiredArgsConstructor
-    final class ActionSub implements Runnable {
+    final class ActionSub implements Grabber {
 
         private final BinanceFuturesExchange exchangeOld;
         final info.bitrich.xchangestream.binance.BinanceStreamingExchange exchangeNew;
@@ -128,5 +150,11 @@ public class KLineGrabber implements Runnable {
 
             ThreadUtil.sleep(Integer.MAX_VALUE);
         }
+
+        @Override
+        public void close() {
+            exchangeNew.disconnect().blockingAwait();
+        }
+
     }
 }

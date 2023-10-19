@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.knowm.xchange.binance.BinanceAdapters;
 import org.knowm.xchange.binance.dto.trade.BinanceForceOrder;
-import org.knowm.xchange.currency.CurrencyPair;
 
 import java.util.List;
 
@@ -19,13 +18,13 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class ForceOrderGrabber implements Runnable {
+public class ForceOrderGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
     private final List<String> symbols;
 
-    public Runnable init() {
+    public Grabber init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
         symbols.forEach(s -> builder.addForceOrders(BinanceAdapters.adaptSymbol(s, true)));
@@ -44,6 +43,11 @@ public class ForceOrderGrabber implements Runnable {
                     throwable -> log.error("ERROR in getting force order: ", throwable)
             );
         });
+    }
+
+    @Override
+    public void close() {
+        exchangeContext.getExchangeCurrentStream().disconnect().blockingAwait();
     }
 
     private ExchangeForceOrder adapt(String s, BinanceForceOrder e) {

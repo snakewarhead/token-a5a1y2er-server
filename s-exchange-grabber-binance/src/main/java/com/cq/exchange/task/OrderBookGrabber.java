@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Slf4j
 @RequiredArgsConstructor
-public class OrderBookGrabber implements Runnable {
+public class OrderBookGrabber implements Grabber {
 
     private final ServiceContext serviceContext;
     private final ExchangeContext exchangeContext;
@@ -30,7 +30,7 @@ public class OrderBookGrabber implements Runnable {
     private final List<String> symbols;
     private final boolean needNotify;
 
-    public Runnable init() {
+    public Grabber init() {
         // subscript
         ProductSubscription.ProductSubscriptionBuilder builder = ProductSubscription.create();
         symbols.forEach(s -> builder.addOrderbook(BinanceAdapters.adaptSymbol(s, false)));
@@ -64,5 +64,10 @@ public class OrderBookGrabber implements Runnable {
                     throwable -> log.error(StrUtil.format("ERROR in getting order book: {} - ", s), throwable)
             );
         });
+    }
+
+    @Override
+    public void close() {
+        exchangeContext.getExchangeCurrentStream().disconnect().blockingAwait();
     }
 }

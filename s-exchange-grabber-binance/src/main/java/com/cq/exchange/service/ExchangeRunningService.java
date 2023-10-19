@@ -6,7 +6,6 @@ import com.cq.exchange.ExchangeContext;
 import com.cq.exchange.enums.ExchangeActionType;
 import com.cq.exchange.task.*;
 import com.cq.exchange.vo.ExchangeRunningParam;
-import info.bitrich.xchangestream.core.StreamingExchange;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -28,7 +27,7 @@ public class ExchangeRunningService {
     private final RabbitTemplate rabbitTemplate;
 
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
-    private ConcurrentHashMap<ExchangeRunningParam, List<Pair<Future, ExchangeContext>>> mapRunning = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<ExchangeRunningParam, List<Pair<Future, Grabber>>> mapRunning = new ConcurrentHashMap<>();
 
     public void init(int poolSize) {
         threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
@@ -44,36 +43,41 @@ public class ExchangeRunningService {
 
         ExchangeContext exchangeContext = new ExchangeContext(p.getExchange(), p.getTradeType());
 
-        List<Pair<Future, ExchangeContext>> futures = new ArrayList<>();
+        List<Pair<Future, Grabber>> futures = new ArrayList<>();
         ExchangeRunningParam.Action a = p.getAction();
         if (ExchangeActionType.OrderBook.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.submit(new OrderBookGrabber(serviceContext, exchangeContext, rabbitTemplate, a.getSymbols(), !init).init());
-            futures.add(Pair.of(f, exchangeContext));
+            Grabber g = new OrderBookGrabber(serviceContext, exchangeContext, rabbitTemplate, a.getSymbols(), !init).init();
+            Future f = threadPoolTaskScheduler.submit(g);
+            futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.AggTrade.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.submit(new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
-            futures.add(Pair.of(f, exchangeContext));
+            Grabber g = new AggTradeGrabber(serviceContext, exchangeContext, a.getSymbols()).init();
+            Future f = threadPoolTaskScheduler.submit(g);
+            futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.ForceOrder.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.submit(new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init());
-            futures.add(Pair.of(f, exchangeContext));
+            Grabber g = new ForceOrderGrabber(serviceContext, exchangeContext, a.getSymbols()).init();
+            Future f = threadPoolTaskScheduler.submit(g);
+            futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.TakerLongShortRatio.is(a.getName())) {
             a.getParams().forEach(ap -> {
                 a.getSymbols().forEach(s -> {
-                    Future f = threadPoolTaskScheduler.schedule(new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap), new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
-                    futures.add(Pair.of(f, exchangeContext));
+                    Grabber g = new TakerLongShortRatioGrabber(serviceContext, exchangeContext, s, ap);
+                    Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(TakerLongShortRatioGrabber.cron(ap)));
+                    futures.add(Pair.of(f, g));
                 });
             });
         }
         if (ExchangeActionType.AllTicker.is(a.getName())) {
-            Future f = threadPoolTaskScheduler.submit(new AllTickerGrabber(serviceContext, exchangeContext).init());
-            futures.add(Pair.of(f, exchangeContext));
+            Grabber g = new AllTickerGrabber(serviceContext, exchangeContext).init();
+            Future f = threadPoolTaskScheduler.submit(g);
+            futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.KLine.is(a.getName())) {
             KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, a.getParams().get(0));
             Future f = threadPoolTaskScheduler.submit(g);
-            futures.add(Pair.of(f, exchangeContext));
+            futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.CoinInfoRaw.is(a.getName())) {
             CoinInfoRawGrabber g = new CoinInfoRawGrabber(serviceContext, exchangeContext).init();
@@ -81,7 +85,7 @@ public class ExchangeRunningService {
             threadPoolTaskScheduler.submit(g);
             // run in schedule
             Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
-            futures.add(Pair.of(f, exchangeContext));
+            futures.add(Pair.of(f, g));
         }
 
         if (!init) {
@@ -103,11 +107,7 @@ public class ExchangeRunningService {
         futures.forEach(f -> {
             try {
                 f.getKey().cancel(true);
-
-                StreamingExchange exchange = f.getValue().getExchangeCurrentStream();
-                if (exchange != null) {
-                    exchange.disconnect().blockingAwait();
-                }
+                f.getValue().close();
             } catch (Exception e) {
                 log.error(e.getMessage(), e);
             }
