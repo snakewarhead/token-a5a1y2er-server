@@ -47,6 +47,10 @@ public class KLineGrabber implements Grabber {
 
     private List<Pair<Future, Grabber>> futures = new ArrayList<>();
 
+    public String cron() {
+        return "40 3 0 * * ?";
+    }
+
     public KLineGrabber(ThreadPoolTaskScheduler threadPoolTaskScheduler, ServiceContext serviceContext, ExchangeContext exchangeContext, String period) {
         this.threadPoolTaskScheduler = threadPoolTaskScheduler;
         this.serviceContext = serviceContext;
@@ -57,6 +61,9 @@ public class KLineGrabber implements Grabber {
     @Override
     public void run() {
         try {
+            // close first
+            close();
+
             List<ExchangeCoinInfoRaw> ls = serviceContext.getExchangeCoinInfoRawService().find(exchangeContext.getExchangeEnum().getCode(), exchangeContext.getTradeType().getCode(), 1);
             if (CollUtil.isEmpty(ls)) {
                 log.error("List<ExchangeCoinInfoRaw> is empty");
@@ -147,8 +154,6 @@ public class KLineGrabber implements Grabber {
             // make sure that the klines are continuous
             ThreadUtil.sleep(INTERVAL_IN_FINAL);
             klineFromHttp(MIN, false);
-
-            ThreadUtil.sleep(Integer.MAX_VALUE);
         }
 
         @Override

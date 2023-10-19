@@ -76,7 +76,10 @@ public class ExchangeRunningService {
         }
         if (ExchangeActionType.KLine.is(a.getName())) {
             KLineGrabber g = new KLineGrabber(threadPoolTaskScheduler, serviceContext, exchangeContext, a.getParams().get(0));
-            Future f = threadPoolTaskScheduler.submit(g);
+            // run on startup
+            threadPoolTaskScheduler.submit(g);
+            // run in schedule
+            Future f = threadPoolTaskScheduler.schedule(g, new CronTrigger(g.cron()));
             futures.add(Pair.of(f, g));
         }
         if (ExchangeActionType.CoinInfoRaw.is(a.getName())) {
