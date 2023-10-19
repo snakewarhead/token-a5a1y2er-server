@@ -4,4 +4,4 @@ spring:
   application:
     name: b-command-websocket
   profiles:
-    include: exchange, dev
+    include: exchange, local
