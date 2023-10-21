@@ -98,7 +98,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
                     // notify
                     if (notifyContext.fresh(s.getSymbol())) {
-                        String ct = htmlTable(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
+                        String ct = htmlTables(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
                         MailMsg msg = MailMsg.builder()
                                 .subject("volume change quick")
                                 .text(ct)
@@ -121,19 +121,24 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
     }
 
-    private String htmlTable(String tilte, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
+    private String htmlTables(String tilte, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
         // open time
         // symbol exchange
         List<String> headers = new ArrayList<>();
         headers.add("symbol");
         headers.add("exchange");
+
         headers.add("量比");
         headers.add("价格");
         headers.add("振幅");
         headers.add("平均振幅");
-        headers.add("买入额主动(U)");
-        headers.add("成交额(U)");
-        headers.add("成交额平均(U)");
+
+        headers.add("成交额差值");
+        headers.add("买入额主动");
+        headers.add("卖出额主动");
+        headers.add("成交额");
+        headers.add("成交额平均");
+
         headers.add("成交量");
         headers.add("成交量平均");
         headers.add("成交量标准差");
@@ -162,32 +167,49 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         // 平均振幅
         ct.add(MathUtil.stripRate(info.getAvgPriceVolatilityRate()));
 
-        // 买入额主动(U)
-        ct.add(MathUtil.strip(kline.getTakerBuyQuoteVolume(), 2));
+        // 交易额
+        {
+            BigDecimal total = kline.getQuoteVolume();
+            BigDecimal buy = kline.getTakerBuyQuoteVolume();
+            BigDecimal sell = MathUtil.sub(total, buy);
+            BigDecimal diff = MathUtil.sub(buy, sell);
 
-        // 成交额(U)
-        ct.add(MathUtil.strip(kline.getQuoteVolume(), 2));
+            // 成交额差值: dff = buy - sell
+            ct.add(StrUtil.format("<span style=\"color: {};\">{}</span>", MathUtil.isPositive(diff) ? "green" : "red", MathUtil.stripMoney(diff)));
 
-        // 成交额平均(U)
-        ct.add(MathUtil.strip(info.getQtyAvgVolumeQuote(), 2));
+            // 买入额主动
+            ct.add(MathUtil.stripMoney(buy));
+
+            // 卖出额主动
+            ct.add(MathUtil.stripMoney(sell));
+
+            // 成交额
+            ct.add(MathUtil.stripMoney(total));
+
+            // 成交额平均
+            ct.add(MathUtil.stripMoney(info.getQtyAvgVolumeQuote()));
+        }
 
         // 成交量
-        ct.add(MathUtil.strip(kline.getVolume(), infoRaw.getQuantityPrecision()));
+        {
+            // 成交量当前
+            ct.add(MathUtil.strip(kline.getVolume(), infoRaw.getQuantityPrecision()));
 
-        // 成交量平均
-        ct.add(MathUtil.strip(info.getQtyAvgSmoothVolume(), infoRaw.getQuantityPrecision()));
+            // 成交量平均
+            ct.add(MathUtil.strip(info.getQtyAvgSmoothVolume(), infoRaw.getQuantityPrecision()));
 
-        // 成交量标准差
-        ct.add(MathUtil.strip(info.getQtyStdevVolume(), infoRaw.getQuantityPrecision()));
+            // 成交量标准差
+            ct.add(MathUtil.strip(info.getQtyStdevVolume(), infoRaw.getQuantityPrecision()));
 
-        // 成交量标准差率
-        ct.add(MathUtil.stripRate(info.getQtyStdevVolumeRate()));
+            // 成交量标准差率
+            ct.add(MathUtil.stripRate(info.getQtyStdevVolumeRate()));
+        }
 
         contents.add(ct);
 
-        String extend = "成交量标准差率 = 标准差 / 平均值 (衡量波动幅度)";
+//        String extend = "成交量标准差率 = 标准差 / 平均值 (衡量波动幅度)";
+        String extend = "===================================================================================";
 
         return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents, extend);
     }
-
 }
