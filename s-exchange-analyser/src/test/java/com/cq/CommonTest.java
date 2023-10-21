@@ -2,11 +2,13 @@ package com.cq;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.thread.ThreadUtil;
+import cn.hutool.core.util.NumberUtil;
 import com.cq.exchange.NotifyContext;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -92,5 +94,14 @@ public class CommonTest {
         log.info("4 - {}", nc.fresh("c"));
 
         log.info("m - {}", nc.getStales().toString());
+    }
+
+    @Test
+    public void NumberUtilFormat() {
+        String n0 = NumberUtil.decimalFormat(",###.##", new BigDecimal("540488.707"));
+        log.info("n0 - {}", n0);
+
+        String n1 = NumberUtil.decimalFormat("#.####", new BigDecimal("540488.70707"));
+        log.info("n1 - {}", n1);
     }
 }

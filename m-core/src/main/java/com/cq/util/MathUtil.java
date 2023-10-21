@@ -1,12 +1,13 @@
 package com.cq.util;
 
+import cn.hutool.core.util.NumberUtil;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
 public class MathUtil {
 
-    public final static int RATE_PRECISION = 4;
     public final static int RESULT_SCALE = 8;
     private final static int CAL_SCALE = 12;
 
@@ -64,8 +65,13 @@ public class MathUtil {
     public static String strip(BigDecimal one, int scale) {
         return one.setScale(scale, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
+
     public static String stripRate(BigDecimal one) {
-        return strip(one, RATE_PRECISION);
+        return NumberUtil.decimalFormat("#.####", one);
+    }
+
+    public static String stripMoney(BigDecimal one) {
+        return NumberUtil.decimalFormat(",###.##", one);
     }
 
     public static String strip(BigDecimal one) {
@@ -121,6 +127,10 @@ public class MathUtil {
 
     public static BigDecimal max(BigDecimal one, BigDecimal two) {
         return one.compareTo(two) > 0 ? one : two;
+    }
+
+    public static boolean isPositive(BigDecimal one) {
+        return one.compareTo(BigDecimal.ZERO) >= 0;
     }
 
 
