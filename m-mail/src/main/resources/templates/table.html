@@ -6,13 +6,13 @@
     <thead>
     <tr>
         <td>idx</td>
-        <td th:each="item:${headers}" th:text="${item}"></td>
+        <td th:each="item:${headers}" th:utext="${item}"></td>
     </tr>
     </thead>
     <tbody>
     <tr th:each="item:${contents}">
         <td th:text="${itemStat.count}"></td>
-        <td th:each="jtem:${item}" th:text="${jtem}"></td>
+        <td th:each="jtem:${item}" th:utext="${jtem}"></td>
     </tr>
     </tbody>
 </table>
