@@ -11,7 +11,7 @@ public class MathUtil {
     public final static int RESULT_SCALE = 8;
     private final static int CAL_SCALE = 12;
 
-    private final static BigDecimal NEG_ONE = new BigDecimal("-1");
+    public final static BigDecimal NEG_ONE = new BigDecimal("-1");
 
     public final static BigDecimal MIN_VAL = new BigDecimal("0.00000001");
     public final static BigDecimal NEG_MIN_VAL = new BigDecimal("-0.00000001");
