@@ -132,7 +132,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         // symbol exchange
         List<String> headers = new ArrayList<>();
         headers.add("symbol");
-        headers.add("exchange");
+//        headers.add("exchange");
 
         headers.add("量比");
         headers.add("价格");
@@ -145,15 +145,15 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         headers.add("成交额");
         headers.add("成交额平均");
 
-        headers.add("成交量");
-        headers.add("成交量平均");
-        headers.add("成交量标准差");
+//        headers.add("成交量");
+//        headers.add("成交量平均");
+//        headers.add("成交量标准差");
         headers.add("成交量标准差率");
 
         List<List<String>> contents = new ArrayList<>();
         List<String> ct = new ArrayList<>();
         ct.add(info.getSymbol());
-        ct.add(ExchangeEnum.getEnum(info.getExchangeId()).name());
+//        ct.add(ExchangeEnum.getEnum(info.getExchangeId()).name());
 
         // 量比
         {
@@ -199,13 +199,13 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         // 成交量
         {
             // 成交量当前
-            ct.add(MathUtil.strip(kline.getVolume(), infoRaw.getQuantityPrecision()));
+//            ct.add(MathUtil.strip(kline.getVolume(), infoRaw.getQuantityPrecision()));
 
             // 成交量平均
-            ct.add(MathUtil.strip(info.getQtyAvgSmoothVolume(), infoRaw.getQuantityPrecision()));
+//            ct.add(MathUtil.strip(info.getQtyAvgSmoothVolume(), infoRaw.getQuantityPrecision()));
 
             // 成交量标准差
-            ct.add(MathUtil.strip(info.getQtyStdevVolume(), infoRaw.getQuantityPrecision()));
+//            ct.add(MathUtil.strip(info.getQtyStdevVolume(), infoRaw.getQuantityPrecision()));
 
             // 成交量标准差率
             ct.add(MathUtil.stripRate(info.getQtyStdevVolumeRate()));
