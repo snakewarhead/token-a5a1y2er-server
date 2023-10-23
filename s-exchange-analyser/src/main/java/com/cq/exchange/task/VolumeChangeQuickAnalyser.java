@@ -30,6 +30,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
     private final ExchangeTradeType tradeType;
     private final ExchangePeriodEnum periodEnum;
     private final BigDecimal multipleChange;
+    private final BigDecimal volumeQuoteHuge;
 
     private final static long TIME_STALE_NOTIFY = 24 * 3600 * 1000;
     private final static long PERIOD_STALE_TOLERANCE = 3L;
@@ -73,7 +74,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                         continue;
                     }
 
-                    // is volume over multipleChange?
+                    // is volume multiple over multipleChange?
                     ExchangeKline kline = serviceContext.getExchangeKlineService().findLatest(exchangeEnum.getCode(), tradeType.getCode(), s.getSymbol(), periodEnum.getSymbol());
                     if (kline == null) {
                         log.error("kline is not found. {}", s.getSymbol());
@@ -91,7 +92,12 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                     info.setMultipleVolume(volumeMultiple);
                     serviceContext.getExchangeCoinInfoService().updateOne(info);
 
-                    if (volumeMultiple.compareTo(multipleChange) < 0) {
+                    boolean isOverMultipleChange = volumeMultiple.compareTo(multipleChange) > 0;
+
+                    // is volume quote over volumeQuoteHuge
+                    boolean isOverVolumeQuoteHuge = kline.getQuoteVolume().compareTo(volumeQuoteHuge) > 0;
+
+                    if (!isOverMultipleChange || !isOverVolumeQuoteHuge) {
                         // no over
                         continue;
                     }

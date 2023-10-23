@@ -91,8 +91,9 @@ public class ExchangeRunningService {
         if (ExchangeActionType.VolumeChangeQuick.is(a.getName())) {
             String period = a.getParams().get(0);
             String cron = a.getParams().get(1);
-            BigDecimal multiple = new BigDecimal(a.getParams().get(2));
-            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), multiple).init();
+            BigDecimal multipleChange = new BigDecimal(a.getParams().get(2));
+            BigDecimal volumeQuoteHuge = new BigDecimal(a.getParams().get(3));
+            VolumeChangeQuickAnalyser as = new VolumeChangeQuickAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), multipleChange, volumeQuoteHuge).init();
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron(cron)));
             futures.add(f);
         }
