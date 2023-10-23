@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ExchangeTickerDAO extends MongoRepository<ExchangeTicker, String> {
 
+    ExchangeTicker findByExchangeIdAndTradeTypeAndSymbol(Integer exchangeId, Integer tradeType, String symbol);
 }

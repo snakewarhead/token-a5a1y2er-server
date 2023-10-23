@@ -45,4 +45,6 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
 
     private BigDecimal avgPriceVolatilityRate;
 
+    private BigDecimal priceDiffFutureAndSpot;
+
 }

@@ -136,6 +136,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
         headers.add("量比");
         headers.add("价格");
+        headers.add("期现价差");
         headers.add("振幅");
         headers.add("平均振幅");
 
@@ -163,6 +164,9 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 
         // 价格
         ct.add(MathUtil.strip(kline.getClose(), infoRaw.getPricePrecision()));
+
+        // 期现价差
+        ct.add(StrUtil.format("<span style=\"color: {};\">{}</span>", MathUtil.isPositive(info.getPriceDiffFutureAndSpot()) ? "green" : "red", MathUtil.strip(info.getPriceDiffFutureAndSpot(), infoRaw.getPricePrecision())));
 
         // 振幅 - |H - L| / O
         {

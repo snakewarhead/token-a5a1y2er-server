@@ -2,15 +2,18 @@ package com.cq.exchange.task;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.date.StopWatch;
 import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.entity.ExchangeCoinInfo;
 import com.cq.exchange.entity.ExchangeCoinInfoRaw;
 import com.cq.exchange.entity.ExchangeKline;
+import com.cq.exchange.entity.ExchangeTicker;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangePeriodEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.service.ServiceContext;
+import com.cq.util.MathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.math3.stat.StatUtils;
@@ -42,9 +45,14 @@ public class CoinInfoShortAnalyser implements Runnable {
     private final static int LIMIT_KLINES_MIN = 10;
     private final static int MULTIPLE_STDEV = 4;    // the data is unexpected when over this multiple
 
+    private final static long PERIOD_STALE_TOLERANCE = 3L;
+
+    private long periodStaleTolerance;
+
     private Map<String, LinkedList<ExchangeKline>> symbolKlines = new ConcurrentHashMap<>();
 
     public CoinInfoShortAnalyser init() {
+        periodStaleTolerance = periodEnum.getMillis() * PERIOD_STALE_TOLERANCE;
         return this;
     }
 
@@ -191,6 +199,18 @@ public class CoinInfoShortAnalyser implements Runnable {
                     // qtyAvgPriceVolatilityRate
                     double qtyAvgPriceVolatilityRate = StatUtils.mean(priceVolatilityRates);
 
+                    // priceDiffFutureAndSpot
+                    BigDecimal priceDiffFutureAndSpot = BigDecimal.ZERO;
+                    if (tradeType.isFuture()) {
+                        ExchangeTicker tickerFuture = serviceContext.getExchangeTickerService().find(exchangeEnum.getCode(), tradeType.getCode(), info.getSymbol());
+                        ExchangeTicker tickerSpot = serviceContext.getExchangeTickerService().find(exchangeEnum.getCode(), ExchangeTradeType.SPOT.getCode(), info.getSymbol());
+                        if (tickerFuture != null && tickerSpot != null) {
+                            if (DateUtil.betweenMs(tickerFuture.getDateUpdate(), DateUtil.date()) < periodStaleTolerance && DateUtil.betweenMs(tickerSpot.getDateUpdate(), DateUtil.date()) < periodStaleTolerance) {
+                                priceDiffFutureAndSpot = MathUtil.sub(tickerFuture.getLast(), tickerSpot.getLast());
+                            }
+                        }
+                    }
+
                     ExchangeCoinInfo infoRipe = ExchangeCoinInfo.builder()
                             .period(periodEnum.getSymbol())
                             .qtyStdevVolume(BigDecimal.valueOf(qtyStdevVolume))
@@ -198,6 +218,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                             .qtyAvgSmoothVolume(BigDecimal.valueOf(qtyAvgSmoothVolume))
                             .qtyAvgVolumeQuote(BigDecimal.valueOf(qtyAvgVolumeQuote))
                             .avgPriceVolatilityRate(BigDecimal.valueOf(qtyAvgPriceVolatilityRate))
+                            .priceDiffFutureAndSpot(priceDiffFutureAndSpot)
                             .build();
                     infoRipe.setExchangeId(exchangeEnum.getCode());
                     infoRipe.setTradeType(tradeType.getCode());
