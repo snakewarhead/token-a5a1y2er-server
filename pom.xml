@@ -44,16 +44,16 @@
         <module>m-mongodb</module>
         <module>m-rabbitmq</module>
 
-        <module>m-blockchain</module>
+<!--        <module>m-blockchain</module>-->
         <module>m-exchange</module>
         <module>m-web</module>
 
         <module>m-mail</module>
 
-        <module>s-blockchain-analyze-transaction-fee-rank-eth</module>
-        <module>s-blockchain-grabber-eth</module>
-        <module>s-blockchain-grabber-eth-addliquadity</module>
-        <module>s-blockchain-grabber-eth-utility</module>
+<!--        <module>s-blockchain-analyze-transaction-fee-rank-eth</module>-->
+<!--        <module>s-blockchain-grabber-eth</module>-->
+<!--        <module>s-blockchain-grabber-eth-addliquadity</module>-->
+<!--        <module>s-blockchain-grabber-eth-utility</module>-->
 
         <module>s-exchange-grabber-coinglass</module>
         <module>s-exchange-grabber-binance</module>
