@@ -218,7 +218,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         contents.add(ct);
 
 //        String extend = "成交量标准差率 = 标准差 / 平均值 (衡量波动幅度)";
-        String extend = "===================================================================================";
+        String extend = "=================";
 
         return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents, extend);
     }
