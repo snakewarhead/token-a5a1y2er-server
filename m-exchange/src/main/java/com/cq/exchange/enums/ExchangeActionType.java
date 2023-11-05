@@ -20,6 +20,7 @@ public enum ExchangeActionType {
     TradeVolumePrice(1 << 19),
     FundingRateRank(1 << 20),
     VolumeChangeQuick(1 << 21),
+    DCOver(1 << 22),
 
     // ------ 1 << 31
     All(0XFFFF_FFFF);

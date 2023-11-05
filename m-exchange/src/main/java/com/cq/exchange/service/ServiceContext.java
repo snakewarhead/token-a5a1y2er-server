@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class ServiceContext {
 
+    public final static long PERIOD_STALE_TOLERANCE = 3L;
+
     private final ExchangeCoinInfoRawService exchangeCoinInfoRawService;
     private final ExchangeTickerService exchangeTickerService;
     private final ExchangeKlineService exchangeKlineService;

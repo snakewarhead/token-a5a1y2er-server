@@ -21,10 +21,7 @@ import org.apache.commons.math3.util.FastMath;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -211,6 +208,38 @@ public class CoinInfoShortAnalyser implements Runnable {
                         }
                     }
 
+                    // pricesVolatilities
+                    var pricesVolatilities = new HashMap<Integer, ExchangeCoinInfo.PricesVolatility>();
+
+                    int lengthVolatility = -1;
+                    if (periodEnum.is(ExchangePeriodEnum.m5)) {
+                        // use 8h every window, 8 * 60 / 5
+                        lengthVolatility = 96;
+                    }
+
+                    if (lengthVolatility != -1) {
+                        int length = FastMath.min(lengthVolatility, ksCached.size() - 1);
+                        int idxLatestPre = ksCached.size() - 1 - 1;
+                        int idxStart = idxLatestPre - length + 1;
+                        int idxEnd = idxLatestPre + 1;
+                        var ksCachedWindow = ksCached.subList(idxStart, idxEnd);
+
+                        // priceHigh
+                        double[] highs = ksCachedWindow.stream().mapToDouble(i -> i.getHigh().doubleValue()).toArray();
+                        double highest = StatUtils.max(highs);
+
+                        // priceLow
+                        double[] lows = ksCachedWindow.stream().mapToDouble(i -> i.getLow().doubleValue()).toArray();
+                        double lowest = StatUtils.max(lows);
+
+                        var pv = ExchangeCoinInfo.PricesVolatility.builder()
+                                .windows(lengthVolatility)
+                                .priceHigh(BigDecimal.valueOf(highest))
+                                .priceLow(BigDecimal.valueOf(lowest))
+                                .build();
+                        pricesVolatilities.put(lengthVolatility, pv);
+                    }
+
                     ExchangeCoinInfo infoRipe = ExchangeCoinInfo.builder()
                             .period(periodEnum.getSymbol())
                             .qtyStdevVolume(BigDecimal.valueOf(qtyStdevVolume))
@@ -218,6 +247,7 @@ public class CoinInfoShortAnalyser implements Runnable {
                             .qtyAvgSmoothVolume(BigDecimal.valueOf(qtyAvgSmoothVolume))
                             .qtyAvgVolumeQuote(BigDecimal.valueOf(qtyAvgVolumeQuote))
                             .avgPriceVolatilityRate(BigDecimal.valueOf(qtyAvgPriceVolatilityRate))
+                            .pricesVolatilities(pricesVolatilities)
                             .priceDiffFutureAndSpot(priceDiffFutureAndSpot)
                             .build();
                     infoRipe.setExchangeId(exchangeEnum.getCode());

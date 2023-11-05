@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -44,7 +45,17 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
     private BigDecimal qtyAvgVolumeQuote;
 
     private BigDecimal avgPriceVolatilityRate;
+    private Map<Integer, PricesVolatility> pricesVolatilities;
 
     private BigDecimal priceDiffFutureAndSpot;
+
+    @Data
+    @Builder
+    public static class PricesVolatility {
+        @Indexed
+        private int windows;
+        private BigDecimal priceHigh;
+        private BigDecimal priceLow;
+    }
 
 }

@@ -97,6 +97,13 @@ public class ExchangeRunningService {
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron(cron)));
             futures.add(f);
         }
+        if (ExchangeActionType.DCOver.is(a.getName())) {
+            String period = a.getParams().get(0);
+            int lengthDC = Integer.parseInt(a.getParams().get(1));
+            DCOverAnalyser as = new DCOverAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), lengthDC).init();
+            Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
+            futures.add(f);
+        }
 
         if (!init) {
             mapRunning.put(p, futures);

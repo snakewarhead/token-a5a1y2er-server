@@ -68,8 +68,21 @@ public class ExchangeKlineService extends ExchangeBaseService<ExchangeKline> {
         return exchangeKlineDAO.findFirstByExchangeIdAndTradeTypeAndSymbolAndPeriodOrderByOpenTimeDesc(exchangeId, tradeType, symbol, period);
     }
 
+    public ExchangeKline findLatestPre(Integer exchangeId, Integer tradeType, String symbol, String period) {
+        var ls = findOlder(exchangeId, tradeType, symbol, period, 1, 1);
+        if (CollUtil.isEmpty(ls)) {
+            return null;
+        }
+        return ls.get(0);
+    }
+
     public long nextPeriod(ExchangeKline k) {
         ExchangePeriodEnum p = ExchangePeriodEnum.getEnum(k.getPeriod());
         return k.getOpenTime() + p.getMillis();
+    }
+
+    public long prePeriod(ExchangeKline k) {
+        ExchangePeriodEnum p = ExchangePeriodEnum.getEnum(k.getPeriod());
+        return k.getOpenTime() - p.getMillis();
     }
 }
