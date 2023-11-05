@@ -106,7 +106,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                     if (notifyContext.fresh(s.getSymbol())) {
                         String ct = htmlTables(DateUtil.date(kline.getOpenTime()).toString(), s, info, kline);
                         MailMsg msg = MailMsg.builder()
-                                .subject("volume change quick")
+                                .subject("volume change quick " + periodEnum.getSymbol())
                                 .text(ct)
                                 .silent(MailMsg.Silent.builder()
                                         .hash(SecureUtil.md5(info.getSymbol()))
@@ -127,7 +127,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
         log.info(sw.prettyPrint(TimeUnit.MILLISECONDS));
     }
 
-    private String htmlTables(String tilte, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
+    private String htmlTables(String title, ExchangeCoinInfoRaw infoRaw, ExchangeCoinInfo info, ExchangeKline kline) {
         // open time
         // symbol exchange
         List<String> headers = new ArrayList<>();
@@ -220,6 +220,6 @@ public class VolumeChangeQuickAnalyser implements Runnable {
 //        String extend = "成交量标准差率 = 标准差 / 平均值 (衡量波动幅度)";
         String extend = "=================";
 
-        return serviceContext.getHtmlContentBuilder().table(tilte, headers, contents, extend);
+        return serviceContext.getHtmlContentBuilder().table(title, headers, contents, extend);
     }
 }
