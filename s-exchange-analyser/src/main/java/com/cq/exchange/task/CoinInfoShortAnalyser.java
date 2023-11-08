@@ -219,9 +219,9 @@ public class CoinInfoShortAnalyser implements Runnable {
 
                     if (lengthVolatility != -1) {
                         int length = FastMath.min(lengthVolatility, ksCached.size() - 1);
-                        int idxLatestPre = ksCached.size() - 1 - 1;
-                        int idxStart = idxLatestPre - length + 1;
-                        int idxEnd = idxLatestPre + 1;
+                        int idxLatest = ksCached.size() - 1;
+                        int idxStart = idxLatest - length + 1;
+                        int idxEnd = idxLatest + 1;
                         var ksCachedWindow = ksCached.subList(idxStart, idxEnd);
 
                         // priceHigh
@@ -230,7 +230,7 @@ public class CoinInfoShortAnalyser implements Runnable {
 
                         // priceLow
                         double[] lows = ksCachedWindow.stream().mapToDouble(i -> i.getLow().doubleValue()).toArray();
-                        double lowest = StatUtils.max(lows);
+                        double lowest = StatUtils.min(lows);
 
                         var pv = ExchangeCoinInfo.PricesVolatility.builder()
                                 .windows(lengthVolatility)
