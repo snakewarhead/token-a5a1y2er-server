@@ -144,7 +144,7 @@ public class DCOverAnalyser implements Runnable {
         ct.add(info.getSymbol());
 
         // close
-        ct.add(MathUtil.strip(kline.getClose(), infoRaw.getPricePrecision()));
+        ct.add(StrUtil.format("<span style=\"color: {};\">{}</span>", isOverHigh ? "green" : "red", MathUtil.strip(kline.getClose(), infoRaw.getPricePrecision())));
 
         {
             ExchangeCoinInfo.PricesVolatility pricesVolatility = info.getPricesVolatilities().get(lengthDC);
