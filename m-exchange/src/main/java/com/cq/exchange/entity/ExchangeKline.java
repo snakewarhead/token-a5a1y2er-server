@@ -1,5 +1,6 @@
 package com.cq.exchange.entity;
 
+import com.cq.util.MathUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -39,4 +40,8 @@ public class ExchangeKline extends ExchangeEntity<ExchangeKline> {
     private BigDecimal takerBuyBaseVolume;
     private BigDecimal takerBuyQuoteVolume;
 
+    public BigDecimal calcTakerVolumeDiff() {
+        BigDecimal takerSellQuoteVolume = MathUtil.sub(quoteVolume, takerBuyQuoteVolume);
+        return MathUtil.sub(takerBuyQuoteVolume, takerSellQuoteVolume);
+    }
 }

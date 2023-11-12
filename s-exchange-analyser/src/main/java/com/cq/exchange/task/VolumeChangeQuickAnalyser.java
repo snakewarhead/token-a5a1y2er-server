@@ -31,6 +31,7 @@ public class VolumeChangeQuickAnalyser implements Runnable {
     private final ExchangePeriodEnum periodEnum;
     private final BigDecimal multipleChange;
     private final BigDecimal volumeQuoteHuge;
+    private final BigDecimal volumeQuoteDiff;
 
     private final static long TIME_STALE_NOTIFY = 24 * 3600 * 1000;
     private final static long PERIOD_STALE_TOLERANCE = 3L;
@@ -97,7 +98,10 @@ public class VolumeChangeQuickAnalyser implements Runnable {
                     // is volume quote over volumeQuoteHuge
                     boolean isOverVolumeQuoteHuge = kline.getQuoteVolume().compareTo(volumeQuoteHuge) > 0;
 
-                    if (!isOverMultipleChange || !isOverVolumeQuoteHuge) {
+                    // is volume diff over |volumeQuoteDiff| use abs()
+                    boolean isOverVolumeQuoteDiff = kline.calcTakerVolumeDiff().abs().compareTo(volumeQuoteDiff) > 0;
+
+                    if (!isOverMultipleChange || !isOverVolumeQuoteHuge || !isOverVolumeQuoteDiff) {
                         // no over
                         continue;
                     }
