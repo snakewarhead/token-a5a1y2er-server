@@ -40,6 +40,8 @@ public class ExchangeCoinInfo extends ExchangeEntity<ExchangeCoinInfo> {
     private BigDecimal qtyStdevVolume;
     private BigDecimal qtyStdevVolumeRate;  // stdev / mean
     private BigDecimal qtyAvgSmoothVolume;  // mean of volume filtered by stdev * multiple
+
+    @Indexed
     private BigDecimal multipleVolume;  // kline.close / qtyAvgSmoothVolume
 
     private BigDecimal qtyAvgVolumeQuote;
