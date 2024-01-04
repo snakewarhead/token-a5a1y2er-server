@@ -17,6 +17,7 @@ import com.cq.util.MathUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,14 @@ public class DCOverAnalyser implements Runnable {
      * every 8 hours is a period. i.e. if kline period is 5m, then the length is 8 * 60 / 5 = 96
      */
     private final int lengthDC;
+
+    /**
+     * 0001 - high
+     * 0010 - low
+     * 0011 - both
+     */
+    private final int typeNotify;
+    private final BigDecimal multipleChange;
 
     private final static long TIME_STALE_NOTIFY = 4 * 3600 * 1000;
 
@@ -92,7 +101,7 @@ public class DCOverAnalyser implements Runnable {
                         continue;
                     }
 
-                    // is over
+                    // is over High&Low
                     ExchangeCoinInfo.PricesVolatility pricesVolatility = info.getPricesVolatilities().get(lengthDC);
                     if (pricesVolatility == null) {
                         continue;
@@ -100,7 +109,26 @@ public class DCOverAnalyser implements Runnable {
 
                     boolean isOverHigh = kline.getClose().compareTo(pricesVolatility.getPriceHigh()) > 0;
                     boolean isOverLow = kline.getClose().compareTo(pricesVolatility.getPriceLow()) < 0;
-                    if (!isOverHigh && !isOverLow) {
+                    if (typeNotify == 0b01) {
+                        if (!isOverHigh) {
+                            continue;
+                        }
+                    } else if (typeNotify == 0b10) {
+                        if (!isOverLow) {
+                            continue;
+                        }
+                    } else if (typeNotify == 0b11) {
+                        if (!isOverHigh && !isOverLow) {
+                            continue;
+                        }
+                    } else {
+                        log.error("typeNotify is not correct - {}", typeNotify);
+                        continue;
+                    }
+
+                    // is over volume change
+                    boolean isOverMultipleChange = info.getMultipleVolume().compareTo(multipleChange) > 0;
+                    if (!isOverMultipleChange) {
                         continue;
                     }
 
@@ -112,7 +140,7 @@ public class DCOverAnalyser implements Runnable {
                                 .text(ct)
                                 .silent(MailMsg.Silent.builder()
                                         .hash(SecureUtil.md5(info.getSymbol()))
-                                        .deadline(TIME_STALE_NOTIFY)
+                                        .deadline(TIME_STALE_NOTIFY / 4)
                                         .build())
                                 .build();
                         serviceContext.getMailClient().send(msg);
@@ -134,8 +162,13 @@ public class DCOverAnalyser implements Runnable {
         List<String> headers = new ArrayList<>();
         headers.add("symbol");
         headers.add("close");
-        headers.add("highest");
-        headers.add("lowest");
+        headers.add("high");
+        headers.add("low");
+
+        headers.add("量比");
+        headers.add("额差");
+        headers.add("买入");
+        headers.add("卖出");
 
         List<List<String>> contents = new ArrayList<>();
         List<String> ct = new ArrayList<>();
@@ -153,6 +186,27 @@ public class DCOverAnalyser implements Runnable {
             // lowest
             ct.add(MathUtil.strip(pricesVolatility.getPriceLow(), infoRaw.getPricePrecision()));
         }
+
+        // 量比
+        ct.add(MathUtil.stripRate(info.getMultipleVolume()));
+
+        // 交易额
+        {
+            BigDecimal total = kline.getQuoteVolume();
+            BigDecimal buy = kline.getTakerBuyQuoteVolume();
+            BigDecimal sell = MathUtil.sub(total, buy);
+            BigDecimal diff = MathUtil.sub(buy, sell);
+
+            // 成交额差值: dff = buy - sell
+            ct.add(StrUtil.format("<span style=\"color: {};\">{}</span>", MathUtil.isPositive(diff) ? "green" : "red", MathUtil.stripMoney(diff)));
+
+            // 买入额主动
+            ct.add(MathUtil.stripMoney(buy));
+
+            // 卖出额主动
+            ct.add(MathUtil.stripMoney(sell));
+        }
+
         contents.add(ct);
 
         String extend = "=================";

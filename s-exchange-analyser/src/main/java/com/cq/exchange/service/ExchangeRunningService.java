@@ -101,7 +101,9 @@ public class ExchangeRunningService {
         if (ExchangeActionType.DCOver.is(a.getName())) {
             String period = a.getParams().get(0);
             int lengthDC = Integer.parseInt(a.getParams().get(1));
-            DCOverAnalyser as = new DCOverAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), lengthDC).init();
+            int typeNotify = Integer.parseInt(a.getParams().get(2));
+            BigDecimal multipleChange = new BigDecimal(a.getParams().get(3));
+            DCOverAnalyser as = new DCOverAnalyser(serviceContext, exchangeEnum, tradeType, ExchangePeriodEnum.getEnum(period), lengthDC, typeNotify, multipleChange).init();
             Future f = threadPoolTaskScheduler.schedule(as, new CronTrigger(as.cron()));
             futures.add(f);
         }
