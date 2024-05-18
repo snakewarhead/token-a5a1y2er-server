@@ -3,7 +3,7 @@ spring:
     include: exchange-local, rabbitmq-local
 
 proxy:
-  host: 127.0.0.1
+  host:
   port:
     http: 1081
     socks: 1080

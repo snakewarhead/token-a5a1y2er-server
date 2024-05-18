@@ -1,5 +1,6 @@
 package com.cq.exchange;
 
+import cn.hutool.core.util.StrUtil;
 import com.cq.exchange.enums.ExchangeEnum;
 import com.cq.exchange.enums.ExchangeTradeType;
 import com.cq.exchange.utils.Config;
@@ -93,11 +94,13 @@ public class ExchangeContext {
 //        spec.setApiKey(apiKey);
 //        spec.setSecretKey(apiSecret);
 
-        spec.setProxyHost(Config.host);
-        spec.setProxyPort(Config.portHttp);
+        if (StrUtil.isNotEmpty(Config.host)) {
+            spec.setProxyHost(Config.host);
+            spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+        }
 
         spec.setShouldLoadRemoteMetaData(false);
 
@@ -147,11 +150,13 @@ public class ExchangeContext {
 //        spec.setApiKey(apiKey);
 //        spec.setSecretKey(apiSecret);
 
-        spec.setProxyHost(Config.host);
-        spec.setProxyPort(Config.portHttp);
+        if (StrUtil.isNotEmpty(Config.host)) {
+            spec.setProxyHost(Config.host);
+            spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+        }
 
         spec.setShouldLoadRemoteMetaData(false);
 
@@ -174,11 +179,13 @@ public class ExchangeContext {
 
     private StreamingExchange exchangeInner(Class<? extends Exchange> exchangeClass) {
         final ExchangeSpecification spec = new ExchangeSpecification(exchangeClass);
-        spec.setProxyHost(Config.host);
-        spec.setProxyPort(Config.portHttp);
+        if (StrUtil.isNotEmpty(Config.host)) {
+            spec.setProxyHost(Config.host);
+            spec.setProxyPort(Config.portHttp);
 
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
-        spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_HOST, Config.host);
+            spec.setExchangeSpecificParametersItem(StreamingExchange.SOCKS_PROXY_PORT, Config.portSocks);
+        }
 
         spec.setShouldLoadRemoteMetaData(false);
 
